@@ -436,6 +436,15 @@ The detection was validated by intentionally performing multiple failed RDP logo
 
 ---
 
+## 🎯 Security Impact
+
+This detection is critical for security operations as it helps teams:
+- Confirm that a perimeter defense or authentication barrier has been successfully breached.
+- Immediately identify and isolate the specific compromised user account before the attacker can escalate privileges or move laterally.
+- Provide concrete evidence of the exact time of compromise and the adversary's source IP address for further threat hunting and blocklisting.
+
+ ---
+ 
 ## 📸 Screenshots
 
 ### Rule Overview
