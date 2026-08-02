@@ -464,3 +464,144 @@ The detection was validated by intentionally performing multiple failed RDP logo
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+
+# 👤 New Local User Creation
+
+## 🎯 Objective
+
+This rule creates an alert whenever a new local user is created and detects the creation of new local user accounts on Windows systems. This enables the early identification of unauthorized account provisioning, which may indicate an attacker establishing a foothold within the environment.
+
+---
+
+## 📖 Threat Overview
+
+Adversaries often create new local or domain user accounts to maintain access to victim systems and evade detection. By establishing their own credentials, they bypass the need to rely on compromised accounts that might undergo password resets or be disabled by administrators. 
+
+Monitoring for Event ID 4720 (A user account was created) is a critical defensive measure to spot unauthorized persistence mechanisms and unauthorized administrative actions.
+
+---
+
+## 🔥 Severity
+
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Persistence | Create Account | T1136 |
+
+---
+
+## 📂 Data Sources
+
+- Windows Security Event Logs
+- Azure Monitor Agent (AMA)
+- Log Analytics Workspace
+- Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+
+The following logic evaluates events directly from the log analytics workspace:
+
+```kql
+SecurityEvent
+| where EventID == 4720
+| project TimeGenerated,Computer,SubjectAccount,TargetAccount,Activity
+```
+
+---
+
+## ⚙️ Rule Configuration
+
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Analytics Rule | Evaluates logs on a defined schedule. |
+| **Severity** | Medium | Unauthorized account creation is a standard persistence method requiring verification. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Query Frequency** | Run query every 5 Minutes | Provides timely detection for new account generation. |
+| **Lookup Period** | Lookup data from the last 6 Minutes | A 1-minute overlap accounts for minor ingestion delays to ensure no alerts are missed. |
+| **Alert Threshold** | Trigger alert if query returns more than 0 results | Ensures any occurrence of this event ID generates an alert. |
+| **Event Grouping** | Trigger an alert for each event | Maintains individual records for every newly created account. |
+
+---
+
+## 🧩 Entity Mapping
+
+The following entities are mapped to enrich Microsoft Sentinel incidents and improve investigation capabilities.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | TargetAccount |
+
+### Why map these entities?
+
+- **Host:** Immediately points investigators to the specific endpoint where the local account was provisioned.
+- **Account:** Extracts the name of the newly created account so analysts can check if it aligns with standard naming conventions or appears malicious.
+
+---
+
+## 🚨 Alert Trigger Conditions
+
+An alert is generated when all of the following conditions are met:
+
+- Windows Security Event **4720 (A user account was created)** is generated.
+- The scheduled KQL query runs and returns more than 0 results within the evaluation window.
+
+---
+
+## 📋 Incident Configuration
+
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+
+- **Incident Creation:** Enabled (Creates incidents from alerts triggered by this analytics rule).
+- **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is Disabled.
+
+### Why disable alert grouping?
+
+Disabling grouping ensures that if multiple distinct accounts are created in rapid succession on different machines (or by different actors), each instance generates a discrete incident for strict auditing, rather than rolling them into a single ticket that might obscure the scale of the persistence effort.
+
+---
+
+## 🤖 Automated Response
+
+- **Automation Rules:** There are currently no automation rules configured for this specific analytic rule. Manual triage and response by an analyst are required upon incident creation.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-02 125146.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-02 125201.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-02 125211.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-02 125218.png)*
+
+### Query Scheduling
+> *(Insert Screenshot 2026-08-02 125228.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-02 125251.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-02 125258.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-02 125306.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
