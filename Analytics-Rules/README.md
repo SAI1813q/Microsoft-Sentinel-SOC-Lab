@@ -248,3 +248,219 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🔐 Successful Login After Brute Force
+
+## 🎯 Objective
+
+Detect successful authentication immediately following multiple failed login attempts against local or domain accounts. This rule enables early identification of potentially compromised credentials following a brute-force or password guessing attack, allowing analysts to respond to a successful breach.
+
+---
+
+## 📖 Threat Overview
+
+Attackers frequently employ brute-force or password-spraying techniques to guess valid credentials. If the threat actor successfully identifies a password, they will typically log in to the compromised account immediately to establish initial access, maintain persistence, or move laterally within the network.
+
+Monitoring for a successful login event (Event ID 4624) that occurs shortly after a high volume of failed login attempts (Event ID 4625) provides a high-confidence indicator of an account compromise, requiring immediate containment actions by the SOC team.
+
+---
+
+## 🔥 Severity
+
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Initial Access | Valid Accounts | T1078 |
+| Credential Access | Brute Force: Password Guessing | T1110.001 |
+
+---
+
+## 📂 Data Sources
+
+- Windows Security Event Logs
+- Azure Monitor Agent (AMA)
+- Log Analytics Workspace
+- Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+
+```kql
+let TimeWindow = 10m;
+let FailedThreshold = 5;
+
+let FailedLogins = 
+SecurityEvent
+| where EventID == 4625
+| where isnotempty(IpAddress)
+| where IpAddress != "-"
+| summarize 
+    FailedCount = count(),
+    LastFailedTime = max(TimeGenerated)
+    by TargetUserName, IpAddress;
+
+let SuccessfulLogins = 
+SecurityEvent
+| where EventID == 4624
+| where LogonType == 10
+| where isnotempty(IpAddress)
+| where IpAddress != "-"
+| project 
+    SuccessTime = TimeGenerated,
+    TargetUserName,
+    IpAddress,
+    Computer;
+
+FailedLogins
+| where FailedCount >= FailedThreshold
+| join kind=inner SuccessfulLogins 
+    on TargetUserName, IpAddress
+| where SuccessTime between (LastFailedTime .. (LastFailedTime + TimeWindow))
+| project 
+    SuccessTime,
+    Computer,
+    TargetUserName,
+    IpAddress,
+    FailedCount,
+    LastFailedTime
+| order by SuccessTime desc
+```
+
+---
+
+## ⚙️ Rule Configuration
+
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously with minimal delay to detect active compromises the moment they happen. |
+| **Severity** | High | A successful login following a brute force indicates an active threat actor on the network. |
+| **Status** | Enabled | Ensures the detection is always active. |
+| **Event Grouping** | Trigger an alert for each event | Ensures every qualifying successful login attempt is individually recorded. |
+| **Suppression** | Stop for 1 Hour | Prevents alert flooding in the event the attacker rapidly logs in and out of the compromised machine. |
+
+---
+
+## 🧩 Entity Mapping
+
+The following entities are mapped to enrich Microsoft Sentinel incidents and improve investigation capabilities.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | TargetUserName |
+| IP Address | Address | IpAddress |
+
+### Why map these entities?
+
+- **Account:** Identifies the exact user account that has been compromised, allowing analysts to quickly disable the account, revoke sessions, or initiate a password reset.
+- **IP Address:** Identifies the attacker's source infrastructure, making it easier to correlate with threat intelligence feeds or implement an IP block at the firewall.
+
+Entity mapping also enables Microsoft Sentinel to automatically build richer investigation graphs, tying the failed logon events directly to the successful breach.
+
+---
+
+## 🔄 Detection Workflow
+
+```text
+Repeated Failed Logons (Event ID 4625) followed by a Successful Logon (Event ID 4624)
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests logs
+            │
+            ▼
+Log Analytics Workspace
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+Threshold met: >= 5 failures, followed by 1 success within 10 minutes
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Account Entity)
+            │
+            ▼
+Automation Rule Triggered (Account Compromise Suspected)
+            │
+            ▼
+SOC Analyst Assigned & Containment Actions Executed
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+
+An alert is generated when all of the following conditions are met:
+
+- Five or more failed authentication attempts (Event ID 4625) are logged for a specific user and IP.
+- A successful Remote Interactive authentication (Event ID 4624, LogonType 10) occurs.
+- The successful login matches the same `TargetUserName` and `IpAddress` and happens within a **10-minute** window of the last failed attempt.
+
+---
+
+## 📋 Incident Configuration
+
+To improve incident management and reduce alert fatigue, Microsoft Sentinel is configured with the following settings:
+
+- **Incident Creation:** Enabled to automatically create an incident whenever the analytics rule is triggered.
+- **Alert Grouping:** Enabled to correlate related alerts into a single incident.
+- **Grouping Time Window:** **5 Hours** to consolidate repeated cycles occurring within the selected timeframe.
+- **Grouping Method:** Alerts are grouped based on the **Account (Name)** entity.
+
+### Why group alerts by Account?
+
+If an attacker establishes initial access, they may trigger multiple successful logins during their lateral movement or discovery phases. Grouping by the **Account** entity ensures that all alerts tied to this specific compromised identity over a 5-hour period are consolidated into a single high-priority incident for the SOC to investigate, rather than flooding the queue with duplicate tickets.
+
+---
+
+## 🤖 Automated Response
+
+When an incident is created:
+
+- The configured Automation Rule (**Account Compromise Suspected**) is executed.
+- Incident tags are automatically appended for easier SOC filtering and triage.
+- Playbooks can subsequently trigger logic to block the malicious IP or force a credential reset in Entra ID.
+
+---
+
+## ✅ Validation
+
+The detection was validated by intentionally performing multiple failed RDP logon attempts against a monitored endpoint using an incorrect password, immediately followed by logging in successfully with the correct password. Microsoft Sentinel successfully correlated the events, generated an alert, created an incident, and executed the automation tagging rule.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot)*
+
+### KQL Query
+> *(Insert Screenshot)*
+
+### Entity Mapping
+> *(Insert Screenshot)*
+
+### Incident Settings
+> *(Insert Screenshot)*
+
+### Automation Rule
+> *(Insert Screenshot)*
+
+### Review & Create
+> *(Insert Screenshot)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
