@@ -81,29 +81,34 @@ SecurityEvent
 
 ## ⚙️ Rule Configuration
 
-| Setting | Value |
-|----------|-------|
-| **Rule Type** | Scheduled Analytics Rule |
-| **Rule Name** | Brute Force Login Detection |
-| **Severity** | High |
-| **Status** | Enabled |
-| **Query Frequency** | Every 5 Minutes |
-| **Lookup Period** | Last 6 Minutes |
-| **Alert Threshold** | Trigger alert if query returns more than 0 results |
-| **Event Grouping** | Trigger an alert for each event |
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Analytics Rule | Continuously monitors incoming Windows Security Events at regular intervals. |
+| **Severity** | High | Multiple failed login attempts are a strong indicator of a credential attack and require immediate investigation. |
+| **Status** | Enabled | Ensures the detection is always active. |
+| **Query Frequency** | Every 5 Minutes | Provides near real-time detection while keeping resource usage efficient. |
+| **Lookup Period** | Last 6 Minutes | The lookup window is intentionally configured **one minute longer than the execution frequency**. This overlap prevents events from being missed due to ingestion latency or slight delays in log collection, ensuring reliable detection. |
+| **Alert Threshold** | More than 0 Results | Generates an alert whenever the query identifies at least one matching brute-force activity. |
+| **Event Grouping** | Trigger an alert for each event | Ensures every qualifying brute-force attempt is individually recorded before incident correlation is applied. |
 
 ---
 
 ## 🧩 Entity Mapping
 
-The analytics rule maps the following entities to improve investigation and incident correlation.
+The following entities are mapped to enrich Microsoft Sentinel incidents and improve investigation capabilities.
 
 | Entity | Identifier |
 |---------|------------|
 | Account | Account Name |
 | IP Address | Source IP Address |
 
-Entity mapping enriches Microsoft Sentinel incidents by automatically associating affected user accounts and source IP addresses with the generated alert, providing analysts with additional investigation context.
+### Why map these entities?
+
+- **Account:** Identifies the user account targeted by the brute-force attack, allowing analysts to quickly determine which credentials are under attack.
+
+- **IP Address:** Identifies the source of the authentication attempts, making it easier to investigate malicious hosts, identify repeated attacks, and perform IP-based blocking if necessary.
+
+Entity mapping also enables Microsoft Sentinel to automatically correlate alerts and build richer investigation graphs, reducing manual analysis during incident response.
 
 ---
 
@@ -154,12 +159,25 @@ An alert is generated when all of the following conditions are met:
 
 ## 📋 Incident Configuration
 
-To improve alert management and reduce duplicate incidents, Microsoft Sentinel is configured to:
+To improve incident management and reduce alert fatigue, Microsoft Sentinel is configured with the following settings:
 
-- Automatically create an incident when the rule is triggered.
-- Group related alerts based on the affected **Account** entity.
-- Correlate similar authentication failures into a single investigation.
-- Maintain incident context for efficient triage.
+- **Incident Creation:** Enabled to automatically create an incident whenever the analytics rule is triggered.
+- **Alert Grouping:** Enabled to correlate related alerts into a single incident.
+- **Grouping Time Window:** **5 Hours** to consolidate repeated brute-force attempts occurring within the selected timeframe.
+- **Grouping Method:** Alerts are grouped based on the **Account** entity.
+
+### Why group alerts by Account?
+
+Brute-force attacks often generate dozens or even hundreds of failed authentication attempts against the **same user account**. Without grouping, each detection would create a separate incident, making investigations noisy and difficult to manage.
+
+By grouping alerts using the **Account** entity:
+
+- Multiple failed login attempts against the same user are consolidated into a single incident.
+- Analysts receive one investigation instead of numerous duplicate incidents.
+- Incident timelines become easier to review.
+- Alert fatigue is significantly reduced while preserving all related events within the incident.
+
+This configuration provides a cleaner and more efficient investigation experience for SOC analysts.
 
 ---
 
