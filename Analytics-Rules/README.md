@@ -653,6 +653,188 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 💻 Encoded PowerShell Detection
 
+## 🎯 Objective
+
+Detect the execution of PowerShell commands utilizing Base64 encoding parameters. This rule provides early identification of obfuscated script execution, which is highly indicative of an attacker attempting to hide malicious payloads or evade basic command-line logging and signature-based detection.
+
+---
+
+## 📖 Threat Overview
+
+Threat actors and automated malware strains frequently leverage PowerShell for execution and lateral movement. To avoid detection by endpoint security controls (like Antivirus or EDR) and to safely pass complex scripts through the command line without syntax errors, attackers encode their commands in Base64 using the `-EncodedCommand` (or `-enc`, `-e`) flags. 
+
+While legitimate administrative scripts occasionally use this method, its presence in an environment is suspicious and warrants immediate investigation to decode the payload and determine its true intent.
+
+---
+
+## 🔥 Severity
+
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Execution | Command and Scripting Interpreter: PowerShell | T1059.001 |
+
+---
+
+## 📂 Data Sources
+
+- Windows Security Event Logs (Process Creation)
+- Azure Monitor Agent (AMA)
+- Log Analytics Workspace
+- Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+
+```kql
+SecurityEvent
+| where EventID == 4688
+| where CommandLine has_any ("-enc", "-EncodedCommand")
+| project TimeGenerated,Computer,SubjectAccount,NewProcessName,CommandLine,ParentProcessName
+```
+
+---
+
+## ⚙️ Rule Configuration
+
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Analytics Rule | Evaluates process execution logs on a continuous schedule. |
+| **Severity** | High | Obfuscated PowerShell execution is a common attacker tactic for executing malicious payloads. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Query Frequency** | Run query every 5 Minutes | Provides timely detection of suspicious process execution. |
+| **Lookup Period** | Lookup data from the last 6 Minutes | A 1-minute overlap prevents events from being missed due to slight ingestion delays. |
+| **Alert Threshold** | Trigger alert if query returns more than 0 results | Generates an alert immediately upon finding a matching execution. |
+| **Event Grouping** | Group all events into a single alert | Aggregates results into a single alert payload per query run. |
+
+---
+
+## 🧩 Entity Mapping
+
+The following entities are mapped to enrich Microsoft Sentinel incidents and improve investigation capabilities.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+
+- **Host:** Identifies the exact endpoint where the encoded script was executed, allowing analysts to target their investigation.
+- **Process (CommandLine):** Captures the exact command string used. This is critical because analysts can immediately extract the Base64 string from the entity and decode it to reveal the attacker's hidden instructions.
+
+---
+
+## 🔄 Detection Workflow
+
+```text
+Encoded PowerShell Command Executed (e.g., powershell -enc JAB...)
+            │
+            ▼
+Windows Security Log (Event ID 4688 - Process Creation)
+            │
+            ▼
+Azure Monitor Agent (AMA)
+            │
+            ▼
+Log Analytics Workspace
+            │
+            ▼
+Microsoft Sentinel executes scheduled KQL query
+            │
+            ▼
+Command matches "-enc" or "-EncodedCommand" within the 5-minute schedule
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (No alert grouping)
+            │
+            ▼
+SOC Analyst Assigned & Payload Decoding Begins
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+
+An alert is generated when all of the following conditions are met:
+
+- Windows Security Event **4688 (A new process has been created)** is generated.
+- The `CommandLine` field contains the specific strings `"-enc"` or `"-EncodedCommand"`.
+- The scheduled KQL query returns more than 0 results within the 6-minute evaluation window.
+
+---
+
+## 📋 Incident Configuration
+
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+
+- **Incident Creation:** Enabled (Creates incidents from alerts triggered by this analytics rule).
+- **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+
+Disabling alert grouping ensures that if multiple distinct encoded commands are executed (potentially by different users or on different hosts), they each spawn a separate incident. This guarantees that every unique encoded payload is individually reviewed and decoded by an analyst, rather than being buried within a single grouped incident.
+
+---
+
+## ✅ Validation
+
+This detection can be validated by opening a Command Prompt on a monitored endpoint and executing a benign Base64 encoded PowerShell command, such as:
+`powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgACIASABlAGwAbABvACAAVwBvAHIAbABkACIA` (which decodes to `Write-Host "Hello World"`).
+Within 5 minutes, Microsoft Sentinel should detect the 4688 event and generate the corresponding incident.
+
+---
+
+## 🎯 Security Impact
+
+This detection is essential for security operations as it helps teams:
+- Pierce through attacker obfuscation techniques to reveal actual intent.
+- Quickly identify endpoints where malicious scripting is actively occurring.
+- Capture the raw malicious payload (the encoded string) for threat intelligence extraction (e.g., finding C2 IP addresses or dropped file hashes within the decoded script).
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-02 131314.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-02 131331.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-02 131341.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-02 131401.png)*
+
+### Query Scheduling
+> *(Insert Screenshot 2026-08-02 131412.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-02 131423.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-02 131430.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-02 131437.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
 
 ---
