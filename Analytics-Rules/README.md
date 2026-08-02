@@ -506,8 +506,6 @@ Monitoring for Event ID 4720 (A user account was created) is a critical defensiv
 
 ## 📑 Detection Logic (KQL)
 
-The following logic evaluates events directly from the log analytics workspace:
-
 ```kql
 SecurityEvent
 | where EventID == 4720
@@ -546,12 +544,44 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and imp
 
 ---
 
+## 🔄 Detection Workflow
+
+```text
+New Local User Account Created 
+            │
+            ▼
+Windows Security Log (Event ID 4720)
+            │
+            ▼
+Azure Monitor Agent (AMA)
+            │
+            ▼
+Log Analytics Workspace
+            │
+            ▼
+Microsoft Sentinel executes scheduled KQL query
+            │
+            ▼
+Event matched within the 5-minute schedule
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (No grouping, discrete incident generated)
+            │
+            ▼
+SOC Analyst Assigned & Investigation Begins
+```
+
+---
+
 ## 🚨 Alert Trigger Conditions
 
 An alert is generated when all of the following conditions are met:
 
-- Windows Security Event **4720 (A user account was created)** is generated.
-- The scheduled KQL query runs and returns more than 0 results within the evaluation window.
+- Windows Security Event **4720 (A user account was created)** is generated on the monitored host.
+- The scheduled KQL query runs and returns more than 0 results within the 6-minute evaluation window.
 
 ---
 
@@ -560,7 +590,7 @@ An alert is generated when all of the following conditions are met:
 To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
 
 - **Incident Creation:** Enabled (Creates incidents from alerts triggered by this analytics rule).
-- **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is Disabled.
+- **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
 
 ### Why disable alert grouping?
 
@@ -568,9 +598,18 @@ Disabling grouping ensures that if multiple distinct accounts are created in rap
 
 ---
 
-## 🤖 Automated Response
+## ✅ Validation
 
-- **Automation Rules:** There are currently no automation rules configured for this specific analytic rule. Manual triage and response by an analyst are required upon incident creation.
+This detection can be validated by opening an administrative Command Prompt or PowerShell session on a monitored endpoint and executing the command: `net user /add TestUser Password123!`. Within 5 minutes, Microsoft Sentinel should successfully ingest Event ID 4720 and generate the corresponding incident.
+
+---
+
+## 🎯 Security Impact
+
+This detection helps security teams:
+- Identify unauthorized backdoors established by threat actors.
+- Detect privilege escalation attempts or rogue administrative activity.
+- Quickly isolate affected hosts before an attacker can utilize the new account for lateral movement.
 
 ---
 
@@ -603,5 +642,8 @@ Disabling grouping ensures that if multiple distinct accounts are created in rap
 ---
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
 
 ---
