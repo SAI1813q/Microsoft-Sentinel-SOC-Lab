@@ -2520,7 +2520,6 @@ This detection helps security teams:
 > *(Insert related video screenshots here)*
 
 ---
-
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
