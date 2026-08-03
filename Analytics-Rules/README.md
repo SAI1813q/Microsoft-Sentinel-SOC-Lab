@@ -1294,4 +1294,174 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🥷 Mimikatz Detection
+
+## 🎯 Objective
+This rule detects execution of the Mimikatz credential dumping tool. It enables security teams to identify active attempts to harvest credentials from system memory.
+
+---
+
+## 📖 Threat Overview
+Mimikatz is a widely used post-exploitation tool that extracts plaintext passwords, hash, PIN code, and kerberos tickets from memory. Threat actors frequently attempt to execute Mimikatz or its PowerShell variants (like `Invoke-Mimikatz`) by encoding the commands to evade signature-based endpoint defenses. Monitoring for specific encoding flags associated with command-line execution is critical for spotting these obfuscated credential theft attempts.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Credential Access | OS Credential Dumping | T1003 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query identifies process creation events containing specific command-line arguments used for executing obfuscated commands:
+
+```kql
+SecurityEvent
+| where EventID == 4688
+| where CommandLine has_any (
+    "-enc",
+    "-EncodedCommand",
+    "FromBase64String"
+)
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    NewProcessName,
+    CommandLine,
+    ParentProcessName
+| order by TimeGenerated desc
+```
+
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect credential dumping immediately as it occurs. |
+| **Severity** | High | Active credential extraction indicates an attacker has already bypassed initial defenses. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Generates a distinct alert for every malicious execution detected. |
+| **Suppression** | Not configured | Ensures all events are continually processed without artificial cool-down periods. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents. *(Note: The current configuration in the environment maps the Account Identifier to the Computer field, and the Host Identifier to the Account field.)*
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Computer |
+| Host | HostName | Account |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Host & Account:** Identifying the compromised machine and context limits the scope of the attacker's credential harvesting capabilities.
+* **Process:** Extracting the exact `CommandLine` string allows incident responders to decode the Base64 payload and analyze the exact parameters the attacker attempted to pass.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Obfuscated Command Executed
+            │
+            ▼
+Windows Security Log (Event ID 4688)
+            │
+            ▼
+Azure Monitor Agent (AMA)
+            │
+            ▼
+Microsoft Sentinel evaluates NRT rule continuously
+            │
+            ▼
+Command matches target encoding parameters (e.g., "FromBase64String")
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Account Name)
+            │
+            ▼
+SOC Analyst Assigned & Remediation Begins
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is generated.
+* The `CommandLine` field contains any of the following strings: `"-enc"`, `"-EncodedCommand"`, or `"FromBase64String"`.
+
+---
+
+## 📋 Incident Configuration
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Limit Time Frame:** 5 Hours.
+* **Group By:** Grouping alerts into a single incident if the selected entity types and details match: **Account -> Name**.
+
+### Why group alerts by Account?
+If a script recursively attempts to execute credential dumping techniques across multiple sessions or iterations, grouping them by the target account condenses the alerts into a single incident ticket spanning a 5-hour window.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening a Command Prompt on a monitored endpoint and safely executing a benign command wrapped in one of the targeted string flags (e.g., executing a simple string using `-EncodedCommand`). Microsoft Sentinel will process the 4688 event and trigger the NRT detection alert.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify late-stage lateral movement preparation.
+* Isolate compromised endpoints immediately to prevent the attacker from exfiltrating dumped hashes or tickets.
+* Initiate immediate credential resets for any user account exposed on the host where Mimikatz was executed.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 111842.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 111620.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 111641.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 111651.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 111733.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 111742.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 111752.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
 ---
