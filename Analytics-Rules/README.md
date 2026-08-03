@@ -19,7 +19,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Encoded PowerShell Detection](#-encoded-powershell-detection)** | High | T1059.001 | Detects execution of Base64-encoded PowerShell commands. |
 | **[Download Cradle Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-download-cradle-detection)** | High | T1105 | Detects PowerShell commands used to download payloads from remote servers. |
 | **[Mimikatz Detection](#-mimikatz-detection)** | High | T1003 | Detects execution of the Mimikatz credential dumping tool. |
-| **[PsExec Detection](#-psexec-detection)** | High | T1021.002 | Detects PsExec usage for remote execution and lateral movement. |
+| **[PsExec Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-psexec-detection)** | High | T1021.002 | Detects PsExec usage for remote execution and lateral movement. |
 | **[Registry Run Key Persistence](#-registry-run-key-persistence)** | High | T1547.001 | Detects persistence through Windows Run Registry Keys. |
 | **[Event Log Cleared Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-event-log-cleared-detection)** | High | T1070.001 | Detects attempts to clear Windows Event Logs to hide attacker activity. |
 | **[New Windows Service Installed](#-new-windows-service-installed)** | High | T1543.003 | Detects installation of new Windows services that may establish persistence. |
