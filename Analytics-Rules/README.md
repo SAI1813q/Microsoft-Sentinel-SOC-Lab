@@ -1651,6 +1651,7 @@ Incident Created (Grouped by Host and Account)
             │
             ▼
 SOC Analyst Assigned & Payload Investigation Begins
+```
 ---
 ## 🚨 Alert Trigger Conditions
 An alert is generated when all of the following conditions are met:
