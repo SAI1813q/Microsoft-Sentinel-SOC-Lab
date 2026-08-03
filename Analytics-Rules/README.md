@@ -1652,3 +1652,63 @@ Incident Created (Grouped by Host and Account)
             ▼
 SOC Analyst Assigned & Payload Investigation Begins
 ---
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4698** is generated on the monitored host.
+* The scheduled KQL query runs and returns more than 0 results within the 6-minute evaluation window.
+
+---
+
+## 📋 Incident Configuration
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Host** and **Account (Name)**.
+
+### Why group alerts by Host and Account?
+Legitimate administrative scripts, system updates, or configuration management tools (like SCCM) can sometimes generate multiple scheduled tasks on a machine in rapid succession. By grouping alerts based on the specific Host and Account over a 5-hour window, the SOC receives a single consolidated incident per endpoint. This drastically reduces alert fatigue while still bringing the persistence activity to the analyst's attention for review.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening a Command Prompt with administrative privileges on a monitored endpoint and executing the native `schtasks` command:
+`schtasks /create /tn "SentinelTestTask" /tr "cmd.exe /c echo test" /sc daily /st 12:00`
+Within 5 minutes, Microsoft Sentinel will evaluate the logs, detect Event ID 4698, and generate the corresponding incident.
+
+---
+
+## 🎯 Security Impact
+This detection is essential for security operations as it helps teams:
+* Identify long-term persistence mechanisms installed by threat actors.
+* Detect privilege escalation attempts that rely on executing tasks as the SYSTEM account.
+* Analyze the payload or executable triggered by the task to uncover secondary stage malware or command-and-control (C2) callbacks.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 121451.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 121501.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 121512.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 121525.png)*
+
+### Incident Settings
+> *(Insert image_8d73bf.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 121540.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 121547.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
