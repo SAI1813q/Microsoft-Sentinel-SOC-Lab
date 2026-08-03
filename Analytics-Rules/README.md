@@ -1897,7 +1897,7 @@ This detection helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
 
@@ -2078,7 +2078,7 @@ This detection helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
 # 📁 SMB Admin Share Access
@@ -2240,8 +2240,7 @@ This detection helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
-
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 ---
 
 # 🔑 Pass-the-Hash Detection
@@ -2383,7 +2382,7 @@ This detection helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
 
@@ -2520,7 +2519,8 @@ This detection helps security teams:
 > *(Insert related video screenshots here)*
 
 ---
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
 
