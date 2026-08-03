@@ -3974,4 +3974,161 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🧱 Firewall Disabled
 
+## 🎯 Objective
+This rule detects system modifications that turn off or impair the Windows Defender Firewall. It alerts security teams to defense evasion tactics indicating an attacker is attempting to disable network perimeter blocks before moving laterally or exfiltrating data.
+
+---
+
+## 📖 Threat Overview
+Adversaries frequently disable host-based firewalls to facilitate network reconnaissance, enable remote administration tools (such as RDP or SMB), or establish outbound Command and Control (C2) connections. By utilizing built-in utilities like `netsh` or PowerShell cmdlets (`Set-NetFirewallProfile`), attackers can drop network barriers on compromised endpoints to ease lateral movement across the internal network.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Defense Evasion | Impair Defenses: Disable or Modify System Firewall | T1562.004 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for process creation events where the command line contains known administrative syntax used to disable or turn off the Windows Firewall profiles:
+
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any (
+        "netsh advfirewall set allprofiles state off",
+        "Set-NetFirewallProfile",
+        "Disable-NetFirewall"
+    )
+    | project TimeGenerated, Computer, Account, Process, CommandLine
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect firewall tampering instantly. |
+| **Severity** | Medium | Disabling host firewalls increases vulnerability to network attacks and lateral movement. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every distinct instance of firewall modification commands. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account:** Identifies the user account executing the firewall modification.
+* **Host:** Highlights the endpoint that has had its network protections weakened.
+* **Process:** Extracts the exact `CommandLine` arguments used to disable the profiles.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker executes a command to disable the firewall (e.g., netsh advfirewall set allprofiles state off)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    CommandLine matches firewall disable strings
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by Account and Host)
+                │
+                ▼
+    SOC Analyst Assigned & Host Network Profile Verification Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is logged.
+* The `CommandLine` field contains firewall-disabling syntax such as `"netsh advfirewall set allprofiles state off"`, `"Set-NetFirewallProfile"`, or `"Disable-NetFirewall"`.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host**.
+
+### Why group alerts by Account and Host?
+If multiple firewall profiles (Domain, Private, Public) are turned off sequentially in a single script execution, grouping by Account and Host combines these events into one coherent incident ticket.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by opening an elevated Command Prompt or PowerShell window and executing `netsh advfirewall set allprofiles state off` (ensure you immediately revert this afterward by running `netsh advfirewall set allprofiles state on`). Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify defense evasion attempts designed to clear paths for lateral movement.
+* Spot compromised hosts losing their perimeter protection layers.
+* Enforce compliance and rapid remediation on unprotected endpoints.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 214851.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 214903.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 214914.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 214923.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 214937.png)*
+
+### Automation Response
+> *(Insert Screenshot 2026-08-03 214945.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 214951.png)*
+
+---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
