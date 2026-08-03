@@ -4453,5 +4453,156 @@ This detection helps security teams:
 ---
 
 
+# 🌐 Suspicious Outbound Connection
+
+## 🎯 Objective
+This rule detects outbound network connections established to known malicious IP addresses or external indicators tracked by threat intelligence feeds. It alerts security teams to potential Command and Control (C2) communication or data exfiltration.
+
+---
+
+## 📖 Threat Overview
+When endpoints are compromised, malware or threat actors frequently establish outbound connections to external Command and Control (C2) servers, malicious drop zones, or known threat infrastructure. By performing an inner join between device network logs and active threat intelligence indicators (`ThreatIntelligenceIndicator`), security systems can instantly spot telemetry matching malicious external IPs.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Command And Control, Exfiltration | Exfiltration Over C2 Channel | T1041 |
+
+---
+
+## 📂 Data Sources
+* Microsoft Defender XDR (`DeviceNetworkEvents`)
+* Threat Intelligence Indicators (`ThreatIntelligenceIndicator`)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query correlates successful outbound device connections with active threat intelligence indicators to identify communication with malicious remote IPs:
+
+    DeviceNetworkEvents
+    | where ActionType == "ConnectionSuccess"
+    | join kind=inner (
+        ThreatIntelligenceIndicator
+        | where Active == true
+        | where isnotempty(NetworkIP) or isnotempty(NetworkDestinationIP)
+        | project IndicatorIP = coalesce(NetworkIP, NetworkDestinationIP), Description, ConfidenceScore
+    ) on $left.RemoteIP == $right.IndicatorIP
+    | project Timestamp, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine, RemoteIP, RemotePort, Description, ConfidenceScore
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to identify threat intel matches the moment a connection succeeds. |
+| **Severity** | Medium | Communicating with a flagged threat intel indicator represents suspicious external traffic requiring review. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures distinct outbound connection events to malicious indicators. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | FullName | DeviceName |
+
+### Why map this entity?
+* **Host:** Identifies the exact endpoint on the internal network that successfully connected to the malicious external IP address.
+
+---
+
+## 🔄 Detection Workflow
+
+    Compromised host initiates an outbound connection to an external IP
+                │
+                ▼
+    Defender logs DeviceNetworkEvents (ConnectionSuccess)
+                │
+                ▼
+    Microsoft Sentinel NRT Rule joins network events with ThreatIntelligenceIndicator data
+                │
+                ▼
+    RemoteIP matches an active threat intelligence indicator IP
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (No alert grouping)
+                │
+                ▼
+    SOC Analyst Assigned & Host Network Isolation / C2 Investigation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* A device network event logs a successful outbound connection (`ActionType == "ConnectionSuccess"`).
+* The remote IP (`RemoteIP`) matches an active indicator IP (`IndicatorIP`) from the threat intelligence feed.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Outbound communication with known malicious threat intelligence infrastructure indicates a high-priority risk. Disabling alert grouping ensures every unique connection attempt generates an independent incident ticket for immediate SOC visibility.
+
+---
+
+## ✅ Validation
+This detection can be validated by simulating an outbound connection attempt from a test machine to a safe, controlled threat intelligence test IP or a custom indicator injected into the Threat Intelligence workspace table. Sentinel will evaluate the join condition and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify active Command and Control (C2) callbacks or beaconing behavior.
+* Catch data exfiltration attempts pointing toward malicious external servers.
+* Isolate infected hosts instantly before attackers can expand their footprint.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Screenshot 2026-08-03 221802.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-03 221811.png)*
+
+### KQL Query
+> *(Screenshot 2026-08-03 221828.png)*
+
+### Entity Mapping
+> *(Screenshot 2026-08-03 221849.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-03 221855.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-03 221901.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-03 221909.png)*
+
+---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
 
 
