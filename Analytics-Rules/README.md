@@ -1260,4 +1260,169 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🛠️ PsExec Detection
+
+## 🎯 Objective
+This rule detects PsExec service creation and process execution. It enables security teams to identify lateral movement and remote execution activities that utilize the PsExec utility within the network.
+
+---
+
+## 📖 Threat Overview
+PsExec is a legitimate Microsoft Sysinternals utility designed for system administrators to execute processes on remote systems. However, it is heavily abused by threat actors and ransomware operators to move laterally, escalate privileges (often executing as `NT AUTHORITY\SYSTEM`), and deploy malware across an environment. When PsExec connects to a remote machine, it uploads a service executable (`PSEXESVC.exe`) to the `Admin$` share and registers it as a service. Monitoring for these specific process and service creation events is critical for identifying unauthorized lateral movement.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Lateral Movement | Remote Services: SMB/Windows Admin Shares | T1021.002 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation, Event ID 7045 - Service Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for the creation of the PsExec service and the execution of the PsExec binary:
+
+```kql
+SecurityEvent
+| where EventID in (4688,7045)
+| where Process has_any ("psexec.exe","psexesvc.exe")
+   or CommandLine has "psexec"
+   or ServiceName =~ "PSEXESVC"
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    EventID,
+    Process,
+    CommandLine,
+    ServiceName
+| order by TimeGenerated desc
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect lateral movement immediately as it happens. |
+| **Severity** | High | Unauthorized use of PsExec is a strong indicator of an active compromise. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual instance of PsExec execution as a distinct alert. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account:** Identifies the compromised user credentials being leveraged to authenticate to the remote host.
+* **Host:** Identifies the target system where the remote command was executed.
+* **Process:** Extracts the exact command line arguments passed to PsExec, which often reveals the malicious payload or secondary scripts the attacker is attempting to run.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker uses PsExec to execute a command remotely
+            │
+            ▼
+Target Host logs Event ID 7045 (New Service) and Event ID 4688 (Process Execution)
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the events
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+Keywords ("psexec", "PSEXESVC") matched
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (No alert grouping)
+            │
+            ▼
+SOC Analyst Assigned & Lateral Movement Investigation Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** (Process Creation) or **7045** (Service Creation) is generated.
+* The `Process` contains `"psexec.exe"` or `"psexesvc.exe"`, OR the `CommandLine` contains `"psexec"`, OR the `ServiceName` exactly matches `"PSEXESVC"` (case-insensitive).
+* The NRT rule successfully processes the incoming event stream.
+
+---
+
+## 📋 Incident Configuration
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+* **Incident Creation:** Enabled (Creates incidents from alerts triggered by this analytics rule).
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Lateral movement often happens rapidly across multiple hosts. Disabling alert grouping ensures that if an attacker uses PsExec to pivot to five different servers, the SOC receives discrete incidents for each target. This prevents a single grouped incident from obscuring the true blast radius of the attack.
+
+---
+
+## ✅ Validation
+This detection can be validated by downloading the legitimate PsExec tool from Microsoft Sysinternals and executing a harmless remote command against a monitored test machine (e.g., `psexec \\TargetMachine -u Domain\User -p Password cmd.exe /c echo test`). Microsoft Sentinel will detect the resulting 7045 and 4688 events and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify lateral movement and pivoting activities during a network breach.
+* Spot compromised privileged accounts (since PsExec typically requires local admin rights on the target).
+* Trace the propagation path of an attacker across the network to facilitate accurate containment and eradication.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 112740.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 112754.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 112809.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 112822.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 112831.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 112847.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
 ---
