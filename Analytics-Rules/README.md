@@ -3450,3 +3450,178 @@ This detection helps security teams:
 
 ---
 
+# 💦 Password Spray Detection
+
+## 🎯 Objective
+This rule detects password spraying attacks by monitoring for multiple failed authentication attempts across different user accounts originating from a single IP address within a short time window. 
+
+---
+
+## 📖 Threat Overview
+Traditional brute-force attacks target a single account with many passwords, which easily triggers account lockout policies. To evade detection, adversaries use a "Password Spraying" technique: they take one common password (e.g., `Summer2026!`) and attempt to log in to *every* known account in the domain. Because each account only experiences one failed login, standard lockout thresholds are not triggered, allowing the attacker to slip under the radar while hunting for weak credentials.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Credential Access | Brute Force: Password Spraying | T1110.003 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4625 - An account failed to log on)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query aggregates failed logon events (excluding computer accounts ending in `$`) into 10-minute bins. It triggers if a single IP address fails to authenticate to 3 or more distinct user accounts within that window:
+
+    SecurityEvent
+    | where EventID == 4625
+    | where TargetAccount !endswith "$"
+    | summarize
+        FailedUsers = dcount(TargetAccount),
+        FailedAttempts = count(),
+        TargetedAccounts = make_set(TargetAccount),
+        FirstAttempt = min(TimeGenerated),
+        LastAttempt = max(TimeGenerated)
+        by IpAddress, Computer, bin(TimeGenerated, 10m)
+    | where FailedUsers >= 3
+    | project
+        FirstAttempt,
+        LastAttempt,
+        Computer,
+        IpAddress,
+        FailedUsers,
+        FailedAttempts,
+        TargetedAccounts
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Aggregates data over time windows rather than evaluating individual events instantly. |
+| **Run Query Every** | 10 Minutes | Matches the `bin(TimeGenerated, 10m)` aggregation window in the query. |
+| **Lookup Data From** | Last 11 Minutes | Provides a 1-minute overlap buffer to account for ingestion delays. |
+| **Severity** | High | Successful credential access leads directly to lateral movement and privilege escalation. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators. 
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| IP | Address | IpAddress |
+| Account | Name | TargetedAccounts |
+| Host | HostName | Computer |
+
+### Why map these entities?
+* **IP:** Identifies the source machine performing the password spray.
+* **Account:** Attaches the set of targeted accounts to the incident so the SOC knows exactly who was attacked. *(Note: Because `TargetedAccounts` is generated via `make_set`, Sentinel will map the array of targeted users to the incident).*
+* **Host:** Identifies the Domain Controller or endpoint registering the failed authentication attempts.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker uses a tool to spray one password against 50 domain users
+                │
+                ▼
+    Domain Controller logs Event ID 4625 (Failed Logon) for each attempt
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the events
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule evaluates the last 11 minutes of logs
+                │
+                ▼
+    Query counts >= 3 unique accounts failing from the same Source IP
+                │
+                ▼
+    Alert Generated (Containing the set of all targeted accounts)
+                │
+                ▼
+    Incident Created (Grouped by matching entities)
+                │
+                ▼
+    SOC Analyst Assigned & Source IP Blocked / Account Review Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4625** is logged.
+* The `TargetAccount` does not represent a machine account (does not end with `$`).
+* The unique count (`dcount`) of `TargetAccount` values is **3 or greater** originating from the same `IpAddress` and `Computer` within a **10-minute** window.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Days.
+* **Grouping Method:** Grouping alerts into a single incident if all the entities match.
+
+### Why this grouping configuration?
+Password sprays can sometimes be conducted "low and slow" over several days. By grouping alerts over a large 5-day window, the SOC can track persistent, repeated brute-force attempts from the same source IP against the same infrastructure in a single unified incident ticket.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by attempting to log in to 3 or more distinct, valid user accounts (e.g., `User1`, `User2`, `User3`) with incorrect passwords from the same attacking machine within a 10-minute window. Sentinel will aggregate the 4625 events and generate an incident pinpointing the attacking IP.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify adversaries attempting to bypass standard account lockout thresholds.
+* Reveal the scope of brute-force attacks by surfacing the exact list of targeted accounts.
+* Rapidly identify and block malicious infrastructure (IPs) conducting automated credential attacks against the perimeter or internal network.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 191418.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 191428.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 191442.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 191513.png)*
+
+### Query Scheduling
+> *(Insert Screenshot 2026-08-03 191522.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 191549.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 191555.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 191606.png)*
+
+---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
+
