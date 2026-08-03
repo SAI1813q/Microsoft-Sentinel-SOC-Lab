@@ -22,11 +22,29 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[PsExec Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-psexec-detection)** | High | T1021.002 | Detects PsExec usage for remote execution and lateral movement. |
 | **[Registry Run Key Persistence](#-registry-run-key-persistence)** | High | T1547.001 | Detects persistence through Windows Run Registry Keys. |
 | **[Event Log Cleared Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-event-log-cleared-detection)** | High | T1070.001 | Detects attempts to clear Windows Event Logs to hide attacker activity. |
-| **[New Windows Service Installed](#-new-windows-service-installed)** | High | T1543.003 | Detects installation of new Windows services that may establish persistence. |
 | **[Scheduled Task Creation](#-scheduled-task-creation)** | Medium | T1053.005 | Detects creation of scheduled tasks for persistence or malicious execution. |
 | **[Suspicious Discovery Commands](#-suspicious-discovery-commands)** | Medium | T1082, T1016, T1033 | Detects execution of common system discovery and reconnaissance commands. |
-| **[Domain Admin Group Modification](#-domain-admin-group-modification)** | Critical | T1098 | Detects modifications to privileged Active Directory groups. |
-
+| **[Active Directory Computer Enumeration](#active-directory-computer-enumeration)** | Medium | T1018 | Detects querying of Active Directory for computer objects, indicating network reconnaissance. |
+| **[SMB Admin Share Access](#smb-admin-share-access)** | High | T1021.002 | Detects access to administrative SMB shares (e.g., C$, ADMIN$) for lateral movement. |
+| **[WMI Lateral Movement Detection](#wmi-lateral-movement-detection)** | High | T1047 | Detects execution of commands via Windows Management Instrumentation (WMI) across the network. |
+| **[Potential Pass-the-Ticket Activity](#potential-pass-the-ticket-activity)** | High | T1550.003 | Detects the potential usage of stolen Kerberos tickets to authenticate and move laterally. |
+| **[Pass-the-Hash Detection](#pass-the-hash-detection)** | High | T1550.002 | Detects authentication attempts utilizing stolen password hashes instead of plaintext passwords. |
+| **[AS-REP Roasting Detection](#as-rep-roasting-detection)** | High | T1558.004 | Detects attempts to harvest Kerberos AS-REP messages for offline password cracking. |
+| **[Kerberoasting Detection](#kerberoasting-detection)** | High | T1558.003 | Detects attempts to request Kerberos service tickets for offline password cracking. |
+| **[User Added to Domain Admins](#user-added-to-domain-admins)** | High | T1098 | Detects unauthorized account additions to the highly privileged Domain Admins group. |
+| **[PowerShell Download](#powershell-download)** | High | T1105 | Detects PowerShell execution used specifically to download files from remote locations. |
+| **[Suspicious Command Shell](#suspicious-command-shell)** | Medium | T1059.003 | Detects anomalous or obfuscated usage of the native Windows command shell (cmd.exe). |
+| **[Password Spray Detection](#password-spray-detection)** | High | T1110.003 | Detects authentication attempts against multiple unique users utilizing a single password. |
+| **[Defender Disabled](#defender-disabled)** | High | T1562.001 | Detects modifications in the registry or via command line to disable Microsoft Defender. |
+| **[Mshta Execution](#mshta-execution)** | High | T1218.005 | Detects execution of mshta.exe to run malicious scripts, bypassing application control mechanisms. |
+| **[Impossible Travel](#impossible-travel)** | High | T1078.004 | Detects user logins from geographically distant locations in an impossibly short timeframe. |
+| **[Firewall Disabled](#firewall-disabled)** | Medium | T1562.004 | Detects system modifications that turn off or impair the Windows Defender Firewall. |
+| **[Certutil Download](#certutil-download)** | High | T1105 | Detects the abuse of the certutil.exe administrative tool to download malicious external files. |
+| **[Network Discovery](#network-discovery)** | Medium | T1082 | Detects execution of commands aimed at mapping internal network topologies and connections. |
+| **[Suspicious Outbound Connection](#suspicious-outbound-connection)** | Medium | T1071 | Detects unusual outbound network connections potentially indicating Command and Control (C2) traffic. |
+| **[Create or Modify System Process](#create-or-modify-system-process)** | Medium | T1543 | Detects the creation or modification of system-level processes to establish persistence. |
+| **[Event Logging Service Shut Down](#event-logging-service-shut-down)** | Medium | T1562.001 | Detects the manual termination of the Windows Event logging service to hide malicious activity. |
+| **[User Added to Local Administrators](#user-added-to-local-administrators)** | High | T1098 | Detects unauthorized additions of user accounts to the local Administrators group on an endpoint. |
 
 # 🔐 Brute Force Login Detection
 
