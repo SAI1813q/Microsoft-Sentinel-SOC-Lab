@@ -2244,5 +2244,148 @@ This detection helps security teams:
 
 ---
 
+# 🔑 Pass-the-Hash Detection
+
+## 🎯 Objective
+This rule detects authentication attempts utilizing stolen NTLM password hashes instead of plaintext passwords. It enables security teams to identify lateral movement and credential abuse across the network.
+
+---
+
+## 📖 Threat Overview
+Pass-the-Hash (PtH) is a lateral movement technique where an attacker extracts an NTLM hash from a compromised system's memory (often using tools like Mimikatz) and uses it to authenticate to other network resources without ever needing the user's actual plaintext password. Monitoring for Network logons (Logon Type 3) specifically utilizing the NTLM authentication package is a crucial method for identifying this legacy protocol abuse.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Lateral Movement | Use Alternate Authentication Material: Pass the Hash | T1550.002 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4624 - Successful Logon)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+```kql
+SecurityEvent
+| where EventID == 4624
+| where LogonType == 3
+| where AuthenticationPackageName == "NTLM"
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    IpAddress,
+    LogonType,
+    AuthenticationPackageName
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect hash-based authentication anomalies immediately. |
+| **Severity** | High | Successful PtH attacks indicate a severe breach of credential boundaries. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual NTLM logon anomaly. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| IP | Address | IpAddress |
+
+### Why map these entities?
+* **Account:** Identifies whose compromised hash is being utilized.
+* **Host & IP:** Highlights the targeted endpoint and traces the network origin of the PtH attack.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker utilizes a stolen NTLM hash to authenticate over the network
+            │
+            ▼
+Windows Security Log (Event ID 4624, Logon Type 3, NTLM) generated
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by IP and Account)
+            │
+            ▼
+SOC Analyst Assigned & Account Isolation Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4624** is logged.
+* The `LogonType` is **3** (Network).
+* The `AuthenticationPackageName` is exactly **"NTLM"**.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **IP** and **Account (Name)**.
+
+### Why group alerts by IP and Account?
+In enterprise environments, legitimate legacy systems may still use NTLM. By grouping alerts by the source IP Address and the Account, the SOC receives a single consolidated incident representing a PtH campaign, preventing massive alert fatigue from repetitive network authentications.
+
+---
+
+## ✅ Validation
+This detection can be validated by utilizing a tool like Mimikatz or CrackMapExec in a controlled lab environment to execute a Pass-the-Hash attack against a target server. Microsoft Sentinel will detect the resulting Event ID 4624 (Logon Type 3, NTLM) and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify adversaries bypassing plaintext password requirements.
+* Flag legacy protocol usage that requires hardening or Kerberos enforcement.
+* Map the lateral movement path of an attacker originating from a specific IP address.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Incident Settings
+> *(Insert related video screenshots and image_722ddc.png here)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
+
 
 
