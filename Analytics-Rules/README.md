@@ -2980,3 +2980,153 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🎯 Kerberoasting Detection
+
+## 🎯 Objective
+This rule detects potential Kerberoasting attacks by monitoring for Kerberos Service Ticket (TGS) requests (Event ID 4769) targeting specific service accounts. It alerts security teams to adversaries attempting to harvest service account password hashes for offline cracking.
+
+---
+
+## 📖 Threat Overview
+Kerberoasting is a post-compromise credential access technique. An adversary who has already obtained a valid standard domain user account can request a Kerberos Service Ticket (TGS) for any account that has a registered Service Principal Name (SPN). The Domain Controller responds with a ticket containing a portion encrypted with the service account's password hash. The attacker extracts this ticket and uses offline cracking tools (like Hashcat or John the Ripper) to reveal the plaintext password. Because service accounts often have elevated or Domain Admin privileges, this is a critical escalation path.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Credential Access | Steal or Forge Kerberos Tickets: Kerberoasting | T1558.003 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4769 - A Kerberos service ticket was requested)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for Kerberos TGS requests targeting a specific service account (Note: The `sqlsvc` filter is configured specifically for targeted lab environment detection):
+
+    SecurityEvent
+    | where EventID == 4769
+    | where EventData contains "ServiceName"
+    | where EventData contains "sqlsvc"
+    | project TimeGenerated, Computer, Account, EventData, IpAddress
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect credential access attempts the moment a service ticket is requested. |
+| **Severity** | High | Successful Kerberoasting can rapidly lead to domain privilege escalation. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual TGS ticket request matching the criteria. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| IP | Address | IpAddress |
+
+### Why map these entities?
+* **Account:** Identifies the compromised user account making the TGS request.
+* **Host:** Highlights the Domain Controller or system processing the ticket request.
+* **IP:** Traces the network origin of the attacker initiating the Kerberoasting requests.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker requests a TGS for a vulnerable Service Principal Name (SPN)
+                │
+                ▼
+    Domain Controller logs Event ID 4769 (Service Ticket Requested)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    EventData contains the targeted service account ("sqlsvc")
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by Source IP)
+                │
+                ▼
+    SOC Analyst Assigned & Account Password Reset Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4769** is logged.
+* The `EventData` field contains the string `"ServiceName"`.
+* The `EventData` field contains the specific string `"sqlsvc"` (the targeted service account).
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **IP**.
+
+### Why group alerts by IP?
+In a production environment, attackers use automated scripts (like Invoke-Kerberoast) to request tickets for *all* vulnerable SPNs in the domain at once. Grouping by IP Address ensures that a massive burst of 4769 events from a single compromised endpoint is bundled into a single, actionable incident ticket for the SOC, drastically reducing alert fatigue.
+
+---
+
+## ✅ Validation
+This detection can be validated by running an SPN extraction and TGS request tool like Rubeus (`Rubeus.exe kerberoast /user:sqlsvc`) or Impacket (`GetUserSPNs.py`) from an attacking machine within the lab environment against the `sqlsvc` account. Microsoft Sentinel will capture the 4769 event and generate the incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify internal reconnaissance and credential harvesting against service accounts.
+* Track the exact source IP address of the compromised machine performing the attack.
+* Highlight weak points in the domain's service account structure (e.g., service accounts with weak passwords that are vulnerable to offline cracking).
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 181932.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 181943.png)*
+
+### KQL Query & Entity Mapping
+> *(Insert Screenshot 2026-08-03 182004.png)*
+> *(Insert Screenshot 2026-08-03 182020.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 182037.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 182047.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
