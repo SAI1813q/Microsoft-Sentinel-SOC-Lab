@@ -28,7 +28,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[SMB Admin Share Access](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-smb-admin-share-access)** | High | T1021.002 | Detects access to administrative SMB shares (e.g., C$, ADMIN$) for lateral movement. |
 | **[WMI Lateral Movement Detection](#wmi-lateral-movement-detection)** | High | T1047 | Detects execution of commands via Windows Management Instrumentation (WMI) across the network. |
 | **[Potential Pass-the-Ticket Activity](#potential-pass-the-ticket-activity)** | High | T1550.003 | Detects the potential usage of stolen Kerberos tickets to authenticate and move laterally. |
-| **[Pass-the-Hash Detection](#pass-the-hash-detection)** | High | T1550.002 | Detects authentication attempts utilizing stolen password hashes instead of plaintext passwords. |
+| **[Pass-the-Hash Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-pass-the-hash-detection)** | High | T1550.002 | Detects authentication attempts utilizing stolen password hashes instead of plaintext passwords. |
 | **[AS-REP Roasting Detection](#as-rep-roasting-detection)** | High | T1558.004 | Detects attempts to harvest Kerberos AS-REP messages for offline password cracking. |
 | **[Kerberoasting Detection](#kerberoasting-detection)** | High | T1558.003 | Detects attempts to request Kerberos service tickets for offline password cracking. |
 | **[User Added to Domain Admins](#user-added-to-domain-admins)** | High | T1098 | Detects unauthorized account additions to the highly privileged Domain Admins group. |
