@@ -1464,4 +1464,94 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 📝 Registry Run Key Persistence
+
+## 📌 Description
+Detects modifications to common Windows Registry Run Keys that attackers frequently abuse to establish persistence. Malware or threat actors often create or modify Run and RunOnce registry keys so malicious programs execute automatically whenever a user logs in.
+
+---
+
+## 🎯 MITRE ATT&CK Mapping
+
+| Tactic | Technique |
+|---------|-----------|
+| Persistence | T1547.001 – Registry Run Keys / Startup Folder |
+| Privilege Escalation | T1547.001 – Registry Run Keys / Startup Folder |
+
+---
+
+## 🚨 Severity
+**Medium**
+
+### Why Medium?
+While registry Run Key modifications are commonly used by malware and attackers to maintain persistence, legitimate software installers and administrative tools may also create these entries. Investigation is required to determine whether the activity is authorized or malicious.
+
+---
+
+## 🔍 Detection Logic
+
+```kql
+SecurityEvent
+| where EventID == 4657
+| where ObjectName has_any (
+    @"\Software\Microsoft\Windows\CurrentVersion\Run",
+    @"\Software\Microsoft\Windows\CurrentVersion\RunOnce",
+    @"\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Run",
+    @"\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"
+)
+| project TimeGenerated,
+          Computer,
+          Account,
+          ObjectName,
+          ProcessName,
+          OperationType
+| order by TimeGenerated desc
+```
+
+---
+
+## 📊 Query Scheduling
+
+| Setting | Value |
+|---------|-------|
+| Run Query Every | **5 Minutes** |
+| Lookup Data From | **Last 6 Minutes** |
+| Start Running | **Automatically** |
+
+---
+
+## 🗂️ Entity Mapping
+
+| Entity | Identifier | Value |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+
+---
+
+## 🚨 Incident Settings
+
+| Setting | Configuration |
+|---------|---------------|
+| Create Incidents | Enabled |
+| Alert Grouping | Enabled |
+| Grouping Window | 5 Hours |
+| Grouping Method | Group alerts into a single incident if the selected entity types and details match |
+| Group By | Host + Account |
+
+### Why Host + Account?
+
+Registry Run Key persistence often generates multiple registry modification events during a single attack. Grouping alerts by **Host** and **Account** consolidates related persistence activity into one incident, reducing alert fatigue while giving analysts a complete view of the attack on a specific endpoint.
+
+---
+
+## 💡 Expected Alert
+
+An alert is generated whenever a registry value is created or modified in one of the monitored persistence locations, allowing analysts to investigate potential malware persistence or unauthorized startup modifications.
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
 ---
