@@ -3623,5 +3623,167 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🛡️ Defender Disabled
+
+## 🎯 Objective
+This rule detects modifications in the registry or via the command line intended to disable Microsoft Defender. It alerts security teams to defense evasion tactics indicating an attacker is attempting to blind endpoint protections before executing malicious payloads.
+
+---
+
+## 📖 Threat Overview
+Before dropping ransomware, establishing persistence, or running noisy post-exploitation frameworks, adversaries frequently attempt to disable local antivirus and Endpoint Detection and Response (EDR) solutions. By leveraging built-in Windows administrative tools like `sc.exe` or PowerShell cmdlets like `Set-MpPreference`, attackers can turn off real-time monitoring, behavioral analysis, and antispyware features to execute their payload undetected.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Defense Evasion | Impair Defenses: Disable or Modify Tools | T1562.001 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for process creation events where the command line contains known strings used to stop the Windows Defender service or disable its primary protection features:
+
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any (
+        "Set-MpPreference -DisableRealtimeMonitoring",
+        "Set-MpPreference -DisableIOAVProtection",
+        "Set-MpPreference -DisableBehaviorMonitoring",
+        "Set-MpPreference -DisableAntiSpyware",
+        "sc.exe stop WinDefend",
+        "sc stop WinDefend"
+    )
+    | project TimeGenerated, Computer, Account, NewProcessName, CommandLine
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Runs on a consistent schedule to check for evasion commands. |
+| **Run Query Every** | 5 Minutes | Ensures prompt detection of defense evasion to intercept payloads. |
+| **Lookup Data From** | Last 6 Minutes | Provides a 1-minute overlap buffer to account for ingestion delays. |
+| **Severity** | High | Intentionally disabling endpoint protection is a critical indicator of an active attack. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Host:** Identifies the specific endpoint that is currently unprotected and vulnerable.
+* **Account:** Identifies the compromised administrative account executing the commands.
+* **Process:** Extracts the exact `CommandLine` used, revealing which specific Defender features the attacker attempted to disable.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker executes a command to disable Defender (e.g., sc stop WinDefend)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule evaluates the last 6 minutes of logs
+                │
+                ▼
+    CommandLine matches known evasion strings
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by Account and Host)
+                │
+                ▼
+    SOC Analyst Assigned & Endpoint Isolation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is logged.
+* The `CommandLine` field contains specific `Set-MpPreference` directives disabling protections, or `sc` commands stopping the `WinDefend` service.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host**.
+
+### Why group alerts by Account and Host?
+Attackers or automated malware scripts will often run multiple commands in rapid succession to ensure various layers of Defender (Real-time monitoring, IOAV, Behavioral) are all completely disabled. Grouping by Account and Host consolidates these sequential commands into one actionable incident ticket for the SOC.
+
+---
+
+## ✅ Validation
+This detection can be validated in a controlled lab environment by opening an elevated PowerShell prompt and executing `Set-MpPreference -DisableRealtimeMonitoring $true` (ensure you immediately revert this by running the same command with `$false`). Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify the exact moment an endpoint loses its primary defense mechanisms.
+* Catch attackers in the intermediary phase between initial access and payload execution.
+* Quickly isolate blinded endpoints from the rest of the network before lateral movement or ransomware deployment can occur.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 213617.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 213629.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 213642.png)*
+
+### Entity Mapping & Scheduling
+> *(Insert Screenshot 2026-08-03 213653.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 213706.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 213717.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 213726.png)*
+> *(Insert Screenshot 2026-08-03 213732.png)*
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
 
 
