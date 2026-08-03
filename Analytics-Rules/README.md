@@ -1899,3 +1899,185 @@ This detection helps security teams:
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
+# 🗺️ Active Directory Computer Enumeration Detected
+
+## 🎯 Objective
+This rule detects the execution of commands commonly used for Active Directory reconnaissance, specifically targeting computer object enumeration. It enables security teams to identify threat actors attempting to map the domain environment, often as a precursor to lateral movement or privilege escalation.
+
+---
+
+## 📖 Threat Overview
+Once adversaries establish a foothold in an Active Directory environment, they need to understand the network layout to find valuable targets (like Domain Controllers, File Servers, or Exchange Servers). Tools like SharpHound/BloodHound or built-in PowerShell cmdlets like `Get-ADComputer` are frequently used to dump massive amounts of directory data. Monitoring process execution for these specific cmdlets is a critical capability for detecting the reconnaissance phase of an attack lifecycle.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Discovery | Remote System Discovery | T1018 |
+| Discovery | Permission Groups Discovery | T1069 |
+| Discovery | Account Discovery | T1087 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors process creation logs for the specific `Get-ADComputer` PowerShell cmdlet:
+
+```kql
+SecurityEvent
+| where EventID == 4688
+| where isnotempty(CommandLine)
+| where CommandLine has "Get-ADComputer"
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    NewProcessName,
+    ParentProcessName,
+    CommandLine,
+    ProcessId
+| order by TimeGenerated desc
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect Active Directory enumeration the moment it begins. |
+| **Severity** | Medium | Administrators occasionally run AD queries, requiring context to determine if the activity is malicious. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual query to determine the full scope of the enumeration. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Alert Enhancement
+
+### Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Custom Details
+The following parameters have been surfaced directly into the alerts for faster triage:
+* **Process:** `NewProcessName`
+* **ParentProcess:** `ParentProcessName`
+
+### Why map these entities & details?
+* **Account & Host:** Identifies the compromised user and endpoint being used as a staging ground for the AD scan.
+* **Process / Parent Process:** Mapping the executing process and its parent allows analysts to quickly spot suspicious execution chains (e.g., `cmd.exe` spawning `powershell.exe` to run the query).
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker runs SharpHound or PowerShell to query AD computers
+            │
+            ▼
+Windows Security Log (Event ID 4688) generated on the endpoint
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+CommandLine matches "Get-ADComputer"
+            │
+            ▼
+Alert Generated (Custom details attached)
+            │
+            ▼
+Incident Created (Grouped by Account and Host)
+            │
+            ▼
+SOC Analyst Assigned & Lateral Movement Prevention Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is generated.
+* The `CommandLine` field is not empty and contains the string `"Get-ADComputer"`.
+* The NRT rule successfully processes the incoming event stream.
+
+---
+
+## 📋 Incident Configuration
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host (Name)**.
+
+### Why group alerts by Account and Host?
+AD enumeration tools often execute hundreds of queries iteratively. By grouping alerts based on the specific Host and Account over a 5-hour window, the SOC receives a single consolidated incident containing the entire reconnaissance session, effectively preventing alert fatigue.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening a PowerShell prompt on a monitored endpoint (which has the ActiveDirectory module installed) and running the command:
+`Get-ADComputer -Filter *`
+Microsoft Sentinel will instantly detect the process creation event containing the cmdlet, generate an alert, and create the consolidated incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify internal reconnaissance immediately, providing a crucial window to respond before the attacker moves laterally.
+* Pinpoint compromised identities that are actively probing the directory.
+* Understand the attacker's objectives based on the specific AD objects they are querying.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 164346.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 164410.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 164453.png)*
+
+### Entity Mapping & Custom Details
+> *(Insert Screenshot 2026-08-03 164505.png)*
+> *(Insert Screenshot 2026-08-03 164515.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 164539.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 164547.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 164554.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+
+
+
