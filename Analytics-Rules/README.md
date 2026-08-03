@@ -4091,11 +4091,16 @@ An alert is generated when all of the following conditions are met:
 If multiple firewall profiles (Domain, Private, Public) are turned off sequentially in a single script execution, grouping by Account and Host combines these events into one coherent incident ticket.
 
 ---
+## 🤖 Automation Rules
+This rule is linked to an automated response:
+* **firewall disabled:** Triggers automatically upon incident creation to add a predefined triage task for the SOC analyst.
+---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by opening an elevated Command Prompt or PowerShell window and executing `netsh advfirewall set allprofiles state off` (ensure you immediately revert this afterward by running `netsh advfirewall set allprofiles state on`). Microsoft Sentinel will capture the 4688 event and generate an incident.
 
 ---
+
 
 ## 🎯 Security Impact
 This detection helps security teams:
@@ -4132,3 +4137,4 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+
