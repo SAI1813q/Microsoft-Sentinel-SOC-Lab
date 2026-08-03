@@ -3131,4 +3131,160 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 👑 User Added to Domain Admins
 
+## 🎯 Objective
+This rule detects when a user account is added to the Domain Admins security group. It alerts security teams to potential privilege escalation or unauthorized administrative access, which are critical indicators of domain compromise.
+
+---
+
+## 📖 Threat Overview
+The Domain Admins group holds unrestricted access to the entire Active Directory domain. Once threat actors compromise a standard account and find an escalation path, their primary goal is often to add themselves (or a backdoor account they control) to the Domain Admins group. This provides them with complete persistence and the ability to move laterally to any system, access sensitive data, and manipulate domain security policies.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Persistence, Privilege Escalation | Account Manipulation | T1098 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4728 - A member was added to a security-enabled global group)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for additions to the Domain Admins group by matching the known Security Identifier (SID) pattern for Domain Admins (`-512`) or the group name directly:
+
+    SecurityEvent
+    | where EventID == 4728
+    | where TargetSid == "S-1-5-21-*-512" or TargetUserName =~ "Domain Admins"
+    | project
+        TimeGenerated,
+        Computer,
+        SubjectAccount = SubjectUserName,
+        AddedUser = MemberName,
+        GroupName = TargetUserName,
+        Activity
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect domain privilege escalation the second it occurs. |
+| **Severity** | High | Unauthorized addition to Domain Admins is a critical, domain-level security breach. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Every addition to this group requires immediate, independent verification. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators. *(Note: Configured to track the administrator performing the action and the host where the change occurred).*
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | SubjectAccount |
+| Host | HostName | Computer |
+
+### Why map these entities?
+* **Account (SubjectAccount):** Identifies the administrator (or compromised admin account) that performed the action.
+* **Host:** Highlights the Domain Controller where the group modification was processed.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker escalates privileges and adds a backdoor account to Domain Admins
+                │
+                ▼
+    Domain Controller logs Event ID 4728 (Member added to global group)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    TargetSid matches "-512" (Domain Admins SID)
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (No alert grouping)
+                │
+                ▼
+    SOC Analyst Assigned to verify authorization of the change
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4728** is logged.
+* The `TargetSid` matches the pattern `"S-1-5-21-*-512"` OR the `TargetUserName` is case-insensitively matched to `"Domain Admins"`.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Modifications to the Domain Admins group should be exceptionally rare in a healthy, mature IT environment. Because this represents the highest level of privilege escalation, the SOC must be notified immediately of *every* distinct occurrence without delay or grouping constraints.
+
+---
+
+## ✅ Validation
+This detection can be validated by logging into a Domain Controller with administrative privileges, opening Active Directory Users and Computers (ADUC) or an elevated PowerShell prompt, and temporarily adding a test user account to the Domain Admins group. Microsoft Sentinel will capture the 4728 event and immediately generate an incident. *(Ensure the test user is removed immediately after validation).*
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify the final stages of privilege escalation attack chains.
+* Detect rogue administrators or insider threats granting unauthorized access.
+* Maintain strict auditing and compliance over the domain's most privileged security group.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 183346.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 183400.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 183426.png)*
+
+### Entity Mapping
+> *(Insert image_6666f7.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 183455.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 183502.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 183512.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
