@@ -3780,10 +3780,198 @@ This detection helps security teams:
 ### Review & Create
 > *(Insert Screenshot 2026-08-03 213726.png)*
 > *(Insert Screenshot 2026-08-03 213732.png)*
+---
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# ✈️ Impossible Travel
 
+## 🎯 Objective
+This rule detects user logins from geographically distant locations in an impossibly short timeframe. It alerts security teams to compromised credentials being used by an adversary in a different region than the legitimate user.
 
+---
+
+## 📖 Threat Overview
+When credentials are stolen (via phishing, credential stuffing, or malware), threat actors often log in from their own infrastructure or a proxy network. If the legitimate user recently logged in from their home office in New York, and a successful login occurs 30 minutes later from a data center in Moscow, it is physically impossible for the user to have traveled that distance. This geographic velocity anomaly is a prime indicator of account takeover (Valid Accounts).
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Initial Access, Defense Evasion, Persistence, Privilege Escalation | Valid Accounts | T1078 |
+
+---
+
+## 📂 Data Sources
+* Entra ID / Azure AD Sign-in Logs (`SigninLogs`)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query calculates the distance and time difference between sequential successful sign-ins for the same user. It triggers if the required travel speed exceeds a commercial flight threshold (900 km/h) and the distance is greater than 500 km (to filter out VPN/ISP routing noise):
+
+    let TimeWindow = 1h; // adjust based on how far back you want to look
+    let MaxSpeedKmh = 900; // ~commercial flight speed threshold
+    SigninLogs
+    | where TimeGenerated > ago(24h)
+    | where ResultType == 0 // successful sign-ins only
+    | extend Latitude = todouble(LocationDetails.geoCoordinates.latitude),
+             Longitude = todouble(LocationDetails.geoCoordinates.longitude),
+             City = tostring(LocationDetails.city),
+             Country = tostring(LocationDetails.countryOrRegion)
+    | where isnotempty(Latitude) and isnotempty(Longitude)
+    | sort by UserPrincipalName asc, TimeGenerated asc
+    | serialize
+    | extend PrevTime = prev(TimeGenerated),
+             PrevLat = prev(Latitude),
+             PrevLong = prev(Longitude),
+             PrevCity = prev(City),
+             PrevCountry = prev(Country),
+             PrevUser = prev(UserPrincipalName)
+    | where UserPrincipalName == PrevUser
+    | extend TimeDiffHours = datetime_diff('minute', TimeGenerated, PrevTime) / 60.0
+    | where TimeDiffHours > 0 and TimeDiffHours < 24 // exclude stale/duplicate rows
+    | extend DistanceKm = geo_distance_2points(PrevLong, PrevLat, Longitude, Latitude) / 1000
+    | extend RequiredSpeedKmh = DistanceKm / TimeDiffHours
+    | where RequiredSpeedKmh > MaxSpeedKmh
+    | where DistanceKm > 500 // filter out noise from small distance/GPS jitter
+    | project TimeGenerated, UserPrincipalName, PrevTime, PrevCity, PrevCountry,
+              City, Country, DistanceKm, TimeDiffHours, RequiredSpeedKmh,
+              IPAddress, AppDisplayName, DeviceDetail
+    | order by RequiredSpeedKmh desc
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect geographic anomalies immediately. |
+| **Severity** | High | Impossible travel on a successful login strongly indicates a compromised identity. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures distinct instances of anomalous geographic jumps. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| IP | Address | IPAddress |
+| Account | Name | UserPrincipalName |
+
+### Why map these entities?
+* **Account:** Identifies the compromised user whose credentials are being abused from multiple locations.
+* **IP:** Identifies the network origin of the anomalous authentication attempt.
+
+---
+
+## 🔄 Detection Workflow
+
+    User logs in successfully from City A
+                │
+                ▼
+    Attacker logs in successfully with the same credentials from City B shortly after
+                │
+                ▼
+    Entra ID logs the Sign-in events with geolocation data
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    Query calculates that traveling between City A and City B in the elapsed time requires > 900 km/h speed
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by matching entities)
+                │
+                ▼
+    Automation Rule triggered (e.g., Change status for known IP)
+                │
+                ▼
+    SOC Analyst Assigned to revoke sessions and reset passwords
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Two successful sign-ins (`ResultType == 0`) occur for the same `UserPrincipalName`.
+* Both sign-ins have valid latitude and longitude coordinates.
+* The required travel speed between the two locations exceeds **900 km/h**.
+* The distance between the two locations is greater than **500 km**.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if all the entities match (recommended).
+
+### Why group alerts by all matching entities?
+If an attacker utilizes an automated script via a VPN or proxy that triggers multiple impossible travel conditions from the same IP against the same user account, grouping consolidates these into a single incident to prevent alert fatigue.
+
+---
+
+## 🤖 Automation Rules
+This rule is linked to the following automated response:
+* **known ip addreess:** Triggers when an incident is created to change the incident status (useful for whitelisting expected corporate VPN gateways or known egress points).
+
+---
+
+## ✅ Validation
+This detection can be validated by logging into a monitored Entra ID account from your local workstation, immediately connecting to a VPN with an egress node in a different country (e.g., over 500km away), and logging in again successfully within a few minutes. Sentinel will detect the geographic velocity anomaly and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify compromised user credentials that have bypassed multi-factor authentication (MFA) or session controls.
+* Rapidly detect account takeover (ATO) before the attacker can access sensitive data or establish persistence.
+* Pinpoint malicious infrastructure and anomalous IP addresses interacting with cloud environments.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 214212.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 214231.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 214300.png)*
+> *(Insert Screenshot 2026-08-03 214308.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 214321.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 214335.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 214341.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 214351.png)*
+
+---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
 
