@@ -3128,5 +3128,7 @@ This detection helps security teams:
 > *(Insert Screenshot 2026-08-03 182047.png)*
 
 ---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+---
+
