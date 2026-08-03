@@ -25,7 +25,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Scheduled Task Creation](#-scheduled-task-creation)** | Medium | T1053.005 | Detects creation of scheduled tasks for persistence or malicious execution. |
 | **[Suspicious Discovery Commands](#-suspicious-discovery-commands)** | Medium | T1082, T1016, T1033 | Detects execution of common system discovery and reconnaissance commands. |
 | **[Active Directory Computer Enumeration](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-active-directory-computer-enumeration-detected)** | Medium | T1018 | Detects querying of Active Directory for computer objects, indicating network reconnaissance. |
-| **[SMB Admin Share Access](#smb-admin-share-access)** | High | T1021.002 | Detects access to administrative SMB shares (e.g., C$, ADMIN$) for lateral movement. |
+| **[SMB Admin Share Access](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-smb-admin-share-access)** | High | T1021.002 | Detects access to administrative SMB shares (e.g., C$, ADMIN$) for lateral movement. |
 | **[WMI Lateral Movement Detection](#wmi-lateral-movement-detection)** | High | T1047 | Detects execution of commands via Windows Management Instrumentation (WMI) across the network. |
 | **[Potential Pass-the-Ticket Activity](#potential-pass-the-ticket-activity)** | High | T1550.003 | Detects the potential usage of stolen Kerberos tickets to authenticate and move laterally. |
 | **[Pass-the-Hash Detection](#pass-the-hash-detection)** | High | T1550.002 | Detects authentication attempts utilizing stolen password hashes instead of plaintext passwords. |
