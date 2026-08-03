@@ -2836,3 +2836,146 @@ This detection helps security teams:
 
 
 ---
+# 🍖 AS-REP Roasting Detection
+
+## 🎯 Objective
+This rule detects potential AS-REP Roasting attacks by monitoring for Kerberos Authentication Service (AS) requests (Event ID 4768) targeting vulnerable accounts. It alerts security teams to adversaries attempting to harvest password hashes for offline cracking.
+
+---
+
+## 📖 Threat Overview
+AS-REP Roasting is a credential theft technique targeting Active Directory accounts that have the "Do not require Kerberos preauthentication" attribute enabled. Without preauthentication, an attacker can request an authentication ticket (AS-REP) for the account from the Domain Controller. The Domain Controller responds with a ticket encrypted with the user's password hash, which the attacker can then extract and crack offline to obtain the plaintext password.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Credential Access | Steal or Forge Kerberos Tickets: AS-REP Roasting | T1558.004 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4768 - A Kerberos authentication ticket (TGT) was requested)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for Kerberos TGT requests targeting a specific vulnerable service account (Note: The `sqlsvc` filter is configured specifically for targeted lab environment detection):
+
+```kql
+SecurityEvent
+| where EventID == 4768
+| where EventData contains "sqlsvc"
+| project TimeGenerated, Computer, Account, IpAddress, EventData
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect credential access attempts the moment a ticket is requested. |
+| **Severity** | High | Successful AS-REP roasting leads directly to offline password cracking and account compromise. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual AS-REP ticket request. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| IP | Address | IpAddress |
+
+### Why map these entities?
+* **Account:** Identifies the specific vulnerable account (e.g., `sqlsvc`) being targeted for offline cracking.
+* **Host:** Highlights the Domain Controller processing the ticket request.
+* **IP:** Traces the network origin of the attacker initiating the roasting requests.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker enumerates accounts without Kerberos pre-auth and requests a TGT
+            │
+            ▼
+Domain Controller logs Event ID 4768 (TGT Requested)
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+EventData contains the targeted vulnerable account ("sqlsvc")
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Source IP)
+            │
+            ▼
+SOC Analyst Assigned & Account Password Reset Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4768** is logged.
+* The `EventData` field contains the specific string `"sqlsvc"` (the targeted vulnerable account).
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **IP**.
+
+### Why group alerts by IP?
+In a production environment, adversaries will use automated tools to roast every vulnerable account in the domain simultaneously. By grouping alerts by the originating IP Address, the SOC receives a single consolidated incident containing the entire roasting campaign, rather than a separate ticket for every individual account queried.
+
+---
+
+## ✅ Validation
+This detection can be validated by identifying an account with "Do not require Kerberos preauthentication" checked in Active Directory (e.g., `sqlsvc`), and running a tool like Impacket's `GetNPUsers.py` or Rubeus (`Rubeus.exe asreproast /user:sqlsvc`) from an attacking machine. Sentinel will capture the 4768 event and generate the incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify adversaries attempting to extract encrypted password hashes from the network.
+* Highlight misconfigured or highly vulnerable service accounts that require remediation (enabling Kerberos preauthentication).
+* Detect the reconnaissance and initial credential access phase of an attack sequence before lateral movement occurs.
+
+---
+
+## 📸 Screenshots
+
+### Entity Mapping (Updated)
+> *(Insert Screenshot 2026-08-03 181157.png)*
+
+### Incident Settings (Updated)
+> *(Insert Screenshot 2026-08-03 181216.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
