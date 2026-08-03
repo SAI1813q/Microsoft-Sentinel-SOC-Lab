@@ -4295,4 +4295,163 @@ This detection helps security teams:
 ---
 
 
+# 🔍 Network Discovery
+
+## 🎯 Objective
+This rule detects the execution of native Windows commands aimed at mapping internal network topologies, routing tables, and active network connections. It alerts security teams to early-stage adversary reconnaissance.
+
+---
+
+## 📖 Threat Overview
+After gaining initial access to a system, threat actors frequently perform internal reconnaissance to understand their network environment. By using built-in administrative tools like `ipconfig`, `arp`, `netstat`, `route`, `nslookup`, and `ping`, attackers can discover local IP configurations, active connections, neighboring hosts, and DNS infrastructure without dropping custom scanning tools to disk.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Discovery | System Network Configuration Discovery | T1016 |
+| Discovery | Network Service Discovery | T1046 |
+| Discovery | System Information Discovery | T1082 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for process creation events where native network discovery and configuration binaries are executed:
+
+    SecurityEvent
+    | where EventID == 4688
+    | where Process has_any ("ipconfig.exe", "arp.exe", "netstat.exe", "route.exe", "nslookup.exe", "ping.exe")
+    | project TimeGenerated, Computer, Account, Process, CommandLine
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect reconnaissance commands instantly. |
+| **Severity** | Medium | While these tools have legitimate administrative uses, concentrated execution points to pre-attack enumeration. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures individual discovery executions. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account:** Identifies the user or compromised identity performing the network scan.
+* **Host:** Highlights the endpoint where the reconnaissance commands were run.
+* **Process:** Extracts the exact `CommandLine` arguments used during the discovery phase.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker runs discovery commands (e.g., ipconfig /all or netstat -ano)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    Process matches discovery binary list
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by Account and Host)
+                │
+                ▼
+    SOC Analyst Assigned & Host Activity Investigation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is logged.
+* The `Process` field matches any of the discovery utilities: `ipconfig.exe`, `arp.exe`, `netstat.exe`, `route.exe`, `nslookup.exe`, or `ping.exe`.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host**.
+
+### Why group alerts by Account and Host?
+Adversaries typically run scripts that execute multiple discovery commands back-to-back (`ipconfig` followed by `arp`, then `netstat`). Grouping by Account and Host bundles these sequential queries into a single consolidated incident.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by opening a command prompt and executing a network discovery command such as `ipconfig /all` or `arp -a`. Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Uncover internal adversary reconnaissance before lateral movement occurs.
+* Track malicious enumeration scripts executed on endpoints.
+* Gain early visibility into threat actor behavior during the initial access or discovery phase.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Screenshot 2026-08-03 221138.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-03 221200.png)*
+
+### KQL Query
+> *(Screenshot 2026-08-03 221218.png)*
+
+### Entity Mapping
+> *(Screenshot 2026-08-03 221227.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-03 221244.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-03 221252.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-03 221259.png)*
+
+---
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
+
+
 
