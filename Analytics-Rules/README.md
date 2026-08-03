@@ -2387,5 +2387,142 @@ This detection helps security teams:
 
 ---
 
+# 📜 Mshta Execution
+
+## 🎯 Objective
+This rule detects the execution of `mshta.exe`. It enables security teams to identify adversaries attempting to execute malicious scripts while bypassing application control solutions.
+
+---
+
+## 📖 Threat Overview
+`mshta.exe` is a native Windows utility that executes Microsoft HTML Application (HTA) files. Because it is a signed, legitimate Microsoft binary, threat actors frequently abuse it to proxy the execution of malicious VBScript or JScript payloads. This "Living off the Land" technique effectively bypasses application whitelisting defenses (like AppLocker) and often evades endpoint detection.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Defense Evasion | System Binary Proxy Execution: Mshta | T1218.005 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+```kql
+SecurityEvent
+| where EventID == 4688
+| where Process has "mshta.exe"
+| project TimeGenerated, Computer, Account, Process, CommandLine
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect proxy execution as soon as it occurs. |
+| **Severity** | High | `mshta.exe` is rarely used in modern legitimate environments; its presence is highly suspicious. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual instance of Mshta execution. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account & Host:** Identifies the compromised user and the targeted endpoint where the defense evasion is taking place.
+* **Process:** Extracts the exact `CommandLine` arguments, which usually contain the malicious URL or the embedded script payload being passed to `mshta.exe`.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker uses mshta.exe to execute a malicious script payload
+            │
+            ▼
+Windows Security Log (Event ID 4688) generated
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+Process matches "mshta.exe"
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Account and Host)
+            │
+            ▼
+SOC Analyst Assigned & Payload Deobfuscation Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is generated.
+* The `Process` field contains `"mshta.exe"`.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host (Name)**.
+
+### Why group alerts by Account and Host?
+If a malicious macro or dropper repeatedly attempts to call `mshta.exe` to pull down secondary payloads, grouping by the targeted host and account prevents the SOC queue from flooding and encapsulates the entire infection chain into one ticket.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening a Command Prompt on a monitored endpoint and executing a benign HTA command, such as `mshta.exe vbscript:Close(Execute("MsgBox ""Test Sentinel Alert"""))`. Microsoft Sentinel will instantly detect the process creation event containing `mshta.exe`, generate an alert, and create the consolidated incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Spot defense evasion techniques designed to bypass AppLocker or standard application whitelisting.
+* Extract malicious URLs or script contents passed through the `CommandLine`.
+* Identify the initial execution phase of fileless malware infections.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Configuration
+> *(Insert related video screenshots here)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
