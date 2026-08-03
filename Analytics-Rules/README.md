@@ -2081,7 +2081,168 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
+# 📁 SMB Admin Share Access
 
+## 🎯 Objective
+This rule detects unauthorized access to administrative Server Message Block (SMB) shares, such as `C$`, `ADMIN$`, and `IPC$`. It alerts security teams to potential lateral movement attempts where attackers drop payloads or execute remote commands.
+
+---
+
+## 📖 Threat Overview
+Administrative shares (`C$`, `ADMIN$`, `IPC$`) are hidden network shares intended for system administrators to manage remote endpoints. Threat actors leverage these shares extensively with tools like PsExec, Impacket, or custom scripts to transfer malicious payloads, access the remote Service Control Manager, and execute commands across the domain.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Lateral Movement | Remote Services: SMB/Windows Admin Shares | T1021.002 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 5140, 5145)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+```kql
+SecurityEvent
+| where EventID in (5140, 5145)
+| where ShareName has_any ("\\\\*\\ADMIN$", "\\\\*\\C$", "\\\\*\\IPC$")
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    IpAddress,
+    ShareName,
+    RelativeTargetName
+| order by TimeGenerated desc
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect lateral file transfers instantly. |
+| **Severity** | High | Unauthorized access to admin shares is a primary vector for remote code execution. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every distinct share access attempt. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| IP | Address | IpAddress |
+
+### Why map these entities?
+* **Host:** Identifies the target endpoint whose admin share was accessed.
+* **Account & IP:** Details the compromised identity and the network origin of the attacker initiating the SMB connection.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker maps an SMB Admin Share (e.g., \\Server\C$)
+            │
+            ▼
+Windows Security Log (Event ID 5140/5145) generated
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+ShareName matches "ADMIN$", "C$", or "IPC$"
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Account and Host)
+            │
+            ▼
+SOC Analyst Assigned to track lateral movement
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **5140** (A network share object was accessed) or **5145** (A network share object was checked to see whether client can be granted desired access) is logged.
+* The `ShareName` contains references to the hidden administrative shares.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host (Name)**.
+
+### Why group alerts by Account and Host?
+Attackers using tools like Impacket will trigger multiple 5140/5145 events rapidly as they authenticate, map the IPC$ share to create a named pipe, map the ADMIN$ share to drop a binary, and execute. Grouping by Account and Host consolidates the entire tactical sequence into one incident.
+
+---
+
+## ✅ Validation
+This detection can be validated by mapping an administrative share from one machine to another using standard Windows commands (e.g., `net use \\TargetMachine\C$ /user:Domain\AdminUser Password`). Microsoft Sentinel will detect the 5140/5145 events and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify automated lateral movement tools propagating across the network.
+* Intercept the delivery stage of ransomware or remote access trojans (RATs).
+* Enforce least privilege by identifying non-administrative accounts gaining access to administrative shares.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 174034.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 174046.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 174057.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 174106.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 174115.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 174120.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 174127.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
 
