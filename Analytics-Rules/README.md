@@ -1899,6 +1899,8 @@ This detection helps security teams:
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
+---
+
 # 🗺️ Active Directory Computer Enumeration Detected
 
 ## 🎯 Objective
@@ -2077,6 +2079,8 @@ This detection helps security teams:
 ---
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
 
