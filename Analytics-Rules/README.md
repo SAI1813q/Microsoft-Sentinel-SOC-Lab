@@ -2525,3 +2525,152 @@ This detection helps security teams:
 ---
 
 
+# ⚙️ WMI Lateral Movement Detection
+
+## 🎯 Objective
+This rule detects the execution of commands via Windows Management Instrumentation (WMI) across the network. It alerts defenders to attackers utilizing native management protocols to execute processes on remote systems.
+
+---
+
+## 📖 Threat Overview
+WMI is a built-in framework for management and operations on Windows systems. Adversaries frequently abuse WMI (specifically `wmic.exe` or PowerShell WMI cmdlets) because it operates over the network transparently, generates less noise than traditional PSExec methods, and does not require dropping an executable file to disk to execute commands (fileless execution). It is a favored technique for stealthy lateral movement.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Execution | Windows Management Instrumentation | T1047 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+```kql
+SecurityEvent
+| where EventID == 4688
+| where NewProcessName has_any ("wmic.exe", "WmiPrvSE.exe")
+   or Process has "wmi"
+   or CommandLine has_any ("process call create", "/node:", "win32_process")
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    NewProcessName,
+    CommandLine,
+    ParentProcessName
+| order by TimeGenerated desc
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to spot lateral execution payloads as they launch. |
+| **Severity** | High | WMI remote process creation (`process call create`) is a highly suspicious indicator of compromise. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual WMI process creation event. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account:** Identifies the privileged account used to establish the WMI connection.
+* **Host:** Identifies the target system executing the payload.
+* **Process:** The `CommandLine` reveals the exact malicious instruction the attacker passed to the `Win32_Process` class for execution.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker uses WMI to spawn a process on a remote machine
+            │
+            ▼
+Target Host logs Event ID 4688 (e.g., WmiPrvSE.exe spawning cmd.exe)
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+Command matches "process call create" or WMI binaries
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Account and Host)
+            │
+            ▼
+SOC Analyst Assigned & Process Tree Investigation Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is generated.
+* The execution matches WMI binaries (`wmic.exe`, `WmiPrvSE.exe`), or the command line contains specific WMI execution parameters (`process call create`, `win32_process`).
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host (Name)**.
+
+### Why group alerts by Account and Host?
+Attackers rarely use WMI against a single machine; they often loop through a list of endpoints using compromised credentials to rapidly deploy backdoors. Grouping by Account and Host consolidates these repeated bursts of lateral movement into a single incident per compromised identity and endpoint, drastically reducing SOC queue noise.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening a Command Prompt with administrative privileges and executing a remote WMI call against another monitored machine in the lab:
+`wmic /node:192.168.1.50 process call create "cmd.exe /c echo WMITest"`
+Microsoft Sentinel will detect the 4688 event containing the WMI parameters and generate the consolidated incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Uncover fileless lateral movement techniques that bypass traditional antivirus.
+* Track the exact payload execution parameters utilized by the adversary.
+* Identify compromised infrastructure where attackers are abusing native system management tools to maintain stealth.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Configuration
+> *(Insert related video screenshots here)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
