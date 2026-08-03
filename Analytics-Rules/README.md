@@ -1713,3 +1713,171 @@ This detection is essential for security operations as it helps teams:
 ---
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
+# 🔍 Suspicious Discovery Commands
+
+## 🎯 Objective
+This rule detects the execution of common system discovery and reconnaissance commands. It enables security teams to identify the immediate post-compromise enumeration phase where an attacker attempts to map out the local system and network environment.
+
+---
+
+## 📖 Threat Overview
+Once adversaries establish a foothold on a machine, their first priority is situational awareness. They utilize built-in Windows utilities (often called "Living off the Land" binaries or LOLBins) such as `systeminfo.exe`, `hostname.exe`, `wmic.exe`, and `ver.exe` to gather information about the operating system, hardware configuration, domain membership, and network layout. While administrators occasionally use these tools, a sudden cluster of these commands executed by a standard user or service account is highly indicative of malicious reconnaissance.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Discovery | System Network Configuration Discovery | T1016 |
+| Discovery | System Owner/User Discovery | T1033 |
+| Discovery | System Information Discovery | T1082 |
+| Discovery | Account Discovery | T1087 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688 - Process Creation)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors process creation events for known discovery binaries:
+
+```kql
+SecurityEvent
+| where EventID == 4688
+| where Process has_any ("systeminfo.exe", "hostname.exe", "wmic.exe", "ver.exe")
+| project TimeGenerated, Computer, Account, Process, CommandLine
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to catch initial reconnaissance the moment an attacker gains a shell. |
+| **Severity** | Medium | Discovery commands are native tools, requiring context to confirm malicious intent. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual command execution to build a complete timeline of the attacker's reconnaissance. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+| Process | CommandLine | CommandLine |
+
+### Why map these entities?
+* **Account:** Identifies which compromised user or service account is being used to query the system.
+* **Host:** Highlights the specific machine the attacker has landed on.
+* **Process:** Extracts the exact `CommandLine` arguments, showing precisely what information the attacker asked for (e.g., `wmic useraccount get name,sid`).
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker executes discovery commands to map the environment
+            │
+            ▼
+Windows Security Log (Event ID 4688) generated for each command
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the events
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+Process name matches targeted LOLBins (e.g., systeminfo.exe)
+            │
+            ▼
+Alert Generated for each matched command
+            │
+            ▼
+Incident Created (Grouped by Account and Host)
+            │
+            ▼
+SOC Analyst Assigned & Post-Compromise Investigation Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688 (A new process has been created)** is logged.
+* The `Process` field matches one of the targeted reconnaissance tools: `"systeminfo.exe"`, `"hostname.exe"`, `"wmic.exe"`, or `"ver.exe"`.
+* The NRT rule successfully processes the incoming event stream.
+
+---
+
+## 📋 Incident Configuration
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account** and **Host (Name)**.
+
+### Why group alerts by Account and Host?
+Attackers rarely run just one discovery command. They typically execute a quick succession of commands to gather system details, network routes, and domain configurations. By grouping these alerts by the Host and Account over a 5-hour window, the SOC receives a single incident containing the entire chain of reconnaissance commands, rather than being bombarded by multiple fragmented tickets.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening a standard Command Prompt on a monitored endpoint and executing the commands manually:
+`systeminfo`
+`hostname`
+`wmic process list`
+Microsoft Sentinel will instantly detect the 4688 process creation events, generate alerts for each command, and roll them into a single consolidated incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Gain an early warning signal of a successful breach, often before lateral movement or data exfiltration occurs.
+* Identify the exact time frame an attacker gained interactive access to a system.
+* Determine the scope of the attacker's knowledge about the environment based on the specific commands executed.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 122433.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 122445.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 122453.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 122522.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 122550.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 122556.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 122604.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
