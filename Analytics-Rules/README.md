@@ -2671,6 +2671,6 @@ This detection helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
