@@ -36,7 +36,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Suspicious Command Shell](#suspicious-command-shell)** | Medium | T1059.003 | Detects anomalous or obfuscated usage of the native Windows command shell (cmd.exe). |
 | **[Password Spray Detection](#password-spray-detection)** | High | T1110.003 | Detects authentication attempts against multiple unique users utilizing a single password. |
 | **[Defender Disabled](#defender-disabled)** | High | T1562.001 | Detects modifications in the registry or via command line to disable Microsoft Defender. |
-| **[Mshta Execution](#mshta-execution)** | High | T1218.005 | Detects execution of mshta.exe to run malicious scripts, bypassing application control mechanisms. |
+| **[Mshta Execution](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-mshta-execution)** | High | T1218.005 | Detects execution of mshta.exe to run malicious scripts, bypassing application control mechanisms. |
 | **[Impossible Travel](#impossible-travel)** | High | T1078.004 | Detects user logins from geographically distant locations in an impossibly short timeframe. |
 | **[Firewall Disabled](#firewall-disabled)** | Medium | T1562.004 | Detects system modifications that turn off or impair the Windows Defender Firewall. |
 | **[Certutil Download](#certutil-download)** | High | T1105 | Detects the abuse of the certutil.exe administrative tool to download malicious external files. |
