@@ -1102,4 +1102,162 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🗑️ Event Log Cleared Detection
+
+## 🎯 Objective
+This rule detects whenever Windows Event Logs are cleared. It generates an alert to identify attempts by an adversary to cover their tracks, remove forensic evidence, and evade detection mechanisms.
+
+---
+
+## 📖 Threat Overview
+Once adversaries compromise a system, they often attempt to hide their presence and activities by wiping the system and security event logs. Clearing the Windows Security Log generates Event ID 1102. Since regular users cannot clear these logs, the occurrence of this event strongly indicates that an attacker has obtained local administrative privileges and is actively destroying forensic artifacts to disrupt incident response investigations.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Defense Evasion | Clear Windows Event Logs | T1070.001 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for Event ID 1102, which represents the audit log being cleared:
+
+```kql
+SecurityEvent
+| where EventID==1102
+| project TimeGenerated,Computer,SubjectAccount,Activity,EventID
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect log clearing activities the moment they occur. |
+| **Severity** | High | Clearing security logs is a highly suspicious activity indicating an active compromise and cover-up. |
+| **Status** | Disabled | *(Currently disabled in the environment per the configuration screenshot).* |
+| **Event Grouping** | Trigger an alert for each event | Ensures every instance of a log clear action is captured as a distinct alert. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Process | ProcessId <br> CreationTimeUtc | EventID <br> TimeGenerated |
+| Account | Name | SubjectAccount |
+| Host | HostName | Computer |
+
+### Why map these entities?
+* **Account:** Identifies the specific privileged user account that was used to authorize the clearing of the logs.
+* **Host:** Identifies the compromised endpoint where the forensic data was destroyed.
+* **Process:** Correlates the exact event ID and time of destruction.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker clears Windows Security Log to hide tracks
+            │
+            ▼
+Windows Security Log (Event ID 1102) generated prior to wipe
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+            │
+            ▼
+EventID 1102 matched
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Account and Host)
+            │
+            ▼
+SOC Analyst Assigned & Digital Forensics / Incident Response Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **1102 (The audit log was cleared)** is generated.
+* The NRT rule successfully processes the incoming event stream.
+
+---
+
+## 📋 Incident Configuration
+To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if the selected entity types and details match: **Account (Name)** and **Host (HostName)**.
+
+### Why group alerts by Account and Host?
+If an attacker repeatedly clears logs on a specific machine using a specific compromised account (e.g., during a prolonged interactive session), grouping by both the Account and Host ensures that all related log-clearing actions within a 5-hour window are condensed into a single high-priority incident for the SOC.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening the Windows Event Viewer on a monitored endpoint, navigating to the `Security` logs, and selecting **Clear Log**. Alternatively, open an administrative PowerShell prompt and run `wevtutil cl Security`. Microsoft Sentinel will detect the resulting Event ID 1102 and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Immediately detect when an attacker is actively engaging in anti-forensics.
+* Flag compromised accounts that have successfully achieved administrative or system-level privileges.
+* Trigger rapid isolation of the affected host to preserve any remaining volatile memory (RAM) or disk artifacts before the attacker can cause further damage.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 112252.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 112304.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 112323.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 112331.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 112355.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 112406.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 112415.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
 ---
