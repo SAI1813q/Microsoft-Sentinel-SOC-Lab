@@ -2674,3 +2674,164 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# 🎟️ Potential Pass-the-Ticket Activity
+
+## 🎯 Objective
+This rule detects suspicious Kerberos ticket usage followed by a successful network logon. It enables security teams to identify potential "Pass-the-Ticket" (PtT) attacks, where adversaries use stolen Kerberos tickets to authenticate to network resources.
+
+---
+
+## 📖 Threat Overview
+In a Pass-the-Ticket attack, an adversary steals a valid Kerberos Ticket Granting Ticket (TGT) or Service Ticket (TGS) from a compromised system's memory (e.g., using Mimikatz or Rubeus). They then inject this ticket into their own session to access network resources without needing the user's password. This detection looks for the temporal anomaly of a Kerberos ticket request followed almost immediately by a successful network logon utilizing that ticket.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Lateral Movement | Use Alternate Authentication Material: Pass the Ticket | T1550.003 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event IDs 4768, 4770, 4624)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+```kql
+let KerberosTickets =
+SecurityEvent
+| where EventID in (4768, 4770)
+| project TicketTime=TimeGenerated,
+  Account=TargetUserName,
+  ServiceName,
+  Computer;
+let Successfullogons =
+SecurityEvent
+| where EventID == 4624
+| where LogonType in (3, 9)
+| project LogonTime=TimeGenerated,
+  Account=TargetUserName,
+  IpAddress,
+  Computer,
+  LogonType,
+  AuthenticationPackageName;
+KerberosTickets
+| join kind=inner Successfullogons on Account
+| where LogonTime between (TicketTime .. (TicketTime + 5m))
+| project
+  LogonTime,
+  Computer,
+  Account,
+  IpAddress,
+  ServiceName,
+  LogonType
+| order by LogonTime desc
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect identity-based lateral movement in real time. |
+| **Severity** | High | Kerberos ticket abuse indicates a severe breach of domain identity boundaries. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual instance of correlated ticket abuse. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Alert Enhancement
+
+### Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| IP | Address | IpAddress |
+
+### Custom Details
+The following parameters have been surfaced directly into the alerts for faster triage:
+* **SourceIp:** `IpAddress`
+* **TargetHost:** `Computer`
+* **ServiceName:** `ServiceName`
+* **LogonType:** `LogonType`
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker injects a stolen Kerberos ticket and accesses a remote share
+            │
+            ▼
+Domain Controller logs Ticket Events (4768/4770) and Logon (4624)
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the events
+            │
+            ▼
+Microsoft Sentinel NRT Analytics Rule correlates the events within a 5-minute window
+            │
+            ▼
+Alert Generated (Custom details attached)
+            │
+            ▼
+Incident Created (No alert grouping)
+            │
+            ▼
+SOC Analyst Assigned & Identity Revocation Initiated
+```
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* A Kerberos ticket event (**4768** or **4770**) is logged.
+* A successful network logon event (**4624**, Logon Type **3** or **9**) occurs for the same `TargetUserName` within **5 minutes** of the ticket event.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Pass-the-Ticket represents an advanced, high-severity threat. The volume of true positive alerts will be extremely low. Generating a distinct incident for every occurrence ensures immediate, highly focused attention from the SOC without the risk of the alert being buried or delayed by grouping windows.
+
+---
+
+## ✅ Validation
+This detection can be validated by utilizing a tool like Rubeus in a controlled lab environment to request a TGT and immediately inject it to authenticate to a target file share. Microsoft Sentinel will correlate the 4768/4770 events with the subsequent 4624 event and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify advanced adversaries bypassing standard authentication controls.
+* Spot stolen identities being used to traverse the network.
+* Map the trajectory of an attacker using the surfaced `SourceIp` and `TargetHost` details.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Configuration
+> *(Insert related video screenshots here)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
