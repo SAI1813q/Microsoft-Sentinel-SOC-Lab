@@ -1554,4 +1554,101 @@ An alert is generated whenever a registry value is created or modified in one of
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# ⏰ Scheduled Task Creation
+
+## 🎯 Objective
+This rule triggers an alert whenever a scheduled task is created on a Windows system. It enables security teams to detect unauthorized persistence mechanisms and potential privilege escalation activities executed by threat actors.
+
+---
+
+## 📖 Threat Overview
+Adversaries frequently abuse the Windows Task Scheduler to achieve persistence, execute malicious payloads at specific times, or run code under a higher privileged context (such as `NT AUTHORITY\SYSTEM`). Monitoring for Event ID 4698 (A scheduled task was created) is a fundamental defense-in-depth measure to identify attackers solidifying their foothold after initial access.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Persistence | Scheduled Task/Job: Scheduled Task | T1053.005 |
+| Privilege Escalation | Scheduled Task/Job: Scheduled Task | T1053.005 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors the Security event log for the specific event generated when a new task is registered:
+
+```kql
+SecurityEvent
+| where EventID == 4698
+| project TimeGenerated,Computer,SubjectAccount,EventID,Activity
+```
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Analytics Rule | Evaluates logs on a defined schedule. |
+| **Severity** | Medium | Scheduled tasks are frequently created by legitimate software, requiring investigation to determine true intent. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Query Frequency** | Run query every 5 Minutes | Provides timely detection of new persistence mechanisms. |
+| **Lookup Period** | Lookup data from the last 6 Minutes | A 1-minute overlap prevents events from being missed due to slight ingestion delays. |
+| **Alert Threshold** | Trigger alert if query returns more than 0 results | Generates an alert immediately upon finding a matching execution. |
+| **Event Grouping** | Trigger an alert for each event | Maintains individual records for every newly created task. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators. 
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | FullName | SubjectAccount |
+| Process | ProcessId | EventID |
+
+### Why map these entities?
+* **Host:** Identifies the specific endpoint where the scheduled task was created, indicating the system that may be compromised.
+* **Account:** Identifies the user account that authorized or executed the task creation.
+* **Process:** Attempts to tie the creation event to a specific identifier (mapped to EventID in this configuration) for correlation.
+
+---
+
+## 🔄 Detection Workflow
+```text
+Attacker creates a malicious scheduled task for persistence
+            │
+            ▼
+Windows Security Log (Event ID 4698) generated
+            │
+            ▼
+Azure Monitor Agent (AMA) ingests the event
+            │
+            ▼
+Microsoft Sentinel executes scheduled KQL query
+            │
+            ▼
+Event matched within the 5-minute schedule
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Created (Grouped by Host and Account)
+            │
+            ▼
+SOC Analyst Assigned & Payload Investigation Begins
 ---
