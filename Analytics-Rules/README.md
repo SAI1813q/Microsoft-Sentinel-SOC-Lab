@@ -3288,3 +3288,165 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# ⬇️ PowerShell Download
+
+## 🎯 Objective
+This rule detects PowerShell execution used specifically to download files from remote locations. It alerts security teams to potential Command and Control (C2) activity or ingress tool transfer.
+
+---
+
+## 📖 Threat Overview
+Adversaries frequently use built-in Windows tools like PowerShell to download secondary payloads, scripts, or post-exploitation tools from remote infrastructure. By leveraging cmdlets like `Invoke-WebRequest` or .NET classes like `Net.WebClient`, attackers can bypass traditional web filtering and execute malicious code directly in memory or drop it to disk.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Command And Control | Ingress Tool Transfer | T1105 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 4688)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for process creation events where the command line contains known PowerShell download syntax:
+
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any (
+        "Invoke-WebRequest",
+        "iwr",
+        "Start-BitsTransfer",
+        "DownloadFile",
+        "Net.WebClient"
+      )
+    | project TimeGenerated,
+        Computer,
+        Account,
+        NewProcessName,
+        CommandLine
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect malicious downloads the moment they occur. |
+| **Severity** | High | Downloading unauthorized executables or scripts via PowerShell is a strong indicator of compromise. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every individual instance of a download command. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+| Process | CommandLine | CommandLine |
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker executes a PowerShell command to download a payload
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    CommandLine matches download strings (e.g., "Invoke-WebRequest")
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Grouped by matching entities)
+                │
+                ▼
+    SOC Analyst Assigned & Process Tree Investigation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4688** is logged.
+* The `CommandLine` field contains any of the following strings: `"Invoke-WebRequest"`, `"iwr"`, `"Start-BitsTransfer"`, `"DownloadFile"`, or `"Net.WebClient"`.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Enabled**.
+* **Grouping Time Window:** 5 Hours.
+* **Grouping Method:** Grouping alerts into a single incident if all the entities match (recommended).
+
+### Why group alerts by all matching entities?
+If a malicious script executes multiple download commands in rapid succession on the same host using the same account and identical command line syntax, this setting consolidates them into a single incident, significantly reducing alert fatigue.
+
+---
+
+## ✅ Validation
+This detection can be validated by opening PowerShell on a monitored endpoint and executing a benign download command, such as `Invoke-WebRequest -Uri "https://example.com" -OutFile "C:\temp\test.txt"`. Microsoft Sentinel will capture the 4688 event containing the command and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Identify the delivery phase of malware or ransomware.
+* Track the specific URLs or IP addresses attackers are using for Command and Control (C2).
+* Isolate compromised hosts immediately upon detecting unauthorized ingress tool transfers.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Insert Screenshot 2026-08-03 185017.png)*
+
+### MITRE ATT&CK Mapping
+> *(Insert Screenshot 2026-08-03 185040.png)*
+
+### KQL Query
+> *(Insert Screenshot 2026-08-03 185052.png)*
+> *(Insert Screenshot 2026-08-03 185230.png)*
+
+### Entity Mapping
+> *(Insert Screenshot 2026-08-03 185249.png)*
+
+### Incident Settings
+> *(Insert Screenshot 2026-08-03 185655.png)*
+
+### Automation Rule
+> *(Insert Screenshot 2026-08-03 185828.png)*
+
+### Review & Create
+> *(Insert Screenshot 2026-08-03 185836.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
+---
+
