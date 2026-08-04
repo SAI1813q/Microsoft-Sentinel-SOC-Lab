@@ -4905,6 +4905,158 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
+# 👑 User Added to Local Administrators
 
+## 🎯 Objective
+This rule detects when a user account is added to local administrative groups on endpoints or servers (tracking Windows Security Event IDs 4732 and 4728). It alerts security teams to potential local privilege escalation and persistence.
+
+---
+
+## 📖 Threat Overview
+Privilege escalation is a critical phase in an attack lifecycle. Once an adversary gains initial access to a machine via a standard user account, they look for local escalation vectors. Adding a user account to the local Administrators group provides the attacker with full control over the local system, allowing them to dump credentials, install backdoors, and move laterally across the network.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Privilege Escalation, Persistence | Account Manipulation | T1098 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event IDs 4732 and 4728 - A member was added to a security-enabled local or global group)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for security event IDs 4732 and 4728 to track additions to administrative security groups:
+
+    SecurityEvent
+    | where EventID in (4732, 4728)
+    | project TimeGenerated, Computer, SubjectAccount, TargetAccount, Activity
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Aggregates and runs evaluation queries across defined time windows. |
+| **Run Query Every** | 5 Minutes | Continuously monitors for privilege escalation events. |
+| **Lookup Data From** | Last 6 Minutes | Provides a 1-minute overlap buffer to handle log ingestion delays safely. |
+| **Severity** | High | Unauthorized local admin additions represent an immediate threat to endpoint integrity. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | TargetAccount |
+
+### Why map these entities?
+* **Host:** Identifies the specific endpoint where the local group modification occurred.
+* **Account:** Identifies the target user account that was elevated to administrative privileges.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker escalates privileges and adds a user to Local Administrators
+                │
+                ▼
+    Target Host logs Event ID 4732 or 4728
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule evaluates the last 6 minutes of data
+                │
+                ▼
+    EventID matches 4732 or 4728
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Alert grouping disabled)
+                │
+                ▼
+    SOC Analyst Assigned & Privilege Verification Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **4732** or **4728** is logged.
+* The query returns more than 0 results within the scheduled 5-minute interval.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Modifications to local administrator groups should be tightly controlled and rare. Disabling alert grouping ensures that every individual account elevation generates a distinct, immediate ticket for verification.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by opening an elevated command prompt and adding a user to the local administrators group (e.g., `net localgroup Administrators TestUser /add`). Microsoft Sentinel will capture the event and generate an incident. *(Ensure you remove the user immediately after validation using `net localgroup Administrators TestUser /delete`).*
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Intercept local privilege escalation attempts early in the kill chain.
+* Audit unauthorized administrative account creation across endpoints.
+* Protect critical assets from rogue user elevations and insider threats.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Screenshot 2026-08-04 154850.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 154859.png)*
+
+### KQL Query
+> *(Screenshot 2026-08-04 154915.png)*
+
+### Entity Mapping
+> *(Screenshot 2026-08-04 154920.png)*
+
+### Query Scheduling
+> *(Screenshot 2026-08-04 154935.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 154947.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 154947.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 154954.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
