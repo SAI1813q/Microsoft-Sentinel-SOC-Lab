@@ -5696,3 +5696,524 @@ This correlation rule helps security teams:
 
 ---
 
+# 🔗 Correlation 4: New Service → Event Log Cleared
+
+## 🎯 Objective
+This core correlation rule tracks a malicious post-exploitation chain: the installation of a new system service for persistence, followed closely by the clearing or tampering of event logs (Event ID 1102) to wipe forensic evidence. It connects system compromise directly with defense evasion.
+
+---
+
+## 📖 Threat Overview
+When adversaries successfully install a new Windows service (Event IDs `4697` or `7045`) to maintain persistent backdoors, they immediately seek to cover their tracks. By clearing the audit logs (such as Event ID `1102` - The audit log was cleared), they attempt to blind security teams and hide the service installation artifacts. Correlating service installation with subsequent log clearing highlights active cover-up behavior.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Persistence, Privilege Escalation | Create or Modify System Process: Windows Service | T1543.003 |
+| Defense Evasion | Indicator Removal on Host: Clear Windows Event Logs | T1070.001 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs:
+  * Event ID `4697` / `7045` (A new service was installed)
+  * Event ID `1102` (The audit log was cleared)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following advanced KQL query correlates new service installations with subsequent event log clearing within a 30-minute timeframe on the same computer:
+
+    let ServiceInstall = 
+    SecurityEvent
+    | where EventID in (4697,7045)
+    | project ServiceTime = TimeGenerated, Computer, Account;
+    let LogCleared = 
+    SecurityEvent
+    | where EventID == 1102
+    | project ClearTime = TimeGenerated, Computer, Account;
+    ServiceInstall
+    | join kind=inner LogCleared on Computer
+    | where ClearTime between (ServiceTime .. ServiceTime + 30m)
+    | project Computer, Account, ServiceTime, ClearTime
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Evaluates incoming telemetry streams instantly to catch persistence and log clearing concurrently. |
+| **Severity** | High | Service installation paired with clearing event logs represents a severe indicator of an active attack. |
+| **Status** | Enabled | Ensures the correlation rule is actively running. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+
+### Why map these entities?
+* **Account:** Identifies the user account responsible for installing the service and clearing logs.
+* **Host:** Highlights the endpoint where the service persistence and log deletion occurred.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker installs a new Windows service for persistence
+                │
+                ▼
+    Target Host logs Event ID 4697 or 7045
+                │
+                ▼
+    Attacker clears audit logs (Event ID 1102) within 30 minutes to cover tracks
+                │
+                ▼
+    Microsoft Sentinel NRT Rule correlates service installation and log clearing events
+                │
+                ▼
+    Alert Generated combining persistence and defense evasion phases
+                │
+                ▼
+    Incident Created (Alert grouping disabled)
+                │
+                ▼
+    Automated Response Triggered (Add Triage Tag)
+                │
+                ▼
+    SOC Analyst Assigned & Forensic Investigation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Event ID **4697** or **7045** logs a new service installation.
+* Event ID **1102** logs that the audit log was cleared on the same computer within **30 minutes** of the service installation.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Correlating persistence mechanisms directly with log clearing is a critical indicator of compromise. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
+
+---
+
+## 🤖 Automated Responses
+This correlation rule is linked to the following automation:
+* **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
+
+---
+
+## ✅ Validation
+This rule can be validated in a controlled lab environment by installing a test service and subsequently clearing the security event log using administrative tools. Sentinel will correlate the sequence and generate a high-severity alert.
+
+---
+
+## 🎯 Security Impact
+This correlation rule helps security teams:
+* Uncover hidden persistence methods even when attackers attempt to wipe logs.
+* Detect deliberate defense evasion tactics following system modifications.
+* Ensure immediate visibility into post-compromise cleanup activities.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Name Description
+> *(Screenshot 2026-08-04 164349.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 164401.png)*
+> *(Screenshot 2026-08-04 164410.png)*
+
+### KQL Query Logic
+> *(Screenshot 2026-08-04 164419.png)*
+
+### Entity Mapping & Scheduling
+> *(Screenshot 2026-08-04 164428.png)*
+> *(Screenshot 2026-08-04 164531.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 164443.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 164449.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 164541.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
+# 🔗 Correlation 5: Certutil Download → Mshta Execution
+
+## 🎯 Objective
+This core correlation rule tracks a multi-stage adversary execution chain: using `certutil.exe` to download a remote payload (Ingress Tool Transfer / Command and Control), followed closely by executing that payload using `mshta.exe`. It connects file staging directly with living-off-the-land execution.
+
+---
+
+## 📖 Threat Overview
+Attackers frequently abuse native Windows binaries (LOLBins) to bypass security controls. A common stealthy technique involves using `certutil.exe` with flags like `-urlcache` or `http://` URLs to download external payloads to the target machine. Once downloaded, they execute the payload using `mshta.exe` to run malicious HTML applications or script code. Correlating these two sequential events provides high-fidelity detection for staged payload delivery and execution.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Command And Control, Defense Evasion | Ingress Tool Transfer | T1105 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs:
+  * Event ID `4688` (Process Creation - monitoring `certutil.exe` download parameters and `mshta.exe` execution)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following advanced KQL query correlates `certutil` download activity with subsequent `mshta` process execution within a 10-minute window on the same host and account:
+
+    let Certutil = 
+    SecurityEvent
+    | where EventID == 4688
+    | where Process has "certutil.exe"
+    | where CommandLine has_any ("http://","https://","-urlcache")
+    | project CertutilTime = TimeGenerated, Computer, Account;
+    let Mshta = 
+    SecurityEvent
+    | where EventID == 4688
+    | where Process has "mshta.exe"
+    | project MshtaTime = TimeGenerated, Computer, Account;
+    Certutil
+    | join kind=inner Mshta on Computer, Account
+    | where MshtaTime between (CertutilTime .. CertutilTime + 10m)
+    | project Computer, Account, CertutilTime, MshtaTime
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Evaluates complex cross-event timing windows across security logs. |
+| **Run Query Every** | 5 Minutes | Continuously scans for correlated payload staging and execution behavior. |
+| **Lookup Data From** | Last 6 Minutes | Incorporates a 1-minute overlap buffer to accommodate log ingestion latency. |
+| **Severity** | High | Using native tools for download and execution represents an active, high-risk intrusion attempt. |
+| **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+
+### Why map these entities?
+* **Host:** Identifies the endpoint where the file was downloaded via certutil and executed via mshta.
+* **Account:** Identifies the user security context executing the attack chain.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker uses certutil.exe to download a remote payload (-urlcache / http)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Attacker executes the payload using mshta.exe within 10 minutes
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule correlates certutil and mshta process events
+                │
+                ▼
+    Alert Generated combining staging and execution phases
+                │
+                ▼
+    Incident Created (Alert grouping disabled for immediate individual visibility)
+                │
+                ▼
+    Automated Response Triggered (Add Triage Tag)
+                │
+                ▼
+    SOC Analyst Assigned & Endpoint Isolation / Payload Removal Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Event ID **4688** logs `certutil.exe` execution with download flags (`http://`, `https://`, `-urlcache`).
+* Event ID **4688** logs `mshta.exe` process execution by the same account on the same computer within **10 minutes** of the certutil download.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Correlating native tool downloads directly with script execution engines represents a critical, high-priority indicator of compromise. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
+
+---
+
+## 🤖 Automated Responses
+This correlation rule is linked to the following automation:
+* **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
+
+---
+
+## ✅ Validation
+This rule can be validated in a controlled lab environment by executing a benign certutil download command followed immediately by launching mshta. Sentinel will correlate the timestamps and generate a high-severity alert.
+
+---
+
+## 🎯 Security Impact
+This correlation rule helps security teams:
+* Detect abuse of Living-off-the-Land Binaries (LOLBins) for payload delivery.
+* Catch multi-stage execution chains before malicious scripts execute.
+* Prioritize high-fidelity triage tickets backed by multiple correlated security events.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Name Description
+> *(Screenshot 2026-08-04 164623.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 164630.png)*
+
+### KQL Query Logic
+> *(Screenshot 2026-08-04 164642.png)*
+
+### Entity Mapping & Scheduling
+> *(Screenshot 2026-08-04 164652.png)*
+> *(Screenshot 2026-08-04 164719.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 164728.png)*
+> *(Screenshot 2026-08-04 164737.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 164742.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 164747.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
+# 🔗 Correlation 6: Defender Disabled → Firewall Disabled → Mimikatz
+
+## 🎯 Objective
+This core correlation rule tracks a complex, multi-phase attack chain combining defense evasion and credential access: disabling Microsoft Defender protections, disabling the Windows Firewall, and subsequently executing credential dumping tools like Mimikatz. It flags an attacker systematically stripping endpoint defenses before harvesting credentials.
+
+---
+
+## 📖 Threat Overview
+Before executing noisy or high-privilege activities such as credential harvesting, advanced threat actors actively attempt to disable security controls to avoid detection. This campaign involves turning off real-time antivirus protection via PowerShell (`Set-MpPreference`), disabling firewall profiles via `netsh`, and then executing credential dumping utilities (`mimikatz`, `sekurlsa`, `lsadump`). Correlating these steps highlights a coordinated, premeditated intrusion.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Defense Evasion | Impair Defenses | T1562 |
+| Credential Access | OS Credential Dumping | T1003 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs:
+  * Event ID `4688` (Process Creation - monitoring Defender settings modification, firewall toggles, and credential dumping commands)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following advanced KQL query uses multiple `let` statements and inner joins to sequentially correlate Defender tampering, firewall disabling, and credential dumping within tight time windows:
+
+    let DefenderDisabled = 
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any ("Set-MpPreference","DisableRealtimeMonitoring","WinDefend")
+    | project DefenderTime = TimeGenerated, Computer, Account;
+    let FirewallDisabled = 
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any (
+        "netsh advfirewall set allprofiles state off",
+        "Set-NetFirewallProfile"
+    )
+    | project FirewallTime = TimeGenerated, Computer, Account;
+    let Mimikatz = 
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any ("mimikatz","sekurlsa","lsadump")
+    | project MimikatzTime = TimeGenerated, Computer, Account;
+    DefenderDisabled
+    | join kind=inner FirewallDisabled on Computer, Account
+    | where FirewallTime between (DefenderTime .. DefenderTime + 10m)
+    | join kind=inner Mimikatz on Computer, Account
+    | where MimikatzTime between (FirewallTime .. FirewallTime + 15m)
+    | project Computer, Account, DefenderTime, FirewallTime, MimikatzTime
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Evaluates continuous incoming telemetry streams instantly for multi-stage threat detection. |
+| **Severity** | High | Tampering with core security defenses combined with credential theft represents an immediate, critical threat. |
+| **Status** | Enabled | Ensures the correlation rule is actively running. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+
+### Why map these entities?
+* **Host:** Identifies the target endpoint where defenses were stripped and credentials were targeted.
+* **Account:** Identifies the user security context executing the tampering and dumping sequence.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker disables Microsoft Defender protections via command line
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Attacker disables Windows Firewall within 10 minutes
+                │
+                ▼
+    Attacker executes Mimikatz for credential dumping within 15 minutes
+                │
+                ▼
+    Microsoft Sentinel NRT Rule correlates across all three event stages
+                │
+                ▼
+    Alert Generated combining defense evasion and credential access phases
+                │
+                ▼
+    Incident Created (Alert grouping disabled for immediate individual visibility)
+                │
+                ▼
+    Automated Response Triggered (Add Triage Tag)
+                │
+                ▼
+    SOC Analyst Assigned & Emergency Incident Response / Host Isolation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Event ID **4688** logs a command disabling Defender protections (`Set-MpPreference`, etc.).
+* Event ID **4688** logs a firewall deactivation command within **10 minutes** on the same computer and account.
+* Event ID **4688** logs a credential dumping execution (`mimikatz`, etc.) within **15 minutes** of the firewall modification.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Stripping multiple security controls before dumping credentials is a definitive high-priority indicator of compromise. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
+
+---
+
+## 🤖 Automated Responses
+This correlation rule is linked to the following automation:
+* **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
+
+---
+
+## ✅ Validation
+This rule can be validated in a secure test environment by executing safe verification steps matching the process command lines. Sentinel will successfully correlate the multi-stage sequence across the time windows and generate a high-severity alert.
+
+---
+
+## 🎯 Security Impact
+This correlation rule helps security teams:
+* Detect premeditated defense tampering before severe credential theft occurs.
+* Catch complex multi-phase kill chains instantly via NRT evaluation.
+* Ensure immediate, unbundled incident generation for critical adversary campaigns.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Name Description
+> *(Screenshot 2026-08-04 164837.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 164847.png)*
+
+### KQL Query Logic
+> *(Screenshot 2026-08-04 164858.png)*
+> *(Screenshot 2026-08-04 164906.png)*
+
+### Entity Mapping & Scheduling
+> *(Screenshot 2026-08-04 164915.png)*
+> *(Screenshot 2026-08-04 164929.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 164937.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 164942.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 164948.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
