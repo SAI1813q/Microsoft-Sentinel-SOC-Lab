@@ -4752,4 +4752,159 @@ This detection helps security teams:
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
+---
+
+
+# 🛑 Event Logging Service Shut Down
+
+## 🎯 Objective
+This rule detects attempts to stop or disable the Windows Event Log service (specifically tracking Event ID 1100). It alerts security teams to defense evasion tactics used by adversaries attempting to blind logging infrastructure and cover their tracks.
+
+---
+
+## 📖 Threat Overview
+To prevent security analysts and SIEM solutions from detecting malicious post-exploitation activities, threat actors often attempt to clear, tamper with, or outright stop the Windows Event Log service. Stopping the event logging service effectively blinds defenders by halting the recording of security-relevant system events on the host.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Defense Evasion | Impair Defenses: Disable Windows Event Logging | T1562.002 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (Event ID 1100 - The event logging service has shut down)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for the specific event ID indicating that the event logging service has stopped:
+
+    SecurityEvent
+    | where EventID == 1100
+    | project TimeGenerated, Computer, SubjectAccount, Activity, EventID
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect event log tampering instantly. |
+| **Severity** | Medium | Shutting down logging services is a deliberate attempt to blind telemetry and evade detection. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every distinct event log shutdown occurrence. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | SubjectAccount |
+| Host | HostName | Computer |
+
+### Why map these entities?
+* **Account:** Identifies the user account or security context responsible for stopping the event logging service.
+* **Host:** Highlights the specific system or endpoint where logging was disabled.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker attempts to stop the Windows Event Log service
+                │
+                ▼
+    Target Host logs Event ID 1100 (Event Logging Service Shut Down)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    EventID equals 1100
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Alert grouping disabled)
+                │
+                ▼
+    SOC Analyst Assigned & System Integrity Investigation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Security Event **1100** is logged.
+* The event indicates that the event logging service has been shut down.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Tampering with core logging services is a critical indicator of compromise. Disabling grouping ensures that every occurrence generates an immediate, independent incident ticket for the SOC.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by testing administrative service controls or observing log generation patterns when the event log service state changes. Microsoft Sentinel will capture the 1100 event and generate an incident.
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Detect active defense evasion attempts to blind system monitoring.
+* Identify rogue administrators or compromised accounts trying to hide secondary malicious payloads.
+* Maintain strict visibility over core endpoint telemetry channels.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Screenshot 2026-08-04 154345.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 154357.png)*
+
+### KQL Query
+> *(Screenshot 2026-08-04 154403.png)*
+
+### Entity Mapping
+> *(Screenshot 2026-08-04 154412.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 154417.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 154422.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 154538.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
+
+
 
