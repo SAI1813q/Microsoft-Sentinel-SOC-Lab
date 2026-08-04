@@ -5342,5 +5342,186 @@ This correlation rule helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
+# 🔗 Correlation 1: Brute Force → Successful Login → New Local User
+
+## 🎯 Objective
+This core analytics rule correlates three distinct stages of a multi-phase attack chain: multiple failed login attempts (Brute Force), a subsequent successful login using those compromised credentials, and the immediate creation of a new local user account for persistence. It serves as a cornerstone detection for end-to-end account compromise and privilege lifecycle tracking.
+
+---
+
+## 📖 Threat Overview
+Advanced threat actors rarely rely on a single isolated action. A common kill chain involves cracking an account password via automated brute-force techniques (Event ID `4625`), authenticating successfully into the system with the guessed credentials (Event ID `4624`), and immediately creating a backdoored local user account (Event ID `4720`) to maintain persistent access. Correlating these sequential events within a tight time window dramatically reduces false positives and highlights high-fidelity active intrusions.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Credential Access | Brute Force | T1110 |
+| Initial Access, Defense Evasion, Persistence, Privilege Escalation | Valid Accounts | T1078 |
+| Persistence | Create Account | T1136 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs:
+  * Event ID `4625` (An account failed to log on)
+  * Event ID `4624` (An account was successfully logged on)
+  * Event ID `4720` (A user account was created)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following advanced KQL query uses multiple `let` statements and inner joins to link brute-force attempts (10+ failures in 10 minutes) with a successful logon and subsequent account creation within defined time windows:
+
+    let BruteForce = 
+    SecurityEvent
+    | where EventID == 4625
+    | summarize FailedAttempts = count() by Account, Computer, bin(TimeGenerated, 10m)
+    | where FailedAttempts >= 10;
+    let SuccessLogin = 
+    SecurityEvent
+    | where EventID == 4624
+    | project LoginTime = TimeGenerated, Account, Computer;
+    let NewUser = 
+    SecurityEvent
+    | where EventID == 4720
+    | project UserCreatedTime = TimeGenerated, Account, Computer;
+    BruteForce
+    | join kind=inner SuccessLogin on Account, Computer
+    | where LoginTime between (TimeGenerated .. TimeGenerated + 10m)
+    | join kind=inner NewUser on Account, Computer
+    | where UserCreatedTime between (LoginTime .. LoginTime + 10m)
+    | project Account, Computer, FailedAttempts, LoginTime, UserCreatedTime
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Evaluates sequential cross-event correlation logic over historical time blocks. |
+| **Run Query Every** | 5 Minutes | Continuously checks for multi-stage attack patterns. |
+| **Lookup Data From** | Last 6 Minutes | Includes a 1-minute overlap buffer to capture trailing ingested logs safely. |
+| **Severity** | High | A brute-force attack followed by successful access and local account creation indicates active compromise. |
+| **Status** | Enabled | Ensures the correlation rule is actively running. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide comprehensive correlation context.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Account | Name | Account |
+| Host | HostName | Computer |
+
+### Why map these entities?
+* **Account:** Identifies the target user account compromised during the brute-force attack and used to spawn the new user.
+* **Host:** Highlights the specific endpoint or domain controller where the entire sequence took place.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker performs brute-force attack against target account (>= 10 failures)
+                │
+                ▼
+    Attacker logs in successfully using cracked credentials
+                │
+                ▼
+    Attacker creates a new local user account for persistence within 10 minutes
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule correlates events across 4625, 4624, and 4720 logs
+                │
+                ▼
+    Alert Generated combining the complete attack chain
+                │
+                ▼
+    Incident Created (Grouped by matching entities)
+                │
+                ▼
+    Automated Response Triggered (Add Triage Tag)
+                │
+                ▼
+    SOC Analyst Assigned & Host Isolation / Account Revocation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* 10 or more failed login events (`4625`) occur for an account on a host within a 10-minute bin.
+* A successful login (`4624`) for that same account/host occurs within 10 minutes of the brute force window.
+* A new user account creation event (`4720`) occurs within 10 minutes of the successful login.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Multi-stage attacks represent high-priority intrusions. Disabling alert grouping ensures that every unique correlated attack chain triggers an immediate, individual incident ticket for the SOC without merging related alerts.
+
+---
+
+## 🤖 Automated Responses
+This core correlation rule is integrated with the following automation:
+* **Add Triage Tag:** Automatically appends triage tags upon incident creation to prioritize analytical review.
+
+---
+
+## ✅ Validation
+This rule can be validated in a test lab by simulating the exact sequence: executing 10+ failed password attempts on a test account, logging in successfully with the correct password immediately after, and creating a new local user via `net user`. Sentinel will join the timeline and trigger the correlated high-severity alert.
+
+---
+
+## 🎯 Security Impact
+This correlation rule helps security teams:
+* Detect end-to-end multi-phase account takeovers rather than treating logs in isolation.
+* Uncover stealthy persistence attempts immediately following credential compromise.
+* Prioritize high-fidelity triage tickets backed by multiple correlated Windows security events.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Name Description
+> *(Screenshot 2026-08-04 160644.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 160713.png)*
+> *(Screenshot 2026-08-04 160720.png)*
+
+### KQL Query Logic
+> *(Screenshot 2026-08-04 160730.png)*
+> *(Screenshot 2026-08-04 160757.png)*
+
+### Entity Mapping & Scheduling
+> *(Screenshot 2026-08-04 160813.png)*
+> *(Screenshot 2026-08-04 160954.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 161002.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 161206.png)*
+
+### Review & Create / Validation Summary
+> *(Screenshot 2026-08-04 161213.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
