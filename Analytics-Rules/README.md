@@ -44,7 +44,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Suspicious Outbound Connection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-suspicious-outbound-connection)** | Medium | T1071 | Detects unusual outbound network connections potentially indicating Command and Control (C2) traffic. |
 | **[Create or Modify System Process](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-create-or-modify-system-process)** | Medium | T1543 | Detects the creation or modification of system-level processes to establish persistence. |
 | **[Event Logging Service Shut Down](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-event-logging-service-shut-down)** | Medium | T1562.001 | Detects the manual termination of the Windows Event logging service to hide malicious activity. |
-| **[User Added to Local Administrators](#user-added-to-local-administrators)** | High | T1098 | Detects unauthorized additions of user accounts to the local Administrators group on an endpoint. |
+| **[User Added to Local Administrators](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-user-added-to-local-administrators)** | High | T1098 | Detects unauthorized additions of user accounts to the local Administrators group on an endpoint. |
 
 # 🔐 Brute Force Login Detection
 
