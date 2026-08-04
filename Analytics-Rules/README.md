@@ -5058,5 +5058,116 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
+# 🤖 Rule Templates & Machine Learning Behavioral Analytics
+
+## 🎯 Objective
+This section covers rules created using pre-built Microsoft Sentinel rule templates, including Machine Learning (ML) Behavioral Analytics rules and Threat Intelligence integrations. These rules leverage advanced detection models to identify anomalous user behavior and high-fidelity threat matches without requiring custom KQL authoring.
+
+---
+
+## 📖 Threat Overview
+Standard signature-based detection rules can miss sophisticated attacks that blend in with normal administrative tasks or rely on legitimate credentials. Rule templates bridge this gap by introducing built-in heuristics, ML-driven behavior profiling (such as tracking unusual IP addresses, unexpected geographic locations, or anomalous session sign-ins), and automated threat intelligence matching against live event streams.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Initial Access | Valid Accounts | T1078 |
+| Persistence | Account Manipulation | T1098 |
+| Lateral Movement | Remote Services | T1021 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs (RDP and authentication telemetry)
+* Syslog data (SSH login activity)
+* Microsoft Defender Threat Intelligence feeds
+* Log Analytics Workspace
+* Microsoft Sentinel ML Behavioral Analytics Engine
+
+---
+
+## 📑 Rule Templates Overview
+The following pre-built templates were deployed and configured:
+
+1. **(Preview) Anomalous RDP Login Detections**
+   * *Type:* ML Behavior Analytics
+   * *Purpose:* Identifies anomalous Remote Desktop Protocol login activity using machine learning based on Windows Security Event data, flagging unusual IPs, unusual geographies, or unexpected new users.
+2. **(Preview) Anomalous SSH Login Detection**
+   * *Type:* ML Behavior Analytics
+   * *Purpose:* Identifies anomalous Secure Shell login activity based on syslog data using behavioral profiling over a 30-day baseline.
+3. **Microsoft Defender Threat Intelligence Analytics**
+   * *Type:* Threat Intelligence rule
+   * *Purpose:* Generates high-fidelity alerts when active threat intelligence indicators (IPs, domains, hashes) match internal event logs.
+
+---
+
+## ⚙️ Rule Configuration Summary
+| Template Rule Name | Rule Type | Severity | Baseline / Learning Period |
+|---------------------|-----------|----------|---------------------------|
+| **(Preview) Anomalous RDP Login Detections** | ML Behavior Analytics | Medium | Built-in ML profiling (requires normal activity baseline) |
+| **(Preview) Anomalous SSH Login Detection** | ML Behavior Analytics | Medium | 7-day learning period for environment profiling |
+| **Microsoft Defender Threat Intelligence Analytics** | Threat Intelligence | Medium | Real-time indicator matching |
+
+---
+
+## 🔄 Detection Workflow
+
+    Microsoft Sentinel ingests telemetry (Windows Events, Syslog, TI Feeds)
+                │
+                ▼
+    ML Behavioral Engine / TI Matcher evaluates incoming logs against historical profiles
+                │
+                ▼
+    Anomaly detected (e.g., Unusual IP/Geo for RDP/SSH or active TI indicator match)
+                │
+                ▼
+    Alert Generated automatically via built-in template logic
+                │
+                ▼
+    Incident Created & Assigned to SOC Analyst for Behavioral Investigation
+
+---
+
+## ✅ Validation
+Behavioral and template-based rules can be validated by allowing the Sentinel machine learning engine to build its baseline profile over the required training window (e.g., 7 days for SSH detection), or by testing threat intelligence indicator matches using controlled, safe artifact checks within the lab workspace.
+
+---
+
+## 🎯 Security Impact
+Utilizing rule templates and ML behavior analytics helps security teams:
+* Detect stealthy account compromises and anomalous remote logins that bypass static rules.
+* Reduce manual rule-writing overhead while leveraging Microsoft's global threat intelligence.
+* Establish automated anomaly baselines for critical remote access services like RDP and SSH.
+
+---
+
+## 📸 Screenshots
+
+### Anomalous RDP Login Detections
+* **General & Description:** *(Screenshot 2026-08-04 155346.png)*
+* **Automated Response:** *(Screenshot 2026-08-04 155353.png)*
+* **Review & Create:** *(Screenshot 2026-08-04 155402.png)*
+
+### Anomalous SSH Login Detection
+* **General Configuration:** *(Screenshot 2026-08-04 155455.png)*
+* **Automated Response:** *(Screenshot 2026-08-04 155504.png)*
+* **Review & Create:** *(Screenshot 2026-08-04 155513.png)*
+
+### Microsoft Defender Threat Intelligence Analytics
+* **General Configuration:** *(Screenshot 2026-08-04 155426.png)*
+* **Review & Create:** *(Screenshot 2026-08-04 155435.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
