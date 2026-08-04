@@ -1,4 +1,4 @@
-# 🚨 Detection Validation
+# #🚨 Detection Validation & Investigation
 
 This section demonstrates the successful validation of each Microsoft Sentinel analytics rule. After executing attack simulations within the lab environment, Microsoft Sentinel generated alerts and automatically created incidents based on the configured incident creation settings.
 
