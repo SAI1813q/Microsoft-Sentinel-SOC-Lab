@@ -5170,5 +5170,177 @@ Utilizing rule templates and ML behavior analytics helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
+# 🔗 Correlation 2: Encoded PowerShell → Registry Run Key
+
+## 🎯 Objective
+This core correlation rule tracks a sophisticated multi-stage attack sequence: execution via obfuscated or encoded PowerShell commands followed closely by the establishment of persistence via Registry Run Keys. It connects execution mechanics with survival mechanisms to flag active threats.
+
+---
+
+## 📖 Threat Overview
+Attackers frequently use encoded PowerShell commands (using flags like `-enc` or `-encodedcommand`) to bypass script block logging, evade signature detection, and download or execute malicious payloads. To ensure survivability across reboots, they then modify the Windows Registry (such as keys under `CurrentVersion\Run`) to automatically execute that payload every time the system starts. Correlating these two telemetry streams catches the transition from initial execution to persistent compromise.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Execution | Command and Scripting Interpreter: PowerShell | T1059.001 |
+| Persistence, Privilege Escalation | Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder | T1547.001 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs:
+  * Event ID `4688` (Process Creation - monitoring PowerShell execution syntax)
+  * Event ID `4657` (A registry value was modified - tracking modifications under `CurrentVersion\Run`)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following advanced KQL query correlates encoded PowerShell process executions with subsequent registry modifications within a 10-minute window on the same host and account:
+
+    let PowerShell = 
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any ("-enc","-encodedcommand","EncodedCommand")
+    | project PSTime = TimeGenerated, Computer, Account;
+    let RunKey = 
+    SecurityEvent
+    | where EventID == 4657
+    | where ObjectName has @"CurrentVersion\Run"
+    | project RunKeyTime = TimeGenerated, Computer, Account;
+    PowerShell
+    | join kind=inner RunKey on Computer, Account
+    | where RunKeyTime between (PSTime .. PSTime + 10m)
+    | project Computer, Account, PSTime, RunKeyTime
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Evaluates complex cross-event timing windows across security logs. |
+| **Run Query Every** | 5 Minutes | Continuously scans for correlated execution and persistence indicators. |
+| **Lookup Data From** | Last 6 Minutes | Incorporates a 1-minute overlap buffer to accommodate log ingestion latency. |
+| **Severity** | High | Encoded execution paired with registry persistence is a definitive sign of malicious compromise. |
+| **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+
+### Why map these entities?
+* **Host:** Identifies the endpoint where the encoded script ran and the registry was modified.
+* **Account:** Identifies the user security context executing the attack chain.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker executes obfuscated/encoded PowerShell command (-enc)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Attacker writes persistence entry to Registry Run Key (Event ID 4657) within 10 minutes
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule correlates 4688 and 4657 events
+                │
+                ▼
+    Alert Generated combining execution and persistence phases
+                │
+                ▼
+    Incident Created (Alert grouping disabled for immediate individual visibility)
+                │
+                ▼
+    Automated Response Triggered (Add Triage Tag)
+                │
+                ▼
+    SOC Analyst Assigned & Endpoint Isolation / Registry Cleanup Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Event ID **4688** logs a PowerShell process creation containing encoding flags (`-enc`, `-encodedcommand`).
+* Event ID **4657** logs a modification to a Registry Run Key (`CurrentVersion\Run`) by the same account on the same computer within **10 minutes** of the PowerShell execution.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Correlating encoded execution directly with registry persistence represents a critical, high-fidelity intrusion. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
+
+---
+
+## 🤖 Automated Responses
+This correlation rule is linked to the following automation:
+* **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
+
+---
+
+## ✅ Validation
+This rule can be validated in a controlled lab environment by executing an encoded PowerShell command (e.g., base64 encoding a benign command) followed immediately by adding a test entry to `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Sentinel will correlate the timestamps and generate a high-severity alert.
+
+---
+
+## 🎯 Security Impact
+This correlation rule helps security teams:
+* Connect obfuscated execution vectors directly to persistence mechanisms.
+* Cut through noise by verifying multi-stage attacker behavior.
+* Rapidly isolate compromised endpoints before payloads execute on reboot.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Description
+> *(Screenshot 2026-08-04 161718.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 161737.png)*
+> *(Screenshot 2026-08-04 161747.png)*
+
+### KQL Query Logic
+> *(Screenshot 2026-08-04 161802.png)*
+
+### Entity Mapping & Scheduling
+> *(Screenshot 2026-08-04 161811.png)*
+> *(Screenshot 2026-08-04 161825.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 161834.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 161841.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 161847.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+---
 
 
