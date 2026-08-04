@@ -26,125 +26,264 @@ Each alert includes enriched entities, related events, and investigation context
 
 ---
 
-
 # 🚨 Suspicious Discovery Commands
 
-## 📖 Overview
+## 🎯 Detection Overview
 
-This alert was generated after executing common Windows discovery commands on a monitored endpoint. Microsoft Sentinel's Near Real-Time (NRT) analytics rule detected the process creation events and immediately generated an alert. Since incident creation was enabled during rule configuration, Microsoft Sentinel automatically created an incident and associated the alert with it.
-
----
-
-## ⚔️ Attack Simulation
-
-The detection was validated by executing native Windows reconnaissance commands from a Command Prompt on the monitored endpoint.
-
-```cmd
-hostname
-systeminfo
-wmic process list
-```
-
-These commands generated Windows Security Event ID **4688 (Process Creation)**, which matched the analytics rule conditions.
+This detection demonstrates Microsoft Sentinel identifying suspicious system discovery commands executed on a monitored Windows endpoint. The analytics rule detected the execution of native Windows reconnaissance utilities, automatically generated an alert, and correlated it into a Microsoft Defender incident for investigation.
 
 ---
 
-## 🚨 Generated Alert
+## 📖 Attack Scenario
+
+After gaining access to a system, attackers typically perform reconnaissance to understand the environment before moving laterally or escalating privileges. Common Windows utilities such as `hostname.exe`, `systeminfo.exe`, `wmic.exe`, and `ver.exe` are frequently abused because they are legitimate operating system binaries.
+
+Microsoft Sentinel detected this activity through a Near Real-Time analytics rule and automatically created an investigation incident.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
 
 | Property | Value |
 |----------|-------|
-| Alert Name | Suspicious Discovery Commands |
-| Severity | Medium |
-| Status | New |
-| Detection Source | Near Real-Time (NRT) Analytics Rule |
-| Service Source | Microsoft Sentinel |
-| MITRE ATT&CK | Discovery (T1016, T1033, T1082, T1087) |
-
-The alert contains information about the executed process, the user who initiated it, and the affected device, enabling analysts to quickly identify reconnaissance activity.
+| **Alert Name** | Suspicious Discovery Commands |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Not Set |
+| **Assigned To** | Unassigned |
+| **Detection Source** | Microsoft Sentinel |
+| **Analytics Rule** | Suspicious Discovery Commands |
+| **MITRE ATT&CK** | T1016, T1033, T1082, T1087 |
 
 ---
 
-## 📂 Generated Incident
+## Alert Description
 
-Since **Create incidents from alerts** was enabled during analytics rule configuration, Microsoft Sentinel automatically created an incident when the alert was generated.
+The alert was triggered after Microsoft Sentinel detected the execution of one or more Windows discovery commands matching the analytics rule.
 
-The incident includes:
+These commands are commonly executed during the reconnaissance phase of an attack to collect information about the operating system, host configuration, users, and network environment.
 
-- Related alerts
-- Affected device
-- User account
-- Timeline of events
+---
+
+## Alert Workflow
+
+```text
+Attacker executes discovery command
+            │
+            ▼
+Windows Security Event (4688)
+            │
+            ▼
+Azure Monitor Agent
+            │
+            ▼
+Log Analytics Workspace
+            │
+            ▼
+Microsoft Sentinel Analytics Rule
+            │
+            ▼
+Alert Generated
+            │
+            ▼
+Incident Automatically Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 3 |
+| **Incident Name** | Suspicious Discovery Commands |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Sentinel automatically correlated the generated alert into a single incident.
+
+This provides analysts with one investigation workspace containing:
+
+- Alert information
+- Attack story
 - Investigation graph
+- Impacted assets
+- Evidence
+- Activities
 
-Grouping related alerts into a single incident reduces alert fatigue while preserving the complete attack timeline for investigation.
-
----
-
-## 🧩 Alert Entities
-
-The generated alert identified the following entities:
-
-| Entity | Value |
-|---------|-------|
-| Device | VM1 |
-| User | VM1\Sia123 |
-
-These entities enable Microsoft Sentinel to correlate related activity and provide additional investigation context.
+instead of requiring multiple independent investigations.
 
 ---
 
-## 🔎 Investigation Summary
+## 📸 Incident Overview
 
-From the alert, a SOC analyst can immediately determine:
-
-- Which endpoint executed the reconnaissance commands.
-- Which user account initiated the activity.
-- Which analytics rule detected the behavior.
-- When the activity occurred.
-- The corresponding incident for further investigation.
-
-The **Related Events** section provides detailed evidence, including the executed process name and command line, allowing analysts to validate the detection and assess whether the activity is legitimate or potentially malicious.
+> *(Insert Incident Overview Screenshot)*
 
 ---
 
-## ✅ Validation Result
+# 🕸️ Attack Story
 
-The detection was successfully validated by manually executing Windows discovery commands on the monitored endpoint.
+The attack story provides a visual relationship between the detected entities involved in the alert.
 
-Expected outcome:
+For this detection Microsoft Defender automatically associated:
 
-- ✅ Alert generated by Microsoft Sentinel.
-- ✅ Incident automatically created.
-- ✅ Device and User entities successfully mapped.
-- ✅ Alert linked to the corresponding incident.
-- ✅ Related process execution events available for investigation.
+- Device
+- User Account
+- Suspicious Process
+
+allowing analysts to quickly understand how the entities are connected.
 
 ---
 
-## 📸 Alert Evidence
+## 📸 Attack Story
 
-### Generated Alert
+> *(Insert Attack Story Screenshot)*
 
-> *(Insert alert overview screenshot)*
+---
 
-### Alert Details
+# 🔍 Investigation Graph
 
-> *(Insert alert details screenshot)*
+The investigation graph automatically maps the entities involved in the incident.
 
-### Generated Incident
+Observed entities include:
 
-> *(Insert incident overview screenshot)*
+- Device (Vm1)
+- User (Vm1\Sia123)
+- Suspicious Process (HOSTNAME.EXE)
 
-### Related Events
+This visualization helps analysts pivot between related entities during an investigation.
 
-> *(Insert related events screenshot)*
+---
 
-### Investigation Timeline
+## 📸 Investigation Graph
 
-> *(Insert timeline screenshot)*
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| Device | Vm1 |
+| Risk Level | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| User | Vm1\Sia123 |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender collected evidence associated with the detection.
+
+| Property | Value |
+|----------|-------|
+| Entity Type | Process |
+| Verdict | Suspicious |
+| Impacted Asset | Vm1 |
+
+The suspicious process was linked to the alert, providing investigators with additional context during analysis.
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the investigation.
+
+For this incident:
+
+- Alert automatically correlated into Incident 3
+- Trigger performed by Microsoft Defender XDR
+- Activity Status: Completed
+
+This provides an audit trail showing how the incident was created.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- Verify whether the commands were executed by an administrator or a standard user.
+- Review the process command line.
+- Identify any subsequent lateral movement or credential access activity.
+- Examine neighboring alerts within the same timeline.
+- Determine whether the reconnaissance activity is authorized or malicious.
+
+---
+
+# 🎯 Security Impact
+
+This detection provides early visibility into post-compromise reconnaissance activity.
+
+Early detection allows defenders to investigate the attacker before they progress to:
+
+- Credential Dumping
+- Privilege Escalation
+- Lateral Movement
+- Persistence
+- Data Exfiltration
+
+Detecting discovery activity at this stage significantly improves the chances of containing an intrusion before major damage occurs.
 
 ---
 
 ⬆️ **[Back to Detection Validation Summary](#-detection-validation-summary)**
 
 ---
+
+
+
+
