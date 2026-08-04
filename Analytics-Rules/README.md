@@ -5523,5 +5523,176 @@ This correlation rule helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 ---
+# 🔗 Correlation 3: Mimikatz → PsExec
 
+## 🎯 Objective
+This core correlation rule tracks a high-severity, multi-stage adversary campaign: credential dumping using tools like Mimikatz, followed closely by internal movement or remote execution using PsExec. It links credential access directly to lateral movement across the network.
+
+---
+
+## 📖 Threat Overview
+Once threat actors escalate privileges, their primary objective is often harvesting plaintext credentials or hashes using tools like Mimikatz, `sekurlsa`, or `lsadump` (Event ID `4688`). Armed with these valid credentials, they frequently leverage administrative utilities like PsExec (`psexec`) to execute commands and move laterally to other systems on the network. Correlating credential dumping with remote execution catches active lateral movement in progress.
+
+---
+
+## 🔥 Severity
+**High**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Credential Access | OS Credential Dumping | T1003 |
+| Lateral Movement | Remote Services | T1021 |
+
+---
+
+## 📂 Data Sources
+* Windows Security Event Logs:
+  * Event ID `4688` (Process Creation - monitoring for Mimikatz strings and PsExec execution)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following advanced KQL query correlates credential dumping activity with subsequent PsExec execution within a 15-minute timeframe on the same computer and account:
+
+    let Mimikatz = 
+    SecurityEvent
+    | where EventID == 4688
+    | where CommandLine has_any ("mimikatz","sekurlsa","lsadump")
+    | project MimikatzTime = TimeGenerated, Computer, Account;
+    let PsExec = 
+    SecurityEvent
+    | where EventID == 4688
+    | where Process has "psexec"
+    | project PsExecTime = TimeGenerated, Computer, Account;
+    Mimikatz
+    | join kind=inner PsExec on Computer, Account
+    | where PsExecTime between (MimikatzTime .. MimikatzTime + 15m)
+    | project Computer, Account, MimikatzTime, PsExecTime
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Scheduled Rule | Evaluates complex cross-event timing windows across security logs. |
+| **Run Query Every** | 5 Minutes | Continuously scans for correlated credential dumping and lateral movement behavior. |
+| **Lookup Data From** | Last 6 Minutes | Incorporates a 1-minute overlap buffer to accommodate log ingestion latency. |
+| **Severity** | High | Credential theft paired with remote execution indicates an active, severe network breach. |
+| **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | HostName | Computer |
+| Account | Name | Account |
+
+### Why map these entities?
+* **Host:** Identifies the endpoint where credentials were dumped and lateral movement was initiated.
+* **Account:** Identifies the user security context executing the attack chain.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker executes credential dumping utility (Mimikatz / sekurlsa)
+                │
+                ▼
+    Target Host logs Event ID 4688 (Process Creation)
+                │
+                ▼
+    Attacker launches PsExec for lateral movement within 15 minutes
+                │
+                ▼
+    Microsoft Sentinel Scheduled Rule correlates Mimikatz and PsExec process events
+                │
+                ▼
+    Alert Generated combining credential access and lateral movement phases
+                │
+                ▼
+    Incident Created (Alert grouping disabled for immediate individual visibility)
+                │
+                ▼
+    Automated Response Triggered (Add Triage Tag)
+                │
+                ▼
+    SOC Analyst Assigned & Network Isolation / Credential Rotation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Event ID **4688** logs a process execution matching credential dumping strings (`mimikatz`, `sekurlsa`, `lsadump`).
+* Event ID **4688** logs a PsExec process execution (`psexec`) by the same account on the same computer within **15 minutes** of the credential dumping event.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Correlating credential dumping directly with lateral movement tools represents a critical, high-priority intrusion. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC without merging related alerts.
+
+---
+
+## 🤖 Automated Responses
+This correlation rule is linked to the following automation:
+* **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
+
+---
+
+## ✅ Validation
+This rule can be validated in a controlled lab environment by running safe simulated checks or testing string detection for credential tools followed by administrative execution binaries. Sentinel will correlate the timestamps and generate a high-severity alert.
+
+---
+
+## 🎯 Security Impact
+This correlation rule helps security teams:
+* Connect credential theft vectors directly to lateral movement paths.
+* Intercept attackers before they propagate across domain controllers.
+* Prioritize high-fidelity triage tickets backed by multiple correlated security events.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview & Name Description
+> *(Screenshot 2026-08-04 163838.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 163846.png)*
+> *(Screenshot 2026-08-04 163855.png)*
+
+### KQL Query Logic
+> *(Screenshot 2026-08-04 163907.png)*
+
+### Entity Mapping & Scheduling
+> *(Screenshot 2026-08-04 163916.png)*
+> *(Screenshot 2026-08-04 163930.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 163945.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 163950.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 164043.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+
+
+---
 
