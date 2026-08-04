@@ -4603,6 +4603,153 @@ This detection helps security teams:
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
+# ⚙️ Create or Modify System Process
 
+## 🎯 Objective
+This rule detects the creation or modification of system processes and services (specifically tracking Windows Event IDs 4697 and 7045 related to new service installations). It alerts security teams to potential persistence mechanisms established by threat actors.
+
+---
+
+## 📖 Threat Overview
+Adversaries frequently create or modify Windows services to establish persistent access to a compromised system. Because Windows services run with high privileges (often as Local System) and can be configured to start automatically upon boot, dropping a malicious service executable or modifying an existing service binary allows attackers to maintain stealthy, long-term persistence across reboots.
+
+---
+
+## 🔥 Severity
+**Medium**
+
+---
+
+## 🛡️ MITRE ATT&CK Mapping
+| Tactic | Technique | Technique ID |
+|---------|-----------|--------------|
+| Persistence, Privilege Escalation | Create or Modify System Process: Windows Service | T1543.003 |
+
+---
+
+## 📂 Data Sources
+* Windows Security and System Event Logs (Event IDs 4697 and 7045 - A new service was installed)
+* Azure Monitor Agent (AMA)
+* Log Analytics Workspace
+* Microsoft Sentinel
+
+---
+
+## 📑 Detection Logic (KQL)
+The following query monitors for service installation events (`4697` and `7045`) to track newly introduced system processes:
+
+    SecurityEvent
+    | where EventID in (4697, 7045)
+    | project TimeGenerated, Computer, SubjectAccount, EventID, Activity
+
+---
+
+## ⚙️ Rule Configuration
+| Setting | Value | Reason |
+|----------|-------|--------|
+| **Rule Type** | Near Real-Time (NRT) Rule | Runs continuously to detect service-based persistence as it is installed. |
+| **Severity** | Medium | While legitimate administrative tools install services, unauthorized new services often indicate persistence. |
+| **Status** | Enabled | Ensures the detection is currently active. |
+| **Event Grouping** | Trigger an alert for each event | Captures every distinct service installation event. |
+| **Suppression** | Not configured | Analyzes all logs continuously without a cool-down period. |
+
+---
+
+## 🧩 Entity Mapping
+The following entities are mapped to enrich Microsoft Sentinel incidents and provide context for investigators.
+
+| Entity | Identifier | Field |
+|---------|------------|-------|
+| Host | FullName | Computer |
+| Account | Name | SubjectAccount |
+
+### Why map these entities?
+* **Host:** Identifies the target endpoint or server where the new service was installed.
+* **Account:** Identifies the user account or administrator context that registered the service.
+
+---
+
+## 🔄 Detection Workflow
+
+    Attacker installs a malicious Windows service for persistence
+                │
+                ▼
+    Target Host logs Event ID 4697 or 7045 (New service installed)
+                │
+                ▼
+    Azure Monitor Agent (AMA) ingests the event
+                │
+                ▼
+    Microsoft Sentinel NRT Analytics Rule evaluates incoming events
+                │
+                ▼
+    EventID matches 4697 or 7045
+                │
+                ▼
+    Alert Generated
+                │
+                ▼
+    Incident Created (Alert grouping disabled)
+                │
+                ▼
+    SOC Analyst Assigned & Service Binary Path Investigation Initiated
+
+---
+
+## 🚨 Alert Trigger Conditions
+An alert is generated when all of the following conditions are met:
+* Windows Event ID **4697** or **7045** is logged.
+* The event indicates a new service installation on the host system.
+
+---
+
+## 📋 Incident Configuration
+* **Incident Creation:** Enabled.
+* **Alert Grouping:** Group related alerts, triggered by this analytics rule, into incidents is **Disabled**.
+
+### Why disable alert grouping?
+Service installations are generally infrequent in locked-down production environments. Disabling grouping ensures that every new service installation generates a distinct, immediate ticket for verification.
+
+---
+
+## ✅ Validation
+This detection can be validated in a lab environment by installing a temporary test service using an elevated prompt (e.g., `sc.exe create TestService binPath= "cmd.exe"`). Microsoft Sentinel will capture the event and generate an incident. *(Ensure you delete the test service immediately after validation using `sc.exe delete TestService`).*
+
+---
+
+## 🎯 Security Impact
+This detection helps security teams:
+* Uncover hidden persistence mechanisms embedded within Windows services.
+* Track unauthorized service installations across domain infrastructure.
+* Investigate binary paths and parameters associated with newly spawned system processes.
+
+---
+
+## 📸 Screenshots
+
+### Rule Overview
+> *(Screenshot 2026-08-04 154122.png)*
+
+### MITRE ATT&CK Mapping
+> *(Screenshot 2026-08-04 154135.png)*
+
+### KQL Query
+> *(Screenshot 2026-08-04 154141.png)*
+
+### Entity Mapping (Updated)
+> *(Screenshot 2026-08-04 154151.png)*
+
+### Incident Settings
+> *(Screenshot 2026-08-04 154158.png)*
+
+### Automated Response
+> *(Screenshot 2026-08-04 154203.png)*
+
+### Review & Create
+> *(Screenshot 2026-08-04 154212.png)*
+
+---
+
+⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
 
