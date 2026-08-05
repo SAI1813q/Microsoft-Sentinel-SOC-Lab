@@ -23,6 +23,7 @@ Each alert includes enriched entities, related events, and investigation context
 | **[Scheduled Task Creation](#-scheduled-task-creation)** | Medium | ✅ Yes | ✅ Validated | Generated when a new scheduled task was created on the monitored endpoint. |
 | **[Suspicious Discovery Commands](#-suspicious-discovery-commands)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of common Windows reconnaissance commands. |
 | **[Domain Admin Group Modification](#-domain-admin-group-modification)** | Critical | ✅ Yes | ✅ Validated | Generated when a privileged Active Directory group membership was modified. |
+| **[AS-REP Roasting Detection](#-as-rep-roasting-detection)** | High | ✅ Yes | ✅ Validated | Generated when an AS-REQ without Kerberos pre-authentication was detected, indicating a potential AS-REP Roasting attack targeting accounts with pre-authentication disabled. |
 
 ---
 
