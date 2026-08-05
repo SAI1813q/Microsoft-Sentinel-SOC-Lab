@@ -498,3 +498,246 @@ By detecting Authentication Service Requests where **PreAuthType = 0**, Microsof
 ---
 
 ⬆️ **[Back to Detection Validation Summary](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)**
+
+---
+
+# 🚨 Brute Force Login Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying repeated failed Windows authentication attempts against a privileged user account. The analytics rule monitors failed logon events and generates an alert when the number of failed authentication attempts from a single source exceeds the configured threshold, indicating a potential brute force attack.
+
+Microsoft Sentinel automatically correlates the alert into a Microsoft Defender XDR incident, enabling security analysts to investigate the attack using enriched telemetry, affected assets, evidence, and incident timelines.
+
+---
+
+## 📖 Attack Scenario
+
+Brute force attacks are one of the most common techniques used by attackers to gain unauthorized access to user accounts. During this attack, the adversary repeatedly attempts to authenticate using different passwords until the correct credentials are discovered.
+
+In this lab, multiple failed Windows logon attempts targeted the **Administrator** account from a single external IP address. Microsoft Sentinel detected the abnormal authentication pattern using a scheduled analytics rule and automatically generated a security incident for investigation.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | brute force |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Not Set |
+| **Assigned To** | Unassigned |
+| **Detection Source** | Microsoft Sentinel |
+| **Analytics Rule** | Brute Force Login Detection |
+| **MITRE ATT&CK** | T1110 |
+
+---
+
+## Alert Description
+
+The alert was generated after Microsoft Sentinel detected multiple failed Windows logon attempts against the **Administrator** account originating from the same external IP address.
+
+Repeated authentication failures are commonly associated with password guessing and brute force attacks, where attackers attempt to compromise valid user credentials by repeatedly submitting different passwords.
+
+---
+
+## Alert Workflow
+
+```text
+Attacker performs repeated login attempts
+                │
+                ▼
+Windows Security Event (4625)
+                │
+                ▼
+Azure Monitor Agent
+                │
+                ▼
+Log Analytics Workspace
+                │
+                ▼
+Microsoft Sentinel Analytics Rule
+                │
+                ▼
+Alert Generated
+                │
+                ▼
+Incident Automatically Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 76 |
+| **Incident Name** | brute force |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Sentinel automatically correlated the generated alert into a single Microsoft Defender XDR incident.
+
+The incident provides analysts with a centralized investigation workspace containing:
+
+- Alert details
+- Attack Story
+- Investigation Graph
+- Impacted Assets
+- Evidence & Response
+- Activity Timeline
+
+This correlation simplifies the investigation process by consolidating all related telemetry into one incident.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual representation of the entities involved in the brute force attack.
+
+Microsoft Defender XDR automatically associated:
+
+- User Account
+- Suspicious IP Address
+- Brute Force Alert
+
+This relationship enables analysts to quickly understand the attack flow and identify the source responsible for the authentication attempts.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph displays the relationships between the affected entities identified during the investigation.
+
+Observed entities include:
+
+- User Account (**dc.root.project\administrator**)
+- Suspicious IP Address (**45.142.193.145**)
+
+The graphical representation helps analysts pivot between related entities and investigate additional suspicious activity.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted asset.
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | dc.root.project\administrator |
+
+No devices, cloud applications, mailboxes, or additional resources were associated with this incident.
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender collected evidence associated with the incident.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | IP Address |
+| **Entity** | 45.142.193.145 |
+| **Verdict** | Suspicious |
+
+The source IP address was automatically identified as suspicious and linked to the incident, providing additional context for the investigation.
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence & Response Screenshot)*
+
+---
+
+# 📋 Activities
+
+The **Activities** tab records automated actions performed during incident creation and enrichment.
+
+For this incident:
+
+- Alert automatically correlated into Incident **76**
+- Trigger performed by Microsoft Defender XDR
+- Activity Status: **Completed**
+
+The activity log provides an audit trail showing how the incident was automatically generated and enriched.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During the investigation, the analyst should:
+
+- Verify whether the failed authentication attempts originated from a legitimate source.
+- Review the authentication history for the targeted **Administrator** account.
+- Investigate the suspicious source IP address (**45.142.193.145**) for additional malicious activity.
+- Determine whether successful authentication occurred after the failed attempts.
+- Search for related alerts involving the same user or IP address.
+- Review endpoint activity for signs of privilege escalation or lateral movement.
+- Block or isolate the source IP if the activity is confirmed to be malicious.
+- Recommend enabling account lockout policies and enforcing Multi-Factor Authentication (MFA) where applicable.
+
+---
+
+# 🎯 Security Impact
+
+Brute force attacks target user credentials through repeated authentication attempts and are commonly used as an initial access technique. If successful, attackers may obtain valid credentials that can be leveraged for privilege escalation, persistence, lateral movement, or unauthorized access to sensitive resources.
+
+By detecting excessive failed logon attempts at an early stage, Microsoft Sentinel enables security teams to investigate and mitigate password guessing attacks before credentials are compromised, significantly reducing the risk of account takeover and further compromise of the environment.
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
