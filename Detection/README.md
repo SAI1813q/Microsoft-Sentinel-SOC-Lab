@@ -284,27 +284,32 @@ Detecting discovery activity at this stage significantly improves the chances of
 ⬆️ **[Back to Detection Validation Summary](#-detection-validation-summary)**
 
 ---
+
 # 🚨 AS-REP Roasting Detection
 
 ---
 
-# Detection Overview
+## 📖 Detection Overview
 
-**AS-REP Roasting** is a Kerberos attack that targets Active Directory user accounts configured with the **"Do not require Kerberos preauthentication"** option. An attacker can request an Authentication Service Response (AS-REP) from the Domain Controller without providing valid credentials. The returned AS-REP contains an encrypted portion that can be extracted and cracked offline to recover the user's password.
+**AS-REP Roasting** is a Kerberos-based credential access attack that targets Active Directory user accounts configured with the **"Do not require Kerberos preauthentication"** option. Unlike standard Kerberos authentication, these accounts allow attackers to request an Authentication Service Response (AS-REP) from the Domain Controller without first proving knowledge of the account's password.
 
-This Microsoft Sentinel analytics rule detects Kerberos Authentication Service requests where **Kerberos Pre-Authentication is disabled (PreAuthType = 0)**, indicating a potential AS-REP Roasting attempt.
+The returned AS-REP contains encrypted authentication data that can be extracted and subjected to offline password-cracking attacks using tools such as **Hashcat** or **John the Ripper**. If the password is successfully cracked, the attacker may gain unauthorized access to the compromised account, potentially leading to privilege escalation, lateral movement, and further compromise of the Active Directory environment.
+
+This Microsoft Sentinel analytics rule detects **Kerberos Authentication Service Requests (Event ID 4768)** where **PreAuthType = 0**, indicating that Kerberos pre-authentication was not required and a potentially vulnerable account was targeted.
 
 ---
 
-# Attack Scenario
+## 🎯 Attack Scenario
 
-An attacker performs reconnaissance to identify domain accounts that do not require Kerberos pre-authentication. Using offensive tools such as **Rubeus**, **Impacket-GetNPUsers**, or **PowerView**, the attacker requests AS-REP tickets for vulnerable accounts.
+An attacker first identifies Active Directory accounts that have **Kerberos pre-authentication disabled**. This reconnaissance can be performed using offensive tools such as **Rubeus**, **PowerView**, or **Impacket GetNPUsers**.
 
-Since pre-authentication is disabled, the Domain Controller returns an encrypted authentication response without validating the user's password. The attacker exports the Kerberos hash and performs an offline password-cracking attack using tools such as **Hashcat** or **John the Ripper**.
+Once a vulnerable account is identified, the attacker sends an Authentication Service Request (AS-REQ) to the Domain Controller. Because the account does not require Kerberos pre-authentication, the Domain Controller immediately returns an **Authentication Service Response (AS-REP)** containing encrypted credential material.
 
-Microsoft Sentinel monitors Kerberos authentication events and generates an alert whenever an AS-REQ is received without pre-authentication, allowing security analysts to detect credential theft attempts before privilege escalation or lateral movement occurs.
+The attacker then extracts the Kerberos hash from the AS-REP response and performs offline password cracking. If the password is recovered, the compromised account can be used for authentication, privilege escalation, persistence, or lateral movement throughout the Active Directory environment.
 
-**MITRE ATT&CK**
+Microsoft Sentinel continuously monitors Kerberos authentication events and generates a high-severity alert whenever an AS-REQ request is observed without Kerberos pre-authentication, enabling security analysts to detect AS-REP Roasting attempts before credentials are compromised.
+
+### 🎯 MITRE ATT&CK Mapping
 
 | Tactic | Technique | ID |
 |---------|-----------|----|
@@ -313,9 +318,9 @@ Microsoft Sentinel monitors Kerberos authentication events and generates an aler
 
 ---
 
-# Alert Generated
+## 🚨 Alert Generated
 
-## Alert Summary
+### 📋 Alert Summary
 
 | Property | Value |
 |----------|-------|
@@ -330,29 +335,29 @@ Microsoft Sentinel monitors Kerberos authentication events and generates an aler
 | First Activity | Jul 30, 2026 6:28:17 PM |
 | Last Activity | Jul 30, 2026 6:28:17 PM |
 
-### Alert Description
+### 📝 Alert Description
 
-Microsoft Sentinel generated a **High Severity** alert after detecting a Kerberos Authentication Service Request (AS-REQ) for a user account without Kerberos pre-authentication. This behavior is commonly associated with **AS-REP Roasting**, where attackers obtain encrypted Kerberos authentication responses for offline password cracking.
+Microsoft Sentinel generated a **High Severity** alert after detecting a Kerberos Authentication Service Request (AS-REQ) where **Kerberos pre-authentication was disabled**. This behavior is a well-known indicator of an **AS-REP Roasting** attack, in which attackers attempt to obtain Kerberos authentication material for offline password cracking.
 
-### Alert Workflow
+### 🔄 Alert Workflow
 
-```
+```text
 Attacker
       │
       ▼
 AS-REQ without Pre-Authentication
       │
       ▼
-Windows Security Event (4768)
+Windows Security Event ID 4768
       │
       ▼
-Azure Monitor Agent
+Azure Monitor Agent (AMA)
       │
       ▼
 Log Analytics Workspace
       │
       ▼
-Microsoft Sentinel NRT Analytics Rule
+Microsoft Sentinel Analytics Rule
       │
       ▼
 Alert Generated
@@ -361,13 +366,13 @@ Alert Generated
 Incident Created
 ```
 
-> **Screenshot:** Alert Overview
+> 📸 **Screenshot:** Alert Overview
 
 ---
 
-# Incident Created
+## 📋 Incident Created
 
-## Incident Summary
+### 📊 Incident Summary
 
 | Property | Value |
 |----------|-------|
@@ -380,56 +385,45 @@ Incident Created
 | Alerts | 1 |
 | Assets | 1 |
 
-### Incident Correlation
+### 🔍 Incident Correlation
 
-Microsoft Defender XDR automatically correlated the generated alert into **Incident ID 89**, grouping all related telemetry associated with the suspicious Kerberos authentication request.
+Microsoft Defender XDR automatically correlated the generated alert into **Incident ID 89**, consolidating the related security event into a single incident for investigation. This correlation provides analysts with centralized visibility into the alert, associated entities, and supporting telemetry.
 
-The incident contains a single high-severity alert involving the impacted Domain Controller.
-
-> **Screenshot:** Incident Overview
+> 📸 **Screenshot:** Incident Overview
 
 ---
 
-# Attack Story
+## 🕵️ Attack Story
 
-The Attack Story visualizes the relationship between the generated alert and the impacted asset.
+The **Attack Story** provides a visual representation of the incident by mapping the relationships between the generated alert and the impacted asset. It enables analysts to quickly understand how the suspicious Kerberos authentication activity relates to the affected device.
 
-During the attack:
-
-- A Kerberos Authentication Service Request was issued.
-- The target account accepted requests without Kerberos pre-authentication.
-- Microsoft Sentinel detected the abnormal authentication request.
-- Microsoft Defender XDR correlated the alert into a security incident.
-
-### Observed Entity
+### 👀 Observed Entity
 
 | Entity Type | Value |
 |-------------|-------|
 | Device | DC.root.project |
 
-> **Screenshot:** Attack Story
+> 📸 **Screenshot:** Attack Story
 
 ---
 
-# Investigation Graph
+## 🕸️ Investigation Graph
 
-The Investigation Graph provides a graphical relationship between the alert and associated entities.
+The **Investigation Graph** visually connects the alert with associated entities, allowing analysts to pivot between the affected device and related security events. This graphical representation accelerates incident triage and helps identify additional indicators of compromise.
 
-### Observed Entities
+### 🔗 Associated Entity
 
 | Entity | Value |
-|---------|-------|
+|--------|-------|
 | Device | DC.root.project |
 
-The graph enables analysts to quickly pivot from the alert to the affected device and investigate additional related activities occurring on the system.
-
-> **Screenshot:** Investigation Graph
+> 📸 **Screenshot:** Investigation Graph
 
 ---
 
-# Impacted Assets
+## 💻 Impacted Assets
 
-## Device Information
+### 🖥️ Device Information
 
 | Property | Value |
 |----------|-------|
@@ -437,26 +431,19 @@ The graph enables analysts to quickly pivot from the alert to the affected devic
 | Domain | root.project |
 | Risk Level | None |
 
-### User Information
+### 👤 User Information
 
 No user entities were automatically associated with this incident.
 
-> **Screenshot:** Assets
+> 📸 **Screenshot:** Assets
 
 ---
 
-# Evidence & Response
+## 🧾 Evidence & Response
 
-No automated evidence collection or response actions were associated with this incident.
+No automated evidence collection or response actions were associated with this incident. However, the captured Kerberos authentication event provides valuable forensic information regarding the attempted AS-REP Roasting activity.
 
-| Property | Value |
-|----------|-------|
-| Evidence Found | None |
-| Automated Response | None |
-
-Although no evidence was collected, the underlying event contains important Kerberos authentication details.
-
-### Event Highlights
+### 📑 Event Details
 
 | Field | Value |
 |-------|-------|
@@ -464,60 +451,50 @@ Although no evidence was collected, the underlying event contains important Kerb
 | Domain | root.project |
 | Service | krbtgt |
 | PreAuthType | 0 |
-| Ticket Encryption | AES256 (0x12) |
-| Source IP | ::ffff:10.0.0.4 |
+| Ticket Encryption Type | AES256 (0x12) |
+| Source IP Address | ::ffff:10.0.0.4 |
 
-The **PreAuthType = 0** field confirms that Kerberos pre-authentication was disabled for the target account, making it susceptible to AS-REP Roasting.
+The **PreAuthType = 0** value confirms that Kerberos pre-authentication was disabled for the target account, making it susceptible to AS-REP Roasting attacks.
 
-> **Screenshot:** Event XML
+> 📸 **Screenshot:** Event XML
 
 ---
 
-# Activities
+## 📅 Activities
 
-The incident activity log records automated actions performed during incident creation.
+The **Activities** tab records actions automatically performed during incident creation and alert correlation.
 
 | Time | Activity | Performed By | Status |
 |------|----------|--------------|--------|
 | Jul 30, 2026 6:31 PM | Alert automatically correlated to Incident 89 | Microsoft Defender XDR | Completed |
 
-The activity confirms that Microsoft Defender XDR automatically linked the alert to the incident without requiring manual intervention.
+The activity timeline confirms that Microsoft Defender XDR successfully correlated the alert into a single incident without requiring manual analyst intervention.
 
-> **Screenshot:** Activities
-
----
-
-# SOC Analyst Investigation
-
-After reviewing the alert, the following investigative actions should be performed:
-
-- Verify whether the target account (**sqlsvc**) legitimately has Kerberos pre-authentication disabled.
-- Review Active Directory account properties.
-- Determine why pre-authentication is disabled.
-- Review additional Kerberos Event ID **4768** events for the account.
-- Identify the originating source IP address (**10.0.0.4**).
-- Investigate whether multiple AS-REQ requests were issued within a short timeframe.
-- Check for offline password-cracking indicators or subsequent authentication attempts.
-- Review lateral movement activity originating from the attacking host.
-- Enable Kerberos pre-authentication unless there is a documented business requirement.
+> 📸 **Screenshot:** Activities
 
 ---
 
-# Security Impact
+## 🔎 SOC Analyst Investigation
 
-AS-REP Roasting is a highly effective credential access technique because it does not require valid credentials to obtain Kerberos authentication material.
+Following validation of the alert, the SOC analyst should perform the following investigative actions:
 
-If the attacker successfully cracks the retrieved Kerberos hash, they can obtain the plaintext password of the targeted service account, potentially leading to:
-
-- Unauthorized authentication
-- Privilege escalation
-- Lateral movement
-- Persistence within the Active Directory environment
-- Domain compromise
-
-By detecting AS-REQ requests that bypass Kerberos pre-authentication, Microsoft Sentinel enables defenders to identify vulnerable accounts and mitigate credential theft before passwords are successfully cracked.
+- Verify whether the **sqlsvc** account legitimately has Kerberos pre-authentication disabled.
+- Review the account configuration within Active Directory Users and Computers.
+- Investigate the originating source IP address (**10.0.0.4**).
+- Search for additional Event ID **4768** authentication requests involving the same account.
+- Determine whether multiple AS-REQ requests originated from the same host.
+- Review authentication logs for evidence of successful logon attempts after the AS-REP request.
+- Investigate potential lateral movement or privilege escalation activities.
+- Enable Kerberos pre-authentication for the affected account unless a documented business requirement exists.
 
 ---
 
+## 🛡️ Security Impact
 
+AS-REP Roasting is a highly effective **Credential Access** technique because it enables attackers to obtain Kerberos authentication material without possessing valid credentials. Since password cracking occurs offline, organizations may remain unaware of the attack unless Kerberos authentication events are actively monitored.
 
+By detecting Authentication Service Requests where **PreAuthType = 0**, Microsoft Sentinel enables defenders to identify vulnerable accounts, reduce credential exposure, and mitigate the risk of unauthorized access before attackers successfully recover account passwords.
+
+---
+
+⬆️ **[Back to Detection Validation Summary](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)**
