@@ -20,7 +20,7 @@ Each automation documented below includes its purpose, configuration, execution 
 | ⚙️ Automation Rule | [Known IP Address](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Automation%20&%20Playbooks/README.md#%EF%B8%8F-auto-close-known-ip-addresses-vpn) | Automatically updates the incident status for known or trusted IP detections. | ✅ |
 | ⚙️ Automation Rule | [Account Compromise](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Automation%20&%20Playbooks/README.md#%EF%B8%8F-account-compromise-suspected) | Automatically applies contextual tags to account compromise incidents. | ✅ |
 | ⚙️ Automation Rule | [Add Triage Tag](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Automation%20&%20Playbooks/README.md#%EF%B8%8F-add-triage-tag) | Automatically applies triage tags to improve analyst visibility. | ✅ |
-| 📩 Logic App | [SOC Email Notification](#-soc-email-notification) | Sends an automated email notification whenever a Microsoft Sentinel incident is created. | ✅ |
+| 📩 Logic App | [SOC Email Notification](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Automation%20&%20Playbooks/README.md#-logic-app-summary-email-notification) | Sends an automated email notification whenever a Microsoft Sentinel incident is created. | ✅ |
 
 
 ---
