@@ -10,18 +10,18 @@ This project implements both **Microsoft Sentinel Automation Rules** and **Azure
 Each automation documented below includes its purpose, configuration, execution workflow, validation, and supporting screenshots.
 
 ---
-
 # 📋 Playbooks & Automation Summary
 
 | Type | Automation / Playbook | Purpose | Status |
 |------|------------------------|---------|:------:|
-| ⚙️ Automation Rule | [User Added to Local Administrators](User-Added-To-Local-Administrators/README.md) | Automatically assigns privilege escalation incidents to the designated SOC analyst and updates the incident status. | ✅ |
-| ⚙️ Automation Rule | [Brute Force Mitigation](Brute-Force-Mitigation/README.md) | Automatically assigns brute-force incidents to an analyst for investigation. | ✅ |
-| ⚙️ Automation Rule | [Firewall Disabled](Firewall-Disabled/README.md) | Automatically creates an investigation task when firewall tampering is detected. | ✅ |
-| ⚙️ Automation Rule | [Known IP Address](Known-IP-Address/README.md) | Automatically updates incident status for known or trusted IP detections. | ✅ |
-| ⚙️ Automation Rule | [Account Compromise](Account-Compromise/README.md) | Automatically applies contextual tags to suspected account compromise incidents. | ✅ |
-| ⚙️ Automation Rule | [Add Triage Tag](Add-Triage-Tag/README.md) | Automatically applies triage tags to correlation incidents for improved visibility. | ✅ |
-| 📩 Logic App | [SOC Email Notification](Notification-Playbook/README.md) | Sends an automated email notification to the SOC analyst whenever a Microsoft Sentinel incident is created. | ✅ |
+| ⚙️ Automation Rule | [User Added to Local Administrators](#️-user-added-to-local-administrators) | Automatically updates the alert status to **In Progress** and assigns privilege escalation alerts to the designated SOC analyst. | ✅ |
+| ⚙️ Automation Rule | [Brute Force Mitigation](#-brute-force-mitigation) | Automatically assigns brute-force incidents to the designated analyst. | ✅ |
+| ⚙️ Automation Rule | [Firewall Disabled](#-firewall-disabled) | Automatically creates an investigation task when firewall tampering is detected. | ✅ |
+| ⚙️ Automation Rule | [Known IP Address](#-known-ip-address) | Automatically updates the incident status for known or trusted IP detections. | ✅ |
+| ⚙️ Automation Rule | [Account Compromise](#-account-compromise) | Automatically applies contextual tags to account compromise incidents. | ✅ |
+| ⚙️ Automation Rule | [Add Triage Tag](#-add-triage-tag) | Automatically applies triage tags to improve analyst visibility. | ✅ |
+| 📩 Logic App | [SOC Email Notification](#-soc-email-notification) | Sends an automated email notification whenever a Microsoft Sentinel incident is created. | ✅ |
+
 
 ---
 
