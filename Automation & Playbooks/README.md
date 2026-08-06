@@ -231,7 +231,7 @@ Before executing any automated action, the automation evaluates the following co
 - `correaltion 1`
 - `correlation 2`
 - `correaltion 3`
-- `correation 4`
+- `correaltion 4`
 - `correlation 5`
 - `correaltion 6`
 
