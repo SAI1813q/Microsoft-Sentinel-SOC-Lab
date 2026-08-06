@@ -175,4 +175,4 @@ This automation provides several operational benefits:
 
 ---
 
-⬆️ **[Back to Playbooks & Automation Summary](../README.md#-playbooks--automation-summary)**
+⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
