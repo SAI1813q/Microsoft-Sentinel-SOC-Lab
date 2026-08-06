@@ -19,7 +19,7 @@ Each automation documented below includes its purpose, configuration, execution 
 | ⚙️ Automation Rule | [Firewall Disabled](#-firewall-disabled) | Automatically creates an investigation task when firewall tampering is detected. | ✅ |
 | ⚙️ Automation Rule | [Known IP Address](#-known-ip-address) | Automatically updates the incident status for known or trusted IP detections. | ✅ |
 | ⚙️ Automation Rule | [Account Compromise](#-account-compromise) | Automatically applies contextual tags to account compromise incidents. | ✅ |
-| ⚙️ Automation Rule | [Add Triage Tag](#-add-triage-tag) | Automatically applies triage tags to improve analyst visibility. | ✅ |
+| ⚙️ Automation Rule | [Add Triage Tag](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Automation%20&%20Playbooks/README.md#%EF%B8%8F-add-triage-tag) | Automatically applies triage tags to improve analyst visibility. | ✅ |
 | 📩 Logic App | [SOC Email Notification](#-soc-email-notification) | Sends an automated email notification whenever a Microsoft Sentinel incident is created. | ✅ |
 
 
