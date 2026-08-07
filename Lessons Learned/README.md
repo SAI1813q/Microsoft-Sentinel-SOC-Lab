@@ -30,5 +30,3 @@ Building this Microsoft Sentinel SOC Lab involved much more than deploying Azure
 
 - 🚀 **Iterative Development Produces Better Security Solutions**
   - The project continuously evolved through testing, troubleshooting, and refinement. Each iteration resulted in more reliable detections, improved automation, and more meaningful security dashboards.
-
----
