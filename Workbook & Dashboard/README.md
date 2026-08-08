@@ -65,6 +65,8 @@ This workbook acts as the **SOC command-center dashboard**, allowing an analyst 
 ---
 
 [⬆️ Back to Top](#Workbook-Overview)
+
+
 ---
 
 
@@ -120,6 +122,9 @@ This workbook is designed for the **detection and investigation phase of SOC ope
 
 ---
 
+[⬆️ Back to Top](#Workbook-Overview)
+
+---
 # ⚙️ 3. Incident Response & Automation Dashboard
 
 The **Incident Response & Automation Dashboard** provides visibility into the incident lifecycle and automation capabilities implemented in Microsoft Sentinel.
@@ -206,3 +211,10 @@ rather than treating detection as the end of the process.
         ▼                  ▼                  ▼
    SOC Overview      Threat Detection    Incident Response
      Dashboard          Dashboard          & Automation
+```
+
+---
+
+[⬆️ Back to Top](#Workbook-Overview)
+
+---
