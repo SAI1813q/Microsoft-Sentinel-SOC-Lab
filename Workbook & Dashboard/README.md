@@ -62,8 +62,11 @@ The dashboard also tracks lateral movement-related activity:
 This workbook acts as the **SOC command-center dashboard**, allowing an analyst to quickly understand:
 
 > **What is happening, how severe it is, what systems are affected, and which accounts are being targeted.**
-
 ---
+
+[⬆️ Back to Top](#Workbook-Overview)
+---
+
 
 # 🔎 2. Threat Detection Dashboard
 
