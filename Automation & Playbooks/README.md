@@ -31,12 +31,12 @@ Each automation documented below includes its purpose, configuration, execution 
 | Category | Count |
 |----------|------:|
 | Automation Rules | 6 |
-| Logic Apps | 1 |
+| Logic Apps | 2 |
 | Automated Notifications | 1 |
 | Automated Incident Assignment | 2 |
 | Automated Tagging Rules | 2 |
 | Investigation Task Automation | 1 |
-
+| Incident Enrichment & Response Guidance | 1 |
 ---
 # ⚙️ User Added to Local Administrators
 
@@ -976,3 +976,298 @@ The playbook was successfully validated by triggering the **Firewall Disabled** 
 ---
 
 ⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
+
+---
+
+# 🚨 Automated Containment Recommendation
+
+## 📖 Overview
+
+This Azure Logic App provides automated incident enrichment for Microsoft Sentinel incidents by extracting affected account and host entities and adding a standardized containment recommendation as an incident comment.
+
+The playbook is designed to support SOC analysts during the initial triage phase by providing immediate context about the affected identity and endpoint, along with recommended containment actions.
+
+> ⚠️ **Important:** This playbook does **not** automatically disable user accounts or isolate endpoints. It provides recommendations only and requires SOC analyst validation before any containment action is performed.
+
+---
+
+## 🎯 Purpose
+
+This playbook was implemented to improve incident triage and provide standardized containment guidance for security incidents.
+
+Its primary objectives are:
+
+* 👤 Identify the affected account associated with the incident.
+* 💻 Identify the affected host or endpoint.
+* 📝 Automatically add a structured investigation comment to the incident.
+* 🚨 Provide recommended containment actions to the SOC analyst.
+* 🛡️ Prevent unauthorized automated containment by requiring analyst validation.
+* ⚡ Reduce manual effort during initial incident investigation.
+
+---
+
+## ⚡ Trigger
+
+The Logic App is triggered whenever a new Microsoft Sentinel incident is created.
+
+| Setting | Value |
+| --- | --- |
+| Trigger Event | When a Microsoft Sentinel incident is created |
+| Incident Source | Microsoft Sentinel |
+| Trigger Type | Microsoft Sentinel Incident |
+| Execution | Automatic |
+| Response Model | Human-in-the-loop |
+
+---
+
+## 🔍 Entity Extraction
+
+The workflow uses Microsoft Sentinel entity actions to extract contextual information from the incident.
+
+| Entity | Action | Purpose |
+| --- | --- | --- |
+| 👤 Account | `Entities - Get Accounts` | Identifies the affected user/account |
+| 💻 Host | `Entities - Get Hosts` | Identifies the affected endpoint |
+| 📝 Incident | `Microsoft Sentinel Incident` | Provides the incident context |
+
+### 👤 Account Entity
+
+The `Entities - Get Accounts` action extracts account entities associated with the incident.
+
+Example: `ROOT\SecManager`
+
+### 💻 Host Entity
+
+The `Entities - Get Hosts` action extracts host entities associated with the incident.
+
+Example: `Vm1.root.project`
+
+---
+
+## ⚙️ Logic App Workflow
+
+The Logic App consists of the following workflow stages:
+
+### 1️⃣ Microsoft Sentinel Incident Trigger
+
+The workflow begins when a new Microsoft Sentinel incident triggers the Logic App.
+
+The incident context provides the information required for subsequent entity enrichment.
+
+### 2️⃣ Get Account Entities
+
+The `Entities - Get Accounts` action extracts account entities associated with the incident.
+
+The returned account information is used to identify the potentially affected user or identity.
+
+### 3️⃣ Get Host Entities
+
+The `Entities - Get Hosts` action extracts host entities associated with the incident.
+
+The returned host information identifies the endpoint associated with the security event.
+
+### 4️⃣ Compose Incident Context
+
+The Compose action processes and formats the retrieved account and host information for inclusion in the incident comment.
+
+### 5️⃣ Entity Processing
+
+The workflow processes the returned entity information using `For each` actions where required.
+
+This allows the playbook to handle incidents containing multiple account or host entities.
+
+### 6️⃣ Add Comment to Incident
+
+The `Add comment to incident (V3)` action adds the structured containment recommendation directly to the Microsoft Sentinel incident.
+
+---
+
+## 🔄 Automation Workflow
+
+Microsoft Sentinel Incident Created  
+↓  
+Microsoft Sentinel Trigger  
+↓  
+Get Account Entities  
+↓  
+Get Host Entities  
+↓  
+Compose Incident Context  
+↓  
+Generate Containment Recommendation  
+↓  
+Add Comment to Incident  
+↓  
+SOC Analyst Reviews Recommended Actions  
+↓  
+Analyst Validation Required  
+↓  
+Manual Containment if Confirmed Necessary
+
+---
+
+## 📝 Automated Incident Comment
+
+The Logic App automatically adds a standardized containment recommendation to the incident.
+
+The generated comment contains:
+
+* 🚨 Automated Containment Recommendation
+* 👤 Affected account
+* 💻 Affected host
+* 🔍 Recommended SOC investigation actions
+* 🛡️ Analyst validation requirement
+
+The recommendation includes:
+
+**🚨 AUTOMATED CONTAINMENT RECOMMENDATION**
+
+This incident requires SOC investigation.
+
+**Recommended Actions:**
+
+1. Review the affected account for possible compromise.
+2. Review the affected endpoint for malicious activity.
+3. Consider disabling the affected account if compromise is confirmed.
+4. Consider isolating the affected endpoint if malicious activity is confirmed.
+5. Review authentication activity and related security alerts.
+6. Investigate additional indicators associated with the incident.
+
+**👤 Affected Account:** `<Account Entity>`
+
+**💻 Affected Host:** `<Host Entity>`
+
+**⚠️ NO AUTOMATED CONTAINMENT ACTION WAS EXECUTED.**
+
+Account and endpoint containment require SOC analyst validation.
+
+Generated automatically by Microsoft Sentinel SOAR workflow.
+
+---
+
+## 🛡️ Safety & Analyst Validation
+
+This playbook intentionally does **not** perform automatic containment.
+
+The Logic App only provides contextual recommendations to the SOC analyst.
+
+The following actions require analyst validation:
+
+| Recommended Action | Execution |
+| --- | --- |
+| Review affected account | 👨‍💻 SOC Analyst |
+| Disable compromised account | 👨‍💻 SOC Analyst |
+| Isolate affected endpoint | 👨‍💻 SOC Analyst |
+| Review authentication activity | 👨‍💻 SOC Analyst |
+| Investigate related alerts | 👨‍💻 SOC Analyst |
+
+This design prevents potentially legitimate users or endpoints from being automatically disabled or isolated due to a false positive.
+
+---
+
+## 🔐 Human-in-the-Loop Response
+
+The workflow follows a human-in-the-loop response model:
+
+**Detection → Incident Creation → Entity Enrichment → Containment Recommendation → SOC Analyst Validation → Manual Containment**
+
+This approach allows the SOC analyst to validate the incident before performing potentially disruptive actions such as account disabling or endpoint isolation.
+
+---
+
+## ✅ Validation
+
+The playbook was successfully validated by generating a Microsoft Sentinel incident containing both account and host entities.
+
+The following observations confirmed successful execution:
+
+* ✅ The Microsoft Sentinel incident trigger executed successfully.
+* ✅ The affected account entity was successfully extracted.
+* ✅ The affected host entity was successfully extracted.
+* ✅ The Logic App successfully composed the incident context.
+* ✅ The containment recommendation was successfully added to the incident.
+* ✅ The incident displayed the affected account and host.
+* ✅ No automated containment action was executed.
+* ✅ The SOC analyst received standardized containment recommendations.
+
+### Example Validated Output
+
+**Affected Account:** `ROOT\SecManager`
+
+**Affected Host:** `Vm1.root.project`
+
+**NO AUTOMATED CONTAINMENT ACTION WAS EXECUTED.**
+
+Account and endpoint containment require SOC analyst validation.
+
+The successful validation confirms that the playbook can enrich Microsoft Sentinel incidents with actionable containment guidance while maintaining analyst control over response actions.
+
+---
+
+## 📈 Automation Benefits
+
+This playbook provides several operational benefits:
+
+* 🚀 Accelerates initial incident triage.
+* 👤 Provides immediate identity context.
+* 💻 Provides immediate endpoint context.
+* 📝 Standardizes incident documentation.
+* 🛡️ Prevents unsafe automatic containment.
+* 👨‍💻 Keeps containment decisions under SOC analyst control.
+* 🤖 Demonstrates Microsoft Sentinel SOAR capabilities using Azure Logic Apps.
+* 🔗 Demonstrates integration between incident data, entity extraction, and automated response workflows.
+
+---
+
+## 🧠 SOC Workflow Value
+
+This Logic App demonstrates the transition from basic alert detection to automated incident response assistance:
+
+**Detection → Incident → Entity Extraction → Incident Enrichment → Response Recommendation → Analyst Validation → Containment**
+
+This demonstrates how SOAR can reduce repetitive analyst work while keeping high-impact response actions under human control.
+
+---
+
+## 🚀 Future Enhancement
+
+The current implementation intentionally stops at recommendation and analyst validation.
+
+A future version could extend the workflow with controlled containment actions such as:
+
+**Incident → Entity Enrichment → Risk / Detection Validation → SOC Approval → Disable Compromised Account / Isolate Compromised Endpoint**
+
+This would allow the workflow to evolve from **incident enrichment and response guidance** into a controlled automated containment workflow when the required licensing and permissions are available.
+
+---
+
+## 📸 Screenshots
+
+### Logic App Workflow
+
+> Screenshot showing the complete Automated Containment Recommendation Logic App workflow.
+
+### Account Entity Extraction
+
+> Screenshot showing `Entities - Get Accounts` successfully retrieving the affected account.
+
+### Host Entity Extraction
+
+> Screenshot showing `Entities - Get Hosts` successfully retrieving the affected host.
+
+### Compose / Incident Context
+
+> Screenshot showing the extracted account and host information being formatted by the Compose action.
+
+### Incident Comment
+
+> Screenshot showing the automated containment recommendation inside the Microsoft Sentinel incident.
+
+### Successful Validation
+
+> Screenshot showing the successful Logic App run and the generated incident comment.
+
+---
+
+⬆️ [Back to Playbooks & Automation Summary](#-playbooks--automation-summary)
+
