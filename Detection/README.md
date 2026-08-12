@@ -2369,3 +2369,278 @@ If successful and left uninvestigated, this execution could indicate:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+
+# 🚨 Mimikatz Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying **Mimikatz** execution on an endpoint. Mimikatz is a well-known credential dumper capable of extracting plaintext passwords, hashes, PIN codes, and Kerberos tickets from memory.
+
+The analytics rule automatically identified the execution of a suspicious, Base64-encoded PowerShell command commonly associated with script-based Mimikatz deployment (such as `Invoke-Mimikatz`) and generated a **High severity alert**. This allows SOC analysts to immediately investigate critical credential access attempts.
+
+---
+
+## 📖 Attack Scenario
+
+After gaining initial access to a system, attackers frequently attempt to harvest credentials to elevate their privileges and move laterally across the network. To avoid leaving artifacts on the disk that antivirus solutions might detect, adversaries often load Mimikatz directly into memory using PowerShell.
+
+Microsoft Sentinel detected this activity by monitoring endpoint process execution logs for PowerShell instances launched with the `-EncodedCommand` (or `-E`) parameter containing payload signatures recognized as Mimikatz activity.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Mimikatz Detection |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Credential Access |
+| **Analytics Rule** | Mimikatz Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected a PowerShell command line execution indicative of Mimikatz.
+
+The specific command line observed was an encoded PowerShell command:
+`powershell.exe -NoProfile -E VwByAGkAdABlAC0ASABvAHMAdAAgADUANQA3ADEAMAA4ADEANgAtAGUANwAwAdCALQA0ADUANABjAC0AYgAyAGEAMQAtADcANQBlADkANABhAGYAMgA1ADIAMQBjAA==`
+
+The activity involved:
+
+- 👤 **Account:** `WORKGROUP\Vm1$`
+- 💻 **Computer:** `Vm1`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access to host
+          │
+          ▼
+Executes Encoded PowerShell Command
+(Credential Access - In-Memory)
+          │
+          ▼
+Mimikatz loaded into memory
+          │
+          ▼
+Process execution logged by OS
+          │
+          ▼
+Microsoft Sentinel Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 16 |
+| **Incident Name** | Mimikatz Detection |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 16 based on the scheduled detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the credential dumping attempt, the compromised device, and the executing account context.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `WORKGROUP\Vm1$`
+- 💻 **Device:** `Vm1`
+- ⚙️ **Process:** `powershell.exe -NoProfile -E VwByAGkAdABlAC0ASABvAHMAdAA...`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and the account used to run the process.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `WORKGROUP\Vm1$` |
+| **Device** | `Vm1` |
+| **Process** | `powershell.exe` |
+
+The graph allows the SOC analyst to visually pivot between the host, the system account, and the executed encoded process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `WORKGROUP\Vm1$` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `WORKGROUP\Vm1$` |
+| **Computer** | `Vm1` |
+| **Time Generated** | Jul 24, 2026 5:24:55 PM |
+| **Command Line** | `powershell.exe -NoProfile -E <Base64_String>` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Mimikatz Detection' was automatically correlated to incident 16 at Jul 24, 2026 5:30 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Decode the Base64 string from the command line (`VwByAGkAdABlAC0ASABvAHMAdAAgADUANQA3ADE...`) to verify the exact PowerShell commands being executed (e.g., verifying if it is `Invoke-Mimikatz`).
+- 👤 Identify how the `WORKGROUP\Vm1$` system account was leveraged to run the command, which indicates the attacker already possesses elevated/SYSTEM privileges on the host.
+- ⚙️ Identify the parent process of `powershell.exe` to trace the attacker's initial access vector or persistence mechanism.
+- 🔐 Assume all credentials that were active in memory on `Vm1` at the time of execution are compromised. Identify which users were logged into `Vm1` recently.
+- 🚨 Isolate the affected endpoint (`Vm1`) immediately to prevent the attacker from using the stolen credentials to move laterally.
+- 🔑 Force a password reset for any user accounts that had active sessions on `Vm1`.
+
+---
+
+# 🎯 Security Impact
+
+Mimikatz execution is a critical security event that directly leads to credential compromise. 
+
+Detecting this behavior allows SOC analysts to respond to a high-privilege intrusion before the attacker can expand their access across the network.
+
+If successful and left undetected, this execution could lead to:
+
+- 🔑 Plaintext Password and NTLM Hash Theft
+- 🎫 Kerberos Ticket Exfiltration (Pass-the-Ticket)
+- 🔄 Rapid Lateral Movement
+- ⬆️ Privilege Escalation (e.g., Domain Admin compromise)
+- 🏢 Full Network / Active Directory Compromise
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
