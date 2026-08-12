@@ -3192,3 +3192,272 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Network Discovery Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the execution of commands aimed at mapping internal network topologies and connections. Network discovery is a reconnaissance technique used by attackers to understand the environment they have compromised.
+
+The analytics rule automatically identified the execution of native Windows network utilities and generated a **Medium severity alert**. This allows SOC analysts to investigate potential lateral movement preparation.
+
+---
+
+## 📖 Attack Scenario
+
+After gaining initial access to a host, attackers lack knowledge of the surrounding network. To find valuable targets (like Domain Controllers, file shares, or database servers), they frequently use built-in, "Living off the Land" binaries (LOLBins) such as `ipconfig.exe` or `ping.exe`. Because these are standard administrative tools, their execution often blends in with normal system activity.
+
+Microsoft Sentinel detected this reconnaissance phase by monitoring process execution logs for specific commands and arguments that are highly indicative of network mapping behavior.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | network discovery |
+| **Severity** | Medium |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Discovery |
+| **Analytics Rule** | network discovery |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected the execution of commands aimed at mapping internal network topologies and connections.
+
+The specific command line observed in the query results was:
+`"C:\Windows\system32\PING.EXE" 10.0.0.4`
+
+The activity involved:
+
+- 👤 **Account:** `ROOT\SecManager`
+- 💻 **Computer:** `Vm1.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access to endpoint
+          │
+          ▼
+Executes ipconfig / ping commands
+(Discovery / Network Reconnaissance)
+          │
+          ▼
+Process execution logged by OS
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+Medium Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 96 |
+| **Incident Name** | network discovery |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 2 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 96 based on the Near Real-Time (NRT) detection alerts from Microsoft Sentinel. 
+
+The incident successfully grouped 2 active alerts related to network discovery into a single investigation workspace.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\SecManager`
+- 💻 **Device:** `Vm1.root.project`
+- ⚙️ **Process:** 2 Processes identified
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and the context of the user account.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the detailed entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\SecManager` |
+| **Device** | `Vm1.root.project` |
+| **Process 1** | `"C:\Windows\system32\ipconfig.exe"` |
+| **Process 2** | `"C:\Windows\system32\PING.EXE" 10.0.0.4` |
+
+The graph highlights that the user sequentially executed IP configuration checks followed by a targeted ping to `10.0.0.4`.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\SecManager` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified two suspicious process executions as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `ROOT\SecManager` |
+| **Computer** | `Vm1.root.project` |
+| **Time Generated** | Jul 31, 2026 6:25:24 PM |
+| **Command Line** | `"C:\Windows\system32\PING.EXE" 10.0.0.4` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 2 Alerts for 'network discovery' were automatically correlated to the incident.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify with the user (`ROOT\SecManager`) if they were actively troubleshooting network connectivity to `10.0.0.4` during the timeframe.
+- ⚙️ Check the parent processes of `ipconfig.exe` and `ping.exe`. If they were spawned by an interactive command prompt (`cmd.exe`), it might be administrative action; if spawned by a script (`powershell.exe`, `wscript.exe`) or an unusual binary, it is highly suspicious.
+- 🌐 Monitor `Vm1.root.project` for subsequent connections to `10.0.0.4` over protocols like SMB (445), RDP (3389), or SSH (22), which would indicate an attempt to move laterally.
+- 🔍 Look for other reconnaissance commands executed by `ROOT\SecManager` around the same time, such as `netstat`, `arp -a`, `net use`, or `nltest`.
+
+---
+
+# 🎯 Security Impact
+
+While network discovery commands are not inherently destructive, they are a critical precursor to lateral movement and privilege escalation. 
+
+Detecting this behavior allows SOC analysts to identify unauthorized access early in the attack lifecycle.
+
+If this reconnaissance was malicious and left uninvestigated, it could lead to:
+
+- 🎯 Identification of high-value targets (e.g., Domain Controllers, databases)
+- 🔄 Subsequent Lateral Movement to internal subnets
+- 🔑 Focused credential dumping against discovered critical assets
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
