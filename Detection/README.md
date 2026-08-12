@@ -4266,3 +4266,262 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Scheduled Task Created Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the creation of a new Windows Scheduled Task on an endpoint.
+
+The analytics rule automatically identified Event ID 4698 ("A scheduled task was created") and generated a **Medium severity alert**. This allows SOC analysts to investigate potential persistence mechanisms or privilege escalation attempts established by an attacker.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers frequently abuse the Windows Task Scheduler to maintain access to a compromised system across reboots (Persistence) or to execute malicious payloads under a higher-privileged context, such as `NT AUTHORITY\SYSTEM` (Privilege Escalation).
+
+By scheduling a task to run a downloaded binary or an encoded PowerShell script at specific times, upon user logon, or on system startup, the attacker ensures their code continues to run without requiring active interaction.
+
+Microsoft Sentinel detected this activity by monitoring the Windows Security Event Log specifically for Event ID 4698, which is logged whenever a new task is registered with the Task Scheduler service.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | scheduled task created |
+| **Severity** | Medium |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Privilege Escalation, Persistence |
+| **Analytics Rule** | scheduled task created |
+
+---
+
+## Alert Description
+
+The alert was triggered because it "triggers an alert whenever a scheduled task was created".
+
+The specific event generated was Event ID `4698 - A scheduled task was created`.
+
+The activity involved:
+
+- 💻 **Computer:** `Vm1.root.project`
+- ⚙️ **Event ID:** `4698`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access to host
+          │
+          ▼
+Uses schtasks.exe or PowerShell to create a task
+(Persistence / Privilege Escalation)
+          │
+          ▼
+Task Scheduler registers the new task
+          │
+          ▼
+Windows generates Event ID 4698
+          │
+          ▼
+Microsoft Sentinel Scheduled Analytics Rule
+          │
+          ▼
+Medium Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 65 |
+| **Incident Name** | scheduled task created |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 65 based on the scheduled detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the creation of the task and determine its intended execution path on the impacted endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 💻 **Device:** `Vm1.root.project`
+- ⚙️ **Event/Process Entity:** `4698`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **Device** | `Vm1.root.project` |
+| **Event** | `4698` |
+
+The graph allows the SOC analyst to visually pivot between the host and the scheduled task creation event during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution (represented by the PID associated with the event) as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process (identified via Event ID 4698) |
+| **Verdict** | Suspicious |
+| **Computer** | `Vm1.root.project` |
+| **Time Generated** | Jul 28, 2026 9:57:18 PM |
+| **Activity** | `4698 - A scheduled task was created.` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'scheduled task created' was automatically correlated to incident 65 at Jul 28, 2026 10:05 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Extract the raw XML data from Event ID 4698 in Sentinel or the local Event Viewer. This will reveal the critical details: the `TaskName`, the executable or script it is configured to run (`Command`), the arguments (`Arguments`), and the account it runs under (`UserId`).
+- 👤 Identify the user account that *created* the task to determine if it was a legitimate administrator or a compromised account.
+- ⚙️ Analyze the configured `Command` path. If it points to `cmd.exe`, `powershell.exe`, `mshta.exe`, or a binary in a temporary directory (e.g., `C:\Temp\`, `AppData\Local\Temp`), it is highly suspicious.
+- 🌐 Check network logs for any unusual outbound connections originating from the execution of the scheduled task.
+- 🚨 Isolate the affected endpoint (`Vm1.root.project`) if the scheduled task is confirmed malicious.
+- 🛡️ Delete the malicious scheduled task and locate/remove the underlying payload it was configured to execute.
+
+---
+
+# 🎯 Security Impact
+
+Scheduled tasks are one of the most common and reliable methods for attackers to establish a permanent foothold on a system.
+
+Detecting this behavior allows SOC analysts to identify and remove attacker persistence before they can re-establish access after a reboot or connection loss.
+
+If successful and left undetected, this execution could lead to:
+
+- 🛡️ Long-term Persistence (Surviving reboots and logoffs)
+- ⬆️ Privilege Escalation (if the task is set to run as SYSTEM)
+- 📡 Continuous Command and Control (C2) beaconing
+- 📥 Execution of secondary malware payloads on a schedule
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+
+---
