@@ -4800,3 +4800,275 @@ If successful and left undetected, this access could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 User Added to Domain Admins Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a critical Active Directory modification: **a user account being added to the Domain Admins security group**. 
+
+The analytics rule automatically identified Event ID 4728 and generated a **High severity alert**. This allows SOC analysts to immediately investigate potential unauthorized privilege escalation or the creation of a persistent backdoor by an attacker.
+
+---
+
+## 📖 Attack Scenario
+
+After successfully compromising a domain environment, attackers often seek to ensure long-term access (Persistence) and maximum control (Privilege Escalation). One of the most direct ways to achieve this is by adding a standard user account—either an existing compromised account or a newly created "rogue" account—to a highly privileged group like "Domain Admins" or "Enterprise Admins".
+
+Microsoft Sentinel detected this activity by monitoring the Domain Controller's Security Event logs for Event ID 4728, which triggers specifically when a member is added to a security-enabled global group.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | User Added to Domain Admins |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Persistence |
+| **Analytics Rule** | User Added to Domain Admins |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected when a user account is added to the Domain Admins security group. This may indicate privilege escalation or unauthorized administrative access.
+
+The specific event generated was Event ID `4728 - A member was added to a security-enabled global group`.
+
+The activity involved:
+
+- 👤 **Subject Account (The Actor):** `IA123`
+- 👤 **Added User (The Target):** `CN=Soc Analyst L3,CN=Users,DC=root,DC=project`
+- 🛡️ **Group Name:** `Domain Admins`
+- 💻 **Computer:** `DC.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains administrative access to AD
+          │
+          ▼
+Executes command to modify group membership
+(Persistence / Privilege Escalation)
+          │
+          ▼
+"Soc Analyst L3" added to "Domain Admins"
+          │
+          ▼
+Domain Controller logs Event ID 4728
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 73 |
+| **Incident Name** | User Added to Domain Admins |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 73 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the actor (`IA123`) making the change, the Domain Controller where the change occurred, and the implications for the `Soc Analyst L3` account.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User (Actor):** `IA123`
+- 💻 **Device:** `DC.root.project`
+
+This allows analysts to clearly see which account executed the unauthorized change on the Domain Controller.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `IA123` |
+| **Device** | `DC.root.project` |
+
+The graph allows the SOC analyst to visually pivot between the identity that performed the action and the domain infrastructure.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `IA123` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender did not extract separate discrete evidence items (like IP addresses or file hashes) because the event is a native Active Directory configuration change.
+
+However, the query results provided the critical forensic information:
+
+| Property | Value |
+|----------|-------|
+| **Time Generated** | Jul 29, 2026 3:01:43 PM |
+| **Activity** | `4728 - A member was added to a security-enabled global group.` |
+| **Added User** | `CN=Soc Analyst L3,CN=Users,DC=root,DC=project` |
+| **Computer** | `DC.root.project` |
+| **Group Name** | `Domain Admins` |
+| **Subject Account** | `IA123` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'User Added to Domain Admins' was automatically correlated to incident 73 at Jul 29, 2026 3:05 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify with identity management teams if there was an approved change request to grant Domain Admin rights to the `Soc Analyst L3` account.
+- 👤 Investigate the `IA123` account (the actor). Was this account recently compromised? Did it suddenly elevate its own privileges to make this change?
+- ⚙️ Review surrounding logs on `DC.root.project` for Event ID 4720 (User Created) to see if `Soc Analyst L3` was created just moments before being added to the group.
+- 🌐 Monitor the network for immediate lateral movement or data access utilizing the newly empowered `Soc Analyst L3` account.
+- 🚨 If the activity is unauthorized, immediately remove `Soc Analyst L3` from the Domain Admins group.
+- 🔑 Force a password reset and revoke active sessions for both the actor (`IA123`) and the target account (`Soc Analyst L3`).
+
+---
+
+# 🎯 Security Impact
+
+Unmonitored changes to the Domain Admins group represent one of the highest severity risks in a Windows domain environment. 
+
+Detecting this behavior allows SOC analysts to sever an attacker's persistent, highest-level access before they can deploy widespread destructive actions.
+
+If successful and left undetected, this execution could lead to:
+
+- ⬆️ Complete Privilege Escalation (System-wide administrative rights)
+- 🛡️ Indestructible Persistence (Attacker owns the identity infrastructure)
+- 💣 Domain-wide Ransomware deployment capabilities
+- 🎫 Disabling of security tools and creation of golden tickets
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
