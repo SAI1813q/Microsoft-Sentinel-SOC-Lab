@@ -4525,3 +4525,278 @@ If successful and left undetected, this execution could lead to:
 
 
 ---
+# 🚨 SMB Admin Share Access Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying access to administrative SMB shares (such as `ADMIN$`, `C$`, `IPC$`). 
+
+The analytics rule automatically identified a suspicious connection from an endpoint to the `IPC$` share on a Domain Controller and generated a **High severity alert**. This allows SOC analysts to investigate potential lateral movement, remote execution, or reconnaissance activities.
+
+---
+
+## 📖 Attack Scenario
+
+Administrative shares are hidden network shares created by Windows by default. They are intended for remote administration, but attackers frequently abuse them after compromising a privileged account. 
+
+Accessing the `IPC$` (Inter-Process Communication) share specifically is often a precursor to lateral movement tools like PsExec or WMI, as it is used to establish a named pipe connection before transferring payloads or issuing commands to other administrative shares (like `ADMIN$`). 
+
+Microsoft Sentinel detected this activity by monitoring network share access logs (Event ID 5140) directed at critical infrastructure (the Domain Controller).
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | SMB Admin Share Access |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Lateral Movement |
+| **Analytics Rule** | SMB Admin Share Access |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected access to administrative SMB shares for lateral movement.
+
+The query results confirmed a connection to the `IPC$` share. The activity involved:
+
+- 👤 **Account:** `ROOT\VM1$`
+- 💻 **Target Computer:** `DC.root.project`
+- 🌐 **Source IP Address:** `10.0.0.4`
+- 📁 **Share Name:** `\\*\IPC$`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker compromises host and acquires credentials
+          │
+          ▼
+Initiates SMB connection to target host
+(Lateral Movement / Remote Admin Tools)
+          │
+          ▼
+Connects to hidden administrative share (IPC$)
+          │
+          ▼
+Target host logs network share access (Event ID 5140)
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 191 |
+| **Incident Name** | SMB Admin Share Access |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 191 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the compromised source IP, the targeted Domain Controller, and the identity used to facilitate the SMB connection.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\VM1$`
+- 💻 **Device:** `DC.root.project`
+- 🌐 **IP Address:** `10.0.0.4`
+
+This allows analysts to quickly map the trajectory of the lateral movement from the source endpoint to the Domain Controller.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\VM1$` |
+| **Device** | `DC.root.project` |
+| **IP Address** | `10.0.0.4` |
+
+The graph allows the SOC analyst to visually pivot between the source of the attack, the identity utilized, and the targeted asset.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\VM1$` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious IP address and associated share access as part of the evidence.
+
+The query results provided important forensic information regarding the event context:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | IP Address |
+| **Verdict** | Suspicious |
+| **Time Generated** | Aug 1, 2026 7:03:48 PM |
+| **Account** | `ROOT\VM1$` |
+| **Computer** | `DC.root.project` |
+| **IP Address** | `10.0.0.4` |
+| **Share Name** | `\\*\IPC$` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'SMB Admin Share Access' was automatically correlated to incident 191 at Aug 1, 2026 7:07 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the source IP address (`10.0.0.4`). Determine if this endpoint (likely `Vm1`) is supposed to be initiating administrative connections to the Domain Controller.
+- 👤 Analyze the use of the machine account `ROOT\VM1$`. While machine accounts do legitimately communicate with DCs, accessing the `IPC$` share followed by other administrative actions (like Service Creation or scheduled tasks) is highly suspicious and indicates the host `Vm1` is compromised and the attacker has SYSTEM level privileges.
+- 🌐 Monitor `DC.root.project` for subsequent connections from `10.0.0.4` targeting other administrative shares like `ADMIN$` or `C$`.
+- ⚙️ Review Event ID 7045 (Service Creation) or Event ID 4698 (Scheduled Task Creation) on the Domain Controller originating from the `VM1$` account immediately following this SMB access.
+- 🚨 Isolate the source endpoint (`10.0.0.4` / `Vm1`) to halt the lateral movement attempt.
+
+---
+
+# 🎯 Security Impact
+
+Accessing administrative SMB shares is a critical step in most lateral movement playbooks. It is the necessary bridge to execute remote commands or transfer payloads across the network.
+
+Detecting this behavior allows SOC analysts to intercept an attacker traversing the network before they can fully compromise a new, high-value asset.
+
+If successful and left undetected, this access could lead to:
+
+- 🔄 Remote Code Execution (via PsExec, WMI, or Services)
+- 📥 Malicious Payload Deployment (e.g., dropping Ransomware binaries)
+- 🏢 Compromise of the Domain Controller and Active Directory
+- 📤 Data staging and exfiltration
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
