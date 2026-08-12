@@ -358,6 +358,9 @@ Before executing any automated action, the automation evaluates the following co
 
 The automation executes only when **both** conditions are satisfied.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 112450" src="https://github.com/user-attachments/assets/86a1de9d-0f88-491f-8dd0-6c80f0663d69" />
+
+
 ---
 
 ## ⚙️ Automated Actions
@@ -371,6 +374,8 @@ When the configured conditions are met, the automation performs the following ac
 | Comment | `known corporate VPN range` |
 | Rule Execution Order | 3 |
 | Rule Expiration | Indefinite |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 112504" src="https://github.com/user-attachments/assets/c2518df2-44cd-415f-98cd-02fd6ce47153" />
 
 ---
 
@@ -428,17 +433,6 @@ This automation provides several operational benefits:
 
 ---
 
-## 📸 Screenshots
-
-### Trigger & Conditions
-
-> *(Insert Screenshot 2026-08-06 112450.png)*
-
-### Automated Actions
-
-> *(Insert Screenshot 2026-08-06 112504.png)*
-
----
 
 ⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
 
@@ -478,6 +472,9 @@ It evaluates every newly created incident and proceeds only if it originates fro
 | Incident Source | Microsoft Sentinel Analytics Rules |
 | Workspace | LAW-Project1 |
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 112213" src="https://github.com/user-attachments/assets/a245e4a7-cf7d-4567-8238-be072ddc1711" />
+
+
 ---
 
 ## 🔍 Conditions
@@ -502,6 +499,8 @@ When the specified condition is satisfied, the automation automatically performs
 | Add Tag | **Account Compromise Suspected** |
 | Rule Execution Order | 4 |
 | Rule Expiration | Indefinite |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 112220" src="https://github.com/user-attachments/assets/e39e77ae-91c0-440c-861f-9a90f31e0034" />
 
 ---
 
@@ -556,17 +555,6 @@ This automation provides several operational benefits:
 
 ---
 
-## 📸 Screenshots
-
-### Trigger & Conditions
-
-> *(Insert Screenshot 2026-08-06 112213.png)*
-
-### Automated Action Configuration
-
-> *(Insert Screenshot 2026-08-06 112220.png)*
-
----
 
 ⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
 
@@ -606,6 +594,8 @@ It evaluates every newly created incident and proceeds only if it originates fro
 | Incident Source | Microsoft Sentinel Analytics Rules |
 | Workspace | LAW-Project1 |
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 121325" src="https://github.com/user-attachments/assets/d423ce9d-236b-44fb-ad1a-59d88812e41b" />
+
 ---
 
 ## 🔍 Conditions
@@ -629,6 +619,8 @@ When the specified condition is satisfied, the automation automatically performs
 | Assign Incident Owner | Designated SOC Analyst |
 | Rule Execution Order | 1 |
 | Rule Expiration | Indefinite |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 121331" src="https://github.com/user-attachments/assets/d3c0c5fb-796c-468d-b92b-63da76a9b749" />
 
 ---
 
@@ -670,6 +662,8 @@ The following observations confirmed successful execution:
 
 This successful validation confirms that the automation consistently assigns brute force incidents to the appropriate analyst, ensuring rapid incident ownership and investigation.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 121354" src="https://github.com/user-attachments/assets/95e86886-7c2e-4cda-bf5e-6494c95a2ff3" />
+
 ---
 
 ## 📈 Automation Benefits
@@ -684,21 +678,6 @@ This automation provides several operational benefits:
 
 ---
 
-## 📸 Screenshots
-
-### Trigger & Conditions
-
-> *(Insert Screenshot 2026-08-06 121325.png)*
-
-### Automated Action Configuration
-
-> *(Insert Screenshot 2026-08-06 121331.png)*
-
-### Automation Validation
-
-> *(Insert Screenshot 2026-08-06 121354.png)*
-
----
 
 ⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
 
@@ -738,6 +717,8 @@ It evaluates every newly created incident and proceeds only if it originates fro
 | Incident Source | Microsoft Sentinel Analytics Rules |
 | Workspace | LAW-Project1 |
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 200029" src="https://github.com/user-attachments/assets/2747402d-2fbf-4ead-9c1e-c29db8a38214" />
+
 ---
 
 ## 🔍 Conditions
@@ -762,6 +743,8 @@ When the specified condition is satisfied, the automation automatically performs
 | Task Description | Verify whether the firewall was disabled by an authorized administrator. Review the initiating account, affected host, and related security events. Re-enable the firewall if the change was unauthorized and investigate for additional defense evasion activity. |
 | Rule Execution Order | 2 |
 | Rule Expiration | Indefinite |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 113652" src="https://github.com/user-attachments/assets/680301c8-90c4-4417-8221-ca50dd8eafa5" />
 
 ---
 
@@ -815,17 +798,7 @@ This automation provides several operational benefits:
 
 ---
 
-## 📸 Screenshots
 
-### Trigger & Conditions
-
-> *(Insert Screenshot 2026-08-06 200029.png)*
-
-### Automated Action Configuration
-
-> *(Insert Screenshot 2026-08-06 200034.png)*
-
----
 
 ⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
 
@@ -859,6 +832,7 @@ The Logic App is executed by a Microsoft Sentinel Automation Rule with the follo
 - **Action:** Run Logic App **Notification**
 
 Only alerts generated by the **Firewall Disabled** analytic rule invoke this playbook.
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 200126" src="https://github.com/user-attachments/assets/5fc253f1-7fc5-40ee-9186-1229f6cf651f" />
 
 ---
 
@@ -924,6 +898,7 @@ Each notification email contains the following information:
 | 🕒 Time | Alert generation timestamp |
 
 The email concludes with a message indicating that it was automatically generated by the Microsoft Sentinel Logic App.
+<img width="1920" height="1020" alt="Screenshot 2026-08-06 200220" src="https://github.com/user-attachments/assets/fad1a701-5661-40d9-908c-cd05a325aa2e" />
 
 ---
 
@@ -942,18 +917,10 @@ The playbook was successfully validated by triggering the **Firewall Disabled** 
    - 🚨 Severity
    - 📄 Description
    - 🕒 Timestamp
+<img width="1920" height="1021" alt="Screenshot 2026-08-06 200241" src="https://github.com/user-attachments/assets/9b78d2cf-f18e-4439-92c8-380493a8219f" />
 
 ---
 
-## 📸 Screenshots
-
-| Screenshot | Description |
-|------------|-------------|
-| **Screenshot 2026-08-06 200126.png** | Automation Rule configured to execute the **Notification** Logic App when a **Firewall Disabled** alert is created. |
-| **Screenshot 2026-08-06 200131.png** | Logic App Designer showing the workflow consisting of the **Microsoft Sentinel Alert** trigger and **Send an email (V2)** action. |
-| **Screenshot 2026-08-06 200220.png** | Configuration of the **Send an email (V2)** action with dynamically populated alert fields. |
-| **Screenshot 2026-08-06 200241.png** | Successful delivery of the Microsoft Sentinel alert notification email in Outlook. |
----
 
 ⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
 
@@ -1084,6 +1051,10 @@ Analyst Validation Required
 ↓  
 Manual Containment if Confirmed Necessary
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 234036" src="https://github.com/user-attachments/assets/6e7021e2-d944-42e1-9819-ade260f7ea95" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 234030" src="https://github.com/user-attachments/assets/0bbaa205-2f69-4e8f-b619-2b6a6065cdd3" />
+
+
 ---
 
 ## 📝 Automated Incident Comment
@@ -1182,6 +1153,8 @@ Account and endpoint containment require SOC analyst validation.
 
 The successful validation confirms that the playbook can enrich Microsoft Sentinel incidents with actionable containment guidance while maintaining analyst control over response actions.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 234230" src="https://github.com/user-attachments/assets/53ffd0f8-18dd-4684-8009-bf1bba336861" />
+
 ---
 
 ## 📈 Automation Benefits
@@ -1221,33 +1194,6 @@ This would allow the workflow to evolve from **incident enrichment and response 
 
 ---
 
-## 📸 Screenshots
-
-### Logic App Workflow
-
-> Screenshot showing the complete Automated Containment Recommendation Logic App workflow.
-
-### Account Entity Extraction
-
-> Screenshot showing `Entities - Get Accounts` successfully retrieving the affected account.
-
-### Host Entity Extraction
-
-> Screenshot showing `Entities - Get Hosts` successfully retrieving the affected host.
-
-### Compose / Incident Context
-
-> Screenshot showing the extracted account and host information being formatted by the Compose action.
-
-### Incident Comment
-
-> Screenshot showing the automated containment recommendation inside the Microsoft Sentinel incident.
-
-### Successful Validation
-
-> Screenshot showing the successful Logic App run and the generated incident comment.
-
----
 
 ⬆️ [Back to Playbooks & Automation Summary](#-playbooks--automation-summary)
 
