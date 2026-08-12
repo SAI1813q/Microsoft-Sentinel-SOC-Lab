@@ -5072,3 +5072,233 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 User Added to Local Administrators Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a user being added to an administrative group. The analytics rule generated a **High severity alert**.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers may add users to admin groups to maintain persistence or escalate privileges within the environment. The rule explicitly "creates an alert whenever a user is added to admin grp or whenever a user is a made admin".
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | User Added to Local Administrators |
+| **Severity** | High |
+| **Status** | In progress |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Privilege Escalation, Persistence |
+
+---
+
+## Alert Description
+
+The alert description states it "creates an alert whenever a user is added to admin grp or whenever a user is a made admin".
+
+The query results confirmed an Activity ID of `4728 - A member was added to a security-enabled global group.`.
+
+The activity involved:
+
+- 👤 **Subject Account:** `ROOT\IA123`
+- 👤 **Target Account:** `ROOT\Domain Admins`
+- 💻 **Computer:** `DC.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker executes command to modify group membership
+          │
+          ▼
+User is added to an administrative group
+          │
+          ▼
+Event ID 4728 is logged
+          │
+          ▼
+Microsoft Sentinel Scheduled Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 75 |
+| **Incident Name** | User Added to Local Administrators |
+| **Severity** | High |
+| **Status** | Active |
+| **Assigned To** | akashakash91744@gmail.com |
+| **Active Alerts** | 1 |
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\Domain Admins`
+- 💻 **Device:** `DC.root.project`
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\Domain Admins` |
+| **Device** | `DC.root.project` |
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\Domain Admins` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+The query results provided the critical forensic information:
+
+| Property | Value |
+|----------|-------|
+| **Time Generated** | Jul 29, 2026 3:01:43 PM |
+| **Activity** | `4728 - A member was added to a security-enabled global group.` |
+| **Target Account** | `ROOT\Domain Admins` |
+| **Computer** | `DC.root.project` |
+| **Subject Account** | `ROOT\IA123` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'User Added to Local Administrators' was automatically correlated to incident 75 at Jul 29, 2026 3:47 PM.
+- 🤖 An 'Update Alert' activity was recorded at Jul 29, 2026 3:47 PM.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the legitimacy of the administrative action performed by the subject account.
+- ⚙️ Review surrounding logs on the Domain Controller to see if the user addition aligns with approved change management.
+- 🚨 Isolate accounts involved if the activity is deemed unauthorized.
+
+---
+
+# 🎯 Security Impact
+
+Unauthorized additions to administrative groups present a severe risk of privilege escalation and persistence.
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
