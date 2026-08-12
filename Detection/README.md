@@ -2116,3 +2116,256 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+
+# 🚨 Log Cleared Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the clearing of Windows event logs on an endpoint. Clearing event logs is a primary defense evasion technique used by attackers to wipe forensic evidence of their activities, such as lateral movement, credential dumping, or malware execution.
+
+The analytics rule detected an Event ID 1102 ("The audit log was cleared") and automatically generated a **High severity alert**, allowing SOC analysts to investigate the endpoint for preceding malicious behavior.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers frequently use built-in system tools (like `wevtutil.exe` or PowerShell's `Clear-EventLog`) to clear the Security, System, or Application event logs immediately after completing their objectives on a compromised host. By doing so, they eliminate traces of compromised accounts, executed commands, and accessed services.
+
+Microsoft Sentinel detected this activity by monitoring Windows Event Logs for specific Event IDs—most notably Event ID 1102 (audit log cleared) or Event ID 104 (log file cleared)—indicating an intentional disruption of endpoint logging.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Log Cleared |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Defense evasion |
+| **Analytics Rule** | Log Cleared |
+
+---
+
+## Alert Description
+
+The alert was triggered because "whenever logs are cleared it generates an alert". 
+
+The specific event generated was Event ID `1102 - The audit log was cleared`.
+
+The activity involved:
+
+- 💻 **Computer:** `Vm1`
+- ⚙️ **Event ID:** `1102`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker compromises host / executes malicious actions
+          │
+          ▼
+Executes log clearing commands
+(Defense Evasion - T1070.001)
+          │
+          ▼
+Windows generates Event ID 1102
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 25 |
+| **Incident Name** | Log Cleared |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 25 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with the necessary workspace to investigate why the logs were cleared on the impacted endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 💻 **Device:** `Vm1`
+- ⚙️ **Event/Process Entity:** `1102`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **Device** | `Vm1` |
+| **Event** | `1102` |
+
+The graph allows the SOC analyst to visually pivot between the host and the log-clearing event during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified suspicious activity as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process (identified via Event ID 1102) |
+| **Verdict** | Suspicious |
+| **Computer** | `Vm1` |
+| **Time Generated** | Jul 24, 2026 5:55:30 PM |
+| **Activity** | `1102 - The audit log was cleared.` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Log Cleared' was automatically correlated to incident 25 at Jul 24, 2026 5:58 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Determine which user account was active on `Vm1` at the time the logs were cleared.
+- ⚙️ Check if the log clearing was part of a scheduled administrative task or script (though this is rare for security logs).
+- 🔍 Hunt for any surviving forensic artifacts or alerts on `Vm1` immediately prior to the log clearing event (e.g., failed logins, suspicious PowerShell execution, or lateral movement attempts).
+- 🌐 Correlate network traffic logs (firewall, proxy) from `Vm1` to see if there was Command and Control (C2) communication or data exfiltration just before the wipe.
+- 🚨 Isolate the affected endpoint (`Vm1`) immediately, as log clearing is highly indicative of an active, human-driven intrusion.
+- 🛡️ Review central log repositories (like Sentinel workspaces) to reconstruct the attacker's actions prior to the local log destruction.
+
+---
+
+# 🎯 Security Impact
+
+Clearing event logs is a critical defense evasion tactic that blinds local forensic tools and removes evidence of an attacker's foothold.
+
+Detecting this behavior allows SOC analysts to identify that an endpoint is likely heavily compromised, even if the primary malicious actions were hidden.
+
+If successful and left uninvestigated, this execution could indicate:
+
+- 🥷 Successful Defense Evasion
+- 🔑 Hidden Credential Compromise
+- 🔄 Unseen Lateral Movement
+- 💣 Preparation for a destructive payload (e.g., Ransomware)
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
