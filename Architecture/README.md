@@ -84,34 +84,50 @@ This project replicates a production enterprise security operations setup. It de
 
 
 * **Virtual Machine Specifications (`Vm1`):**
-  ![VM1 Properties](./images/Screenshot%202026-08-05%20192429.png)
+  ![VM1 Properties]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192455" src="https://github.com/user-attachments/assets/4369aca4-f895-4fbb-92ac-51475b088b34" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192451" src="https://github.com/user-attachments/assets/1fd683ac-022b-4032-a095-bafbea0430d7" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192435" src="https://github.com/user-attachments/assets/1386db52-4d26-4b9c-be54-6966d44bb0eb" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192429" src="https://github.com/user-attachments/assets/b9d659dc-7560-4933-a2a1-73040a7d76e1" />
+
 
 * **VM1 Agent Extensions:**
   ![VM1 Extensions](./images/Screenshot%202026-08-05%20192455.png)
 
 * **Domain Controller Setup (`DC`):**
-  ![DC Properties](./images/Screenshot%202026-08-05%20192402.png)
+  ![DC Properties]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192408" src="https://github.com/user-attachments/assets/7a398bd2-53db-455f-9fcf-c6d4b71e6e08" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192402" src="https://github.com/user-attachments/assets/46b543db-a796-4687-ba0c-04c28a387602" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192342" src="https://github.com/user-attachments/assets/467cae40-70cc-4e9f-84e1-b83793cfc654" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192413" src="https://github.com/user-attachments/assets/0a82020d-194b-450d-9479-f023d08aeaba" />
+
 
 * **Active Directory Users and Computers (ADUC):**
   ![Active Directory Users and Groups](./images/WhatsApp%20Image%202026-08-05%20at%207.57.56%20PM.jpeg)
 
 * **Virtual Network Topology (`VNet1`):**
-  ![VNet Configuration](./images/Screenshot%202026-08-05%20193823.png)
+  ![VNet Configuration]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193823" src="https://github.com/user-attachments/assets/a4e01e9b-9a26-4fd5-b189-24215a0e5b64" />
+
 
 * **Network Security Groups:**
-  ![NSGs](./images/Screenshot%202026-08-05%20193853.png)
+  ![NSGs]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193853" src="https://github.com/user-attachments/assets/233890b0-f778-422d-ba1e-f5d615a50271" />
+
 
 * **Microsoft Sentinel Workspace & Defender XDR Integration:**
-  ![Sentinel Defender Hub](./images/Screenshot%202026-08-05%20192743.jpg)
+  ![Sentinel Defender Hub]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192743" src="https://github.com/user-attachments/assets/fd58fd3f-c214-45c3-b21f-2671701c8b7c" /><img width="1920" height="1020" alt="Screenshot 2026-08-05 193204" src="https://github.com/user-attachments/assets/2c0ba554-8b6b-4d34-845c-b936652ae2e7" />
+
+
 
 * **Content Hub & Windows Security Events Solution:**
-  ![Content Hub](./images/Screenshot%202026-08-05%20193455.png)
+  ![Content Hub]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193455" src="https://github.com/user-attachments/assets/32225039-7bf4-4b2e-b18d-a81f8a633e79" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 193512" src="https://github.com/user-attachments/assets/0556a5c4-5567-4d83-a48a-d72de6931046" />
+
 
 * **Data Collection Rules (DCR) Scope Configuration:**
-  ![DCR Wizard Scope](./images/Screenshot%202026-08-05%20193622.png)
+  ![DCR Wizard Scope]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193622" src="https://github.com/user-attachments/assets/4572dc20-211e-4092-aeb2-4d1f23e83244" /><img width="1920" height="1020" alt="Screenshot 2026-08-05 193550" src="https://github.com/user-attachments/assets/d2a40419-5688-47ce-8d0b-56d644db0449" />
+
+
 
 * **Logic Apps Automation Playbooks (`Notification`):**
-  ![Logic Apps Run History](./images/Screenshot%202026-08-05%20193713.png)
+  ![Logic Apps Run History]
 
 ---
 
