@@ -5302,3 +5302,232 @@ Unauthorized additions to administrative groups present a severe risk of privile
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 User Created Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the creation of a new user account. The analytics rule generated a **Medium severity alert**.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers often create new local or domain user accounts to establish persistence within a compromised environment. The rule explicitly "creates an alert whenever a new local user is created".
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | user created |
+| **Severity** | Medium |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Persistence |
+
+---
+
+## Alert Description
+
+The alert description states it "creates an alert whenever a new local user is created".
+
+The query results confirmed an Activity ID of `4720 - A user account was created.`.
+
+The activity involved:
+
+- 👤 **Subject Account:** `ROOT\IA123`
+- 👤 **Target Account:** `ROOT\sqlsvc`
+- 💻 **Computer:** `DC.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker executes command to create a new user account
+          │
+          ▼
+New user account is created on the system
+          │
+          ▼
+Event ID 4720 is logged
+          │
+          ▼
+Microsoft Sentinel Scheduled Analytics Rule
+          │
+          ▼
+Medium Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 74 |
+| **Incident Name** | user created |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\sqlsvc`
+- 💻 **Device:** `DC.root.project`
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\sqlsvc` |
+| **Device** | `DC.root.project` |
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\sqlsvc` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+The query results provided the critical forensic information:
+
+| Property | Value |
+|----------|-------|
+| **Time Generated** | Jul 29, 2026 3:17:05 PM |
+| **Activity** | `4720 - A user account was created.` |
+| **Target Account** | `ROOT\sqlsvc` |
+| **Computer** | `DC.root.project` |
+| **Subject Account** | `ROOT\IA123` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'user created' was automatically correlated to incident 74 at Jul 29, 2026 3:25 PM.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the legitimacy of the user creation action performed by the subject account.
+- ⚙️ Review surrounding logs on the Domain Controller to see if the user addition aligns with approved change management.
+- 🚨 Disable the new account and isolate related accounts if the activity is deemed unauthorized.
+
+---
+
+# 🎯 Security Impact
+
+Unauthorized user creation presents a risk of persistence, allowing attackers to maintain access even if their initial entry point is remediated.
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
