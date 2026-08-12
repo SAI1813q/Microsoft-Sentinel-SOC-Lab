@@ -2644,3 +2644,275 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Mshta Execution Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the execution of **Mshta.exe**. Mshta is a legitimate Windows utility designed to execute Microsoft HTML Applications (.hta files). However, attackers frequently abuse it as a "Living off the Land" binary (LOLBin) to proxy the execution of malicious scripts (like VBScript or JScript) while evading application whitelisting and traditional antivirus solutions.
+
+The analytics rule automatically identified the suspicious execution of `mshta.exe` and generated a **High severity alert**, allowing SOC analysts to investigate the potentially malicious payload.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers commonly use `mshta.exe` for Defense Evasion. Because it is a signed, native Windows execution tool, running scripts through it can bypass security controls that block unauthorized executables. In this scenario, `mshta.exe` was used to execute a local `.hta` file, which typically contains embedded scripts designed to establish a foothold, download additional payloads, or execute discovery commands.
+
+Microsoft Sentinel detected this activity by monitoring process execution logs for the invocation of `mshta.exe` with command-line arguments pointing to script files.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Mshta Execution |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Defense Evasion |
+| **Analytics Rule** | Mshta Execution |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected a suspicious `mshta.exe` process execution.
+
+The specific command line observed was:
+`"C:\Windows\system32\mshta.exe" "\\Vm1\C$\Users\Sia123\AppData\Local\Temp\Test.hta"`
+
+The activity involved:
+
+- 👤 **Account:** `WORKGROUP\Vm1$`
+- 💻 **Computer:** `Vm1`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker drops or points to an .hta payload
+          │
+          ▼
+Executes mshta.exe with payload path
+(Defense Evasion)
+          │
+          ▼
+Malicious script runs within mshta process
+          │
+          ▼
+Process execution logged by OS
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 28 |
+| **Incident Name** | Mshta Execution |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 4 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 28 based on the Near Real-Time (NRT) detection alerts from Microsoft Sentinel. 
+
+The incident grouped 4 active alerts related to Mshta Execution into a single workspace, indicating multiple triggers or repeated attempts to execute the payload.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `WORKGROUP\Vm1$`
+- 💻 **Device:** `Vm1`
+- ⚙️ **Process:** `"C:\Windows\system32\mshta.exe" "\\Vm1\C$\Users\Sia123\AppData\Loc...`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and the context of the system account used.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `WORKGROUP\Vm1$` |
+| **Device** | `Vm1` |
+| **Process** | `mshta.exe` |
+
+The graph allows the SOC analyst to visually pivot between the user, the host, and the executed process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `WORKGROUP\Vm1$` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `WORKGROUP\Vm1$` |
+| **Computer** | `Vm1` |
+| **Time Generated** | Jul 24, 2026 5:57:42 PM |
+| **Command Line** | `"C:\Windows\system32\mshta.exe" "\\Vm1\C$\Users\Sia123\AppData\Local\Temp\Test.hta"` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 4 Alerts for 'Mshta Execution' were automatically correlated to incident 28.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Isolate and retrieve the `Test.hta` file from `\\Vm1\C$\Users\Sia123\AppData\Local\Temp\` to analyze its embedded scripts (e.g., VBScript or JavaScript) and determine its true intent.
+- ⚙️ Identify the parent process that invoked `mshta.exe` to uncover the initial access or delivery vector (e.g., a phishing document, a scheduled task, or another malicious script).
+- 👤 Investigate the context of the `WORKGROUP\Vm1$` account being used, which may indicate systemic or elevated execution on the host.
+- 🌐 Monitor `Vm1` for subsequent suspicious network connections (C2 traffic) or child processes spawned by `mshta.exe` (like `cmd.exe` or `powershell.exe`).
+- 🚨 Isolate the affected endpoint (`Vm1`) if the `.hta` payload is confirmed malicious to prevent lateral movement or further malware staging.
+
+---
+
+# 🎯 Security Impact
+
+Using `mshta.exe` is a prominent defense evasion tactic designed to hide malicious activity within a trusted Microsoft process.
+
+Detecting this behavior allows SOC analysts to intercept an attack that might otherwise bypass file-based antivirus signatures or AppLocker restrictions.
+
+If successful and left undetected, this execution could lead to:
+
+- 🥷 Defense Evasion and successful payload execution
+- 📥 Download and execution of secondary malware (e.g., Ransomware, RATs)
+- 📡 Establishing Command and Control (C2) Communication
+- 🛡️ Establishing Persistence via startup folders or registry keys
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
