@@ -44,12 +44,13 @@ This project replicates a production enterprise security operations setup. It de
 ## 📡 Log Collection Architecture
 * **Azure Monitor Agent (AMA):** Modern log forwarding agents deployed across Windows virtual machines.
 * **Data Collection Rules (DCR):** Configured via `dcr-windows` to stream granular Windows Security Events directly into the cloud workspace.
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 193204" src="https://github.com/user-attachments/assets/2c0ba554-8b6b-4d34-845c-b936652ae2e7" />
 
----
 
 ## 🛡️ Microsoft Sentinel & Unified SecOps (Defender XDR)
 * **Workspace Integration:** Connected through `LAW-Project1` in Central India, bridging Azure Sentinel analytics into the unified Microsoft Defender portal interface.
-* **Content Hub Solutions:** Deployed out-of-the-box and customized analytics including *Windows Security Events via AMA*, threat detection rules, and advanced hunting packages.
+* **Content Hub Solutions:** Deployed out-of-the-box and customized analytics including *Windows Security Events via AMA*, threat detection rules, and advanced hunting packages.<img width="1920" height="1020" alt="Screenshot 2026-08-05 192743" src="https://github.com/user-attachments/assets/fd58fd3f-c214-45c3-b21f-2671701c8b7c" />
+
 
 ---
 
@@ -60,7 +61,7 @@ This project replicates a production enterprise security operations setup. It de
 
 ## 📥 Data Collection Rules (DCR)
 * **Targeted Ingestion Rules:** Configured via `dcr-windows` targeting scope subscriptions and specific resource groups (`ResourceGrp`) for `DC` and `Vm1`.
-<img width="1920" height="1020" alt="Screenshot 2026-08-05 193622" src="https://github.com/user-attachments/assets/4572dc20-211e-4092-aeb2-4d1f23e83244" />
+
 ---
 
 ## 🤖 Automation Components
@@ -113,8 +114,7 @@ This project replicates a production enterprise security operations setup. It de
 
 
 * **Microsoft Sentinel Workspace & Defender XDR Integration:**
-  ![Sentinel Defender Hub]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192743" src="https://github.com/user-attachments/assets/fd58fd3f-c214-45c3-b21f-2671701c8b7c" />
-
+  ![Sentinel Defender Hub]
 
 
 * **Content Hub & Windows Security Events Solution:**
