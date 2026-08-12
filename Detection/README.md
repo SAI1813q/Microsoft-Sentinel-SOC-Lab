@@ -22,7 +22,7 @@ Each alert includes enriched entities, related events, and investigation context
 | **[New Windows Service Installed](#-new-windows-service-installed)** | High | ✅ Yes | ✅ Validated | Generated after installation of a new Windows service. |
 | **[Scheduled Task Creation](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-scheduled-task-created-detection)** | Medium | ✅ Yes | ✅ Validated | Generated when a new scheduled task was created on the monitored endpoint. |
 | **[Suspicious Discovery Commands](#-suspicious-discovery-commands)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of common Windows reconnaissance commands. |
-| **[Domain Admin Group Modification](#-domain-admin-group-modification)** | Critical | ✅ Yes | ✅ Validated | Generated when a privileged Active Directory group membership was modified. |
+| **[Domain Admin Group Modification](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-user-added-to-local-administrators-detection)** | Critical | ✅ Yes | ✅ Validated | Generated when a privileged Active Directory group membership was modified. |
 | **[AS-REP Roasting Detection](#-as-rep-roasting-detection)** | High | ✅ Yes | ✅ Validated | Generated when an AS-REQ without Kerberos pre-authentication was detected, indicating a potential AS-REP Roasting attack targeting accounts with pre-authentication disabled. |
 
 ---
