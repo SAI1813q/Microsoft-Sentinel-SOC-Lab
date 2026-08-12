@@ -11,19 +11,29 @@ Each alert includes enriched entities, related events, and investigation context
 | Alert | Severity | Incident Created | Validation Status | Description |
 |-------|----------|------------------|-------------------|-------------|
 | **[Brute Force Login Detection](#-brute-force-login-detection)** | High | ✅ Yes | ✅ Validated | Generated after multiple failed Windows logon attempts exceeded the configured threshold. |
-| **[Successful Login After Brute Force](#-successful-login-after-brute-force)** | High | ✅ Yes | ✅ Validated | Generated when a successful authentication followed repeated failed logon attempts. |
 | **[New Local User Creation](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-user-created-detection)** | Medium | ✅ Yes | ✅ Validated | Generated when a new local user account was created on a monitored endpoint. |
 | **[Encoded PowerShell Detection](#-encoded-powershell-detection)** | High | ✅ Yes | ✅ Validated | Generated after execution of a Base64-encoded PowerShell command. |
 | **[Download Cradle Detection](#-download-cradle-detection)** | High | ✅ Yes | ✅ Validated | Generated when PowerShell attempted to download remote content from an external source. |
 | **[Mimikatz Detection](#-mimikatz-detection)** | High | ✅ Yes | ✅ Validated | Generated after execution of the Mimikatz credential dumping tool. |
 | **[PsExec Detection](#-psexec-detection)** | High | ✅ Yes | ✅ Validated | Generated when PsExec was used to execute commands remotely. |
-| **[Registry Run Key Persistence](#-registry-run-key-persistence)** | High | ✅ Yes | ✅ Validated | Generated after persistence was established using Windows Run Registry Keys. |
 | **[Event Log Cleared Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-log-cleared-detection)** | High | ✅ Yes | ✅ Validated | Generated when Windows Event Logs were cleared to remove forensic evidence. |
-| **[New Windows Service Installed](#-new-windows-service-installed)** | High | ✅ Yes | ✅ Validated | Generated after installation of a new Windows service. |
 | **[Scheduled Task Creation](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-scheduled-task-created-detection)** | Medium | ✅ Yes | ✅ Validated | Generated when a new scheduled task was created on the monitored endpoint. |
 | **[Suspicious Discovery Commands](#-suspicious-discovery-commands)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of common Windows reconnaissance commands. |
-| **[Domain Admin Group Modification](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-user-added-to-local-administrators-detection)** | Critical | ✅ Yes | ✅ Validated | Generated when a privileged Active Directory group membership was modified. |
+| **[Domain Admin Group Modification](#-domain-admin-group-modification)** | Critical | ✅ Yes | ✅ Validated | Generated when a privileged Active Directory group membership was modified. |
 | **[AS-REP Roasting Detection](#-as-rep-roasting-detection)** | High | ✅ Yes | ✅ Validated | Generated when an AS-REQ without Kerberos pre-authentication was detected, indicating a potential AS-REP Roasting attack targeting accounts with pre-authentication disabled. |
+| **[Correlation 3](#-correlation-3)** | High | ✅ Yes | ✅ Validated | Generated after correlating high-confidence multi-stage attack sequences. |
+| **[Firewall Disabled](#-firewall-disabled)** | Medium | ✅ Yes | ✅ Validated | Generated after system modifications that turn off or impair the Windows Defender Firewall. |
+| **[Kerberoasting Detection](#-kerberoasting-detection)** | High | ✅ Yes | ✅ Validated | Generated when attempts to request Kerberos service tickets for offline password cracking were detected. |
+| **[Mshta Execution](#-mshta-execution)** | High | ✅ Yes | ✅ Validated | Generated after suspicious execution of `mshta.exe` utilizing local scripts or remote payloads. |
+| **[Pass-the-Hash Detection](#-pass-the-hash-detection)** | High | ✅ Yes | ✅ Validated | Generated after detecting anomalous NTLM network authentication patterns indicating lateral movement. |
+| **[Network Discovery](#-network-discovery)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of commands aimed at mapping internal network topologies and connections. |
+| **[Password Spray Detection](#-password-spray-detection)** | High | ✅ Yes | ✅ Validated | Generated when password spraying was detected across multiple accounts from a single IP address. |
+| **[PowerShell Download](#-powershell-download)** | High | ✅ Yes | ✅ Validated | Generated when PowerShell execution was used specifically to download files from remote locations. |
+| **[SMB Admin Share Access](#-smb-admin-share-access)** | High | ✅ Yes | ✅ Validated | Generated when access to administrative SMB shares (e.g., C$, ADMIN$, IPC$) was detected for lateral movement. |
+| **[User Added to Local Administrators](#-user-added-to-local-administrators)** | High | ✅ Yes | ✅ Validated | Generated whenever a user was added to an administrative group or made an administrator. |
+| **[WMI Lateral Movement Detection](#-wmi-lateral-movement-detection)** | High | ✅ Yes | ✅ Validated | Generated after identifying suspicious WMI process execution patterns indicative of remote execution. |
+| **[Active Directory Computer Enumeration Detected](#-active-directory-computer-enumeration-detected)** | Medium | ✅ Yes | ✅ Validated | Generated when discovery or enumeration queries are executed to map out computers within Active Directory. |
+| **[Certutil Download](#-certutil-download)** | High | ✅ Yes | ✅ Validated | Generated when the native `certutil.exe` utility is abused to download files or payloads from remote servers. |
 
 ---
 
