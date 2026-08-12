@@ -315,29 +315,7 @@ This automation provides several operational benefits:
 
 ---
 
-## 📸 Screenshots
 
-### Trigger & Initial Conditions
-
-> *(Insert Screenshot 2026-08-06 111310.png)*
-
-### Analytics Rule Conditions
-
-> *(Insert Screenshot 2026-08-06 111327.png)*
-
-### Automated Action Configuration
-
-> *(Insert Screenshot 2026-08-06 111336.png)*
-
-### Automation Validation
-
-> *(Insert Screenshot 2026-08-06 111437.png)*
-
----
-
-⬆️ **[Back to Playbooks & Automation Summary](#-playbooks--automation-summary)**
-
----
 # ⚙️ Auto-Close Known IP Addresses (VPN)
 
 ## 📖 Overview
