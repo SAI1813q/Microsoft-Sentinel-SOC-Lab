@@ -1856,3 +1856,263 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+
+# 🚨 Kerberoasting Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a potential **Kerberoasting** attack. Kerberoasting is a post-exploitation technique where an attacker requests Kerberos Service Tickets (TGS) for service accounts with Service Principal Names (SPNs) and then attempts to crack the passwords offline.
+
+The analytics rule automatically identified the suspicious Kerberos ticket request (often indicated by specific encryption types like RC4 being requested for service accounts) and generated a **High severity alert**, allowing SOC analysts to investigate the compromised account and targeted service.
+
+---
+
+## 📖 Attack Scenario
+
+Once an attacker compromises any valid domain user account, they can query Active Directory for accounts with associated SPNs (typically service accounts, which often have weak, non-expiring passwords). The attacker then requests a Kerberos TGS for that service. 
+
+Active Directory encrypts the ticket using the service account's password hash and sends it back to the attacker. The attacker extracts this ticket from memory and uses offline brute-force tools (like Hashcat or John the Ripper) to crack the hash and retrieve the plain-text password, often leading to privilege escalation.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Kerberoasting Detection |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Credential Access |
+| **Analytics Rule** | Kerberoasting Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected attempts to request Kerberos service tickets for offline password cracking.
+
+The specific event data revealed an unusual ticket request for a service principal.
+
+The activity involved:
+
+- 👤 **Target User:** `L1Soc@ROOT.PROJECT`
+- ⚙️ **Service Name:** `sqlsvc`
+- 💻 **Computer:** `DC.root.project`
+- 🌐 **Source IP:** `::ffff:10.0.0.4`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains standard user access
+          │
+          ▼
+Queries AD for SPNs (Service Accounts)
+          │
+          ▼
+Requests TGS ticket for targeted SPN
+(Credential Access)
+          │
+          ▼
+AD returns ticket encrypted with service hash
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 92 |
+| **Incident Name** | Kerberoasting Detection |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 92 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with the necessary workspace to investigate the compromised account used to request the ticket, the targeted domain controller, and the specific service account at risk.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 💻 **Device:** `DC.root.project`
+- 🚨 **Correlated Alerts**
+
+This allows analysts to quickly understand the endpoint involved in handling the Kerberos ticket requests.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **Device** | `DC.root.project` |
+
+The graph allows the SOC analyst to visually pivot around the affected Domain Controller during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender's query results provided important forensic information embedded in the raw EventData XML.
+
+| Property | Value |
+|----------|-------|
+| **Time Generated** | Jul 30, 2026 6:32:46 PM |
+| **Computer** | `DC.root.project` |
+| **Target User Name** | `L1Soc@ROOT.PROJECT` |
+| **Service Name** | `sqlsvc` |
+| **Ticket Encryption Type**| `0x12` |
+| **IP Address** | `::ffff:10.0.0.4` |
+
+*Note: The Ticket Encryption Type `0x12` often correlates with RC4 encryption (AES is generally preferred), which is commonly targeted by attackers for easier offline cracking.*
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Kerberoasting Detection' was automatically correlated to incident 92.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the source IP (`::ffff:10.0.0.4`) and the user account (`L1Soc@ROOT.PROJECT`) that initiated the ticket request to determine if the activity is legitimate.
+- ⚙️ Identify the targeted service account (`sqlsvc`) and assess its privilege level within the domain (e.g., Domain Admin, Local Admin on specific servers).
+- 🔐 Check if the targeted service account uses a weak, easily crackable password or if it is enforcing AES encryption for Kerberos.
+- 👤 Look for subsequent suspicious logins or activities originating from the targeted service account (`sqlsvc`), which would indicate the password was successfully cracked and used.
+- 🚨 Reset the password of the targeted service account (`sqlsvc`) immediately using a complex, randomly generated password greater than 25 characters.
+- 🛡️ Consider configuring the service account to support AES encryption and disable RC4 to make offline cracking significantly harder.
+
+---
+
+# 🎯 Security Impact
+
+Kerberoasting is a critical credential access technique because it does not require administrative privileges to execute—any valid domain user can request service tickets.
+
+Detecting this behavior allows SOC analysts to intercept an attacker before they can escalate privileges.
+
+If successful and left undetected, this execution could lead to:
+
+- 🔑 Credential Compromise of highly privileged service accounts
+- ⬆️ Rapid Privilege Escalation
+- 🔄 Lateral Movement using the compromised service account
+- 🏢 Full Domain Compromise
+- 📤 Data Exfiltration
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
