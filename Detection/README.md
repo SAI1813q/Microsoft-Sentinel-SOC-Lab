@@ -3461,3 +3461,259 @@ If this reconnaissance was malicious and left uninvestigated, it could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Password Spray Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a potential **Password Spray** attack. A password spray is a type of brute-force attack where an attacker attempts to access a large number of accounts (usernames) with a few commonly used passwords, avoiding standard account lockout policies that trigger after multiple failed attempts on a single account.
+
+The analytics rule automatically identified multiple failed authentication attempts targeting different accounts originating from a single IP address. It generated a **High severity alert**, allowing SOC analysts to investigate the source of the authentication attempts and determine if any accounts were successfully compromised.
+
+---
+
+## 📖 Attack Scenario
+
+To bypass traditional brute-force protections (which lock an account after 3-5 bad attempts), attackers "spray" one or two common passwords (e.g., "Welcome123!", "Summer2026") across hundreds of known usernames. 
+
+Microsoft Sentinel detected this activity by monitoring authentication logs and correlating multiple failed login events (`FailedUsers: 3`, `FailedAttempts: 4`) against multiple target accounts (`\TEST`, `\ADMINISTRATOR`, `\ADMIN`) coming from the exact same external source IP (`103.176.46.208`) within a short timeframe (approximately 3 minutes).
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Password Spray Detection |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Credential Access |
+| **Analytics Rule** | Password Spray Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered based on the rule definition: "generate alert if passowrd spary is detected for multiple accounts from single ip address".
+
+The query results confirmed multiple failed attempts. The activity involved:
+
+- 🌐 **Source IP Address:** `103.176.46.208`
+- 👤 **Targeted Accounts:** `["\\TEST", "\\ADMINISTRATOR", "\\ADMIN"]`
+- 💻 **Computer:** `Vm1.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker acquires a list of valid usernames
+          │
+          ▼
+Attempts login across many accounts with one password
+(Credential Access - Password Spraying)
+          │
+          ▼
+Authentication logs record multiple failed logins
+from a single IP address
+          │
+          ▼
+Microsoft Sentinel Scheduled Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 88 |
+| **Incident Name** | Password Spray Detection |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 88 based on the scheduled detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the malicious IP address and ensure that none of the targeted administrative or test accounts were successfully breached.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 🌐 **IP Address:** `103.176.46.208`
+- 👤 **Targeted Users:** `["\\TEST", "\\ADMINISTRATOR", "\\ADMIN"]`
+
+This allows analysts to clearly see that a single external entity is fanning out attacks against a specific group of user accounts.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **IP Address** | `103.176.46.208` |
+| **User Group** | `["\\TEST", "\\ADMINISTRATOR", "\\ADMIN"]` |
+
+The graph allows the SOC analyst to visually pivot between the source of the attack and the identities being actively targeted.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `["\\TEST", "\\ADMINISTRATOR", "\\ADMIN"]` |
+
+*(Note: Device impact was not explicitly mapped as an asset in the incident interface, though `Vm1.root.project` was identified in the raw logs as the targeted computer).*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious IP address acting as the source of the attacks as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | IP Address |
+| **Verdict** | Suspicious |
+| **IP Address** | `103.176.46.208` |
+| **First Attempt** | Jul 30, 2026 4:52:07 PM |
+| **Last Attempt** | Jul 30, 2026 4:55:55 PM |
+| **Failed Users** | 3 |
+| **Failed Attempts** | 4 |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Password Spray Detection' was automatically correlated to incident 88 at Jul 30, 2026 5:02 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Analyze the source IP address (`103.176.46.208`) using Threat Intelligence sources (e.g., VirusTotal, AbuseIPDB) to determine if it is a known malicious node, VPN, or Tor exit node.
+- 🌐 Block the malicious IP address (`103.176.46.208`) at the perimeter firewall or via Conditional Access policies.
+- 🔐 **CRITICAL:** Query authentication logs (Event ID 4624) to determine if there were any *successful* logins from `103.176.46.208` for the targeted accounts (`\TEST`, `\ADMINISTRATOR`, `\ADMIN`) or any other accounts in the environment.
+- 👤 Verify if the targeted accounts are protected by Multi-Factor Authentication (MFA). If an attacker successfully guessed a password, MFA would act as the next line of defense.
+- ⚙️ Force a password reset for any account that shows suspicious successful authentication following the spray.
+- 🔍 Look for impossible travel alerts associated with the targeted users, which might corroborate compromised credentials.
+
+---
+
+# 🎯 Security Impact
+
+Password spraying is a highly effective credential access technique used by attackers to gain an initial foothold or escalate privileges without triggering noisy account lockouts.
+
+Detecting this behavior allows SOC analysts to block the attacking infrastructure and verify the integrity of user credentials.
+
+If successful and left undetected, this attack could lead to:
+
+- 🔑 Initial Access via compromised credentials
+- ⬆️ Immediate Privilege Escalation (e.g., if the `\ADMINISTRATOR` account was successfully breached)
+- 🏢 Unrestricted access to sensitive data and systems
+- 📤 Data Exfiltration and Ransomware deployment
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+
+---
