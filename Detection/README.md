@@ -3992,3 +3992,277 @@ If successful, this attack chain could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 PsExec Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the execution of **PsExec**. PsExec is a legitimate Microsoft Sysinternals utility designed for remote system administration. However, it is frequently abused by attackers to execute commands, spawn interactive command prompts, or deploy malware (such as ransomware) on remote systems across a compromised network.
+
+The analytics rule automatically identified the creation of the PsExec service and its associated process execution, generating a **High severity alert**. This allows SOC analysts to investigate potential lateral movement or remote code execution.
+
+---
+
+## 📖 Attack Scenario
+
+After compromising an account with sufficient privileges (like a local or domain administrator), attackers need a way to execute commands on other machines in the network to spread their access. PsExec allows them to do this by connecting to the hidden `ADMIN$` share of a target machine, uploading a service executable (`PSEXESVC.exe`), and interacting with it over named pipes.
+
+Microsoft Sentinel detected this activity by monitoring endpoint process creation logs (Event ID 4688) for the explicit execution of `psexec.exe`, indicating an attempt to initiate a remote session.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | PsExec Detection |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Lateral Movement |
+| **Analytics Rule** | PsExec Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected PsExec service creation and process execution.
+
+The query results confirmed the execution via Windows Event Logs. The activity involved:
+
+- 👤 **Account:** `ROOT\SecManager`
+- 💻 **Computer:** `Vm1.root.project`
+- ⚙️ **Process:** `PsExec.exe`
+- 📋 **Event ID:** `4688` (Process Creation)
+
+---
+
+## Alert Workflow
+
+```text
+Attacker acquires privileged credentials
+          │
+          ▼
+Executes PsExec targeting a remote host
+(Lateral Movement / Remote Execution)
+          │
+          ▼
+PsExec connects to ADMIN$ share & creates service
+          │
+          ▼
+Windows generates Event ID 4688 (Process Creation)
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 85 |
+| **Incident Name** | PsExec Detection |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 85 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the remote execution attempt, the executing user, and the targeted endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\SecManager`
+- 💻 **Device:** `Vm1.root.project`
+- ⚙️ **Process:** `psexec`
+
+This allows analysts to quickly understand the execution context and the administrative account utilized to run the remote tool.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\SecManager` |
+| **Device** | `Vm1.root.project` |
+| **Process** | `psexec` |
+
+The graph allows the SOC analyst to visually pivot between the user identity, the host where the process was spawned, and the PsExec process itself.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\SecManager` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `ROOT\SecManager` |
+| **Computer** | `Vm1.root.project` |
+| **Time Generated** | Jul 29, 2026 10:51:29 PM |
+| **Process** | `PsExec.exe` |
+| **Event ID** | `4688` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'PsExec Detection' was automatically correlated to incident 85 at Jul 29, 2026 10:54 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify with the user `ROOT\SecManager` (or the IT operations team) if PsExec is an approved administrative tool and if they were actively using it on `Vm1.root.project` at the time of the alert.
+- ⚙️ Identify the specific commands passed to PsExec via the command line logs. Attackers often use flags like `-s` (run as SYSTEM) and `-accepteula` to suppress GUI prompts.
+- 🌐 Identify the *target* machine. Look for Event ID 7045 (Service Creation) for `PSEXESVC` on other hosts in the network originating from `Vm1.root.project`.
+- 🔍 Look for suspicious child processes spawned by PsExec on the target machine (e.g., `cmd.exe`, `powershell.exe`, or unknown binaries).
+- 🚨 Isolate the source endpoint (`Vm1.root.project`) if the PsExec activity is deemed malicious, as it is acting as a jump point.
+- 🔑 Assume the `ROOT\SecManager` credentials have been compromised and initiate a password rotation.
+
+---
+
+# 🎯 Security Impact
+
+Because it requires administrative privileges to function, the successful execution of PsExec is a strong indicator that an attacker has already bypassed initial defenses and escalated their privileges.
+
+Detecting this behavior allows SOC analysts to interrupt lateral movement before an attacker can deploy widespread destructive payloads.
+
+If successful and left undetected, this execution could lead to:
+
+- 🔄 Widespread Lateral Movement across the domain
+- ⬆️ Remote execution of commands as NT AUTHORITY\SYSTEM
+- 💣 Mass deployment of Ransomware to multiple endpoints simultaneously
+- 📤 Coordinated Data Exfiltration
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
