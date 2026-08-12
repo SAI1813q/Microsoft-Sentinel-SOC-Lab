@@ -750,7 +750,9 @@ By detecting excessive failed logon attempts at an early stage, Microsoft Sentin
 
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
----# 🚨 Mimikatz → PsExec Correlation Detection
+---
+
+# 🚨 Mimikatz → PsExec Correlation Detection
 
 ## 🎯 Detection Overview
 
