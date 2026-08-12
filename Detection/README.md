@@ -1580,3 +1580,279 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+
+# 🚨 Firewall Disabled Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying system modifications that turn off or impair the Windows Defender Firewall. 
+
+The analytics rule automatically identified the execution of network shell (`netsh.exe`) commands explicitly designed to disable firewall profiles and generated a **Medium severity alert**. This allows SOC analysts to investigate potential defense evasion activities on the endpoint.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers frequently attempt to disable host-based firewalls immediately after compromising a system. By turning off the Windows Defender Firewall, adversaries can bypass network filtering, establish unhindered Command and Control (C2) communications, exfiltrate data, and allow lateral movement tools (like PsExec, WMI, or RDP) to function without restriction.
+
+Microsoft Sentinel detected this activity by monitoring endpoint process execution logs for specific `netsh.exe` command-line arguments that alter the `advfirewall` state.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | firewall disabled |
+| **Severity** | Medium |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Defense Evasion |
+| **Analytics Rule** | firewall disabled |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected system modifications that turn off or impair the Windows Defender Firewall.
+
+The specific command line observed was:
+`"C:\Windows\system32\netsh.exe" advfirewall set allprofiles state off`
+
+The activity involved:
+
+- 👤 **Account:** `ROOT\SecManager`
+- 💻 **Computer:** `Vm1.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access / establishes foothold
+          │
+          ▼
+Executes netsh.exe command
+(Defense Evasion)
+          │
+          ▼
+Windows Defender Firewall Disabled
+          │
+          ▼
+Endpoint logging captures process execution
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+Medium Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 220 |
+| **Incident Name** | firewall disabled |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 8 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 220 based on the Near Real-Time (NRT) detection alerts from Microsoft Sentinel. 
+
+Notably, this incident grouped **8 active alerts** for the same activity into a single incident, indicating repeated execution of the command or multiple rule triggers. This provides the analyst with a centralized workspace to investigate the defense evasion attempt.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\SecManager`
+- 💻 **Device:** `Vm1.root.project`
+- ⚙️ **Process:** `"C:\Windows\system32\netsh.exe" advfirewall set allprofiles state ...`
+
+This allows analysts to quickly understand the relationship between the compromised account, the affected endpoint, and the execution chain.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\SecManager` |
+| **Device** | `Vm1.root.project` |
+| **Process** | `netsh.exe` |
+
+The graph allows the SOC analyst to visually pivot between the user account, host, and the executed process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\SecManager` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `ROOT\SecManager` |
+| **Computer** | `Vm1.root.project` |
+| **Time Generated** | Aug 6, 2026 7:46:13 PM |
+| **Command Line** | `"C:\Windows\system32\netsh.exe" advfirewall set allprofiles state off` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 8 Alerts for 'firewall disabled' were automatically correlated to incident 220 over a short time span.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify if the user `ROOT\SecManager` was performing authorized administrative troubleshooting or maintenance that required disabling the firewall.
+- ⚙️ Identify the parent process of `netsh.exe` to determine how the command was launched (e.g., via a malicious script, an interactive shell, or an exploitation framework).
+- 🌐 Monitor the endpoint for suspicious inbound or outbound network connections immediately following the firewall being disabled.
+- 🔍 Search for additional signs of compromise on `Vm1.root.project`, such as new services being created, unauthorized lateral movement (RDP/SMB), or malware dropped onto the disk.
+- 🚨 Isolate the affected endpoint (`Vm1.root.project`) to prevent lateral movement if the activity is deemed malicious.
+- 🛡️ Re-enable the Windows Defender Firewall via policy enforcement or remediation scripts.
+
+---
+
+# 🎯 Security Impact
+
+Disabling the host firewall is a critical defense evasion tactic that removes a primary layer of endpoint protection.
+
+Detecting this behavior allows SOC analysts to intercept an attacker who is preparing the environment for further malicious actions.
+
+If successful and left undetected, this execution could lead to:
+
+- 🥷 Defense Evasion
+- 📡 Unrestricted Command and Control (C2) Communication
+- 🔄 Successful Lateral Movement across the network
+- 📤 Data Exfiltration without network-level blocking
+- 💣 Ransomware Deployment to unprotected segments
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
