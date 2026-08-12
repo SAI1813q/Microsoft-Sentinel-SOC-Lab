@@ -5531,3 +5531,274 @@ Unauthorized user creation presents a risk of persistence, allowing attackers to
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 WMI Lateral Movement Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying potential **WMI (Windows Management Instrumentation) Lateral Movement**. Attackers frequently abuse WMI to execute commands and run processes remotely across systems in a network without needing to drop interactive shells.
+
+The analytics rule automatically identified suspicious WMI process execution patterns and generated a **High severity alert**, allowing SOC analysts to investigate remote administrative execution and lateral movement.
+
+---
+
+## 📖 Attack Scenario
+
+WMI is a powerful native Windows administration feature that allows scripts and management tools to interact with the operating system. Adversaries abuse this functionality by utilizing WMI command-line utilities (`wmic.exe`) or programmatic APIs to spawn processes on remote hosts (often spawning `WmiPrvSE.exe` with an `-Embedding` argument via `svchost.exe`). This allows them to execute payloads or perform reconnaissance stealthily.
+
+Microsoft Sentinel detected this activity by monitoring process creation logs for WMI-related provider execution chains indicative of remote interaction.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | WMI Lateral Movement Detection |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Execution |
+| **Analytics Rule** | WMI Lateral Movement Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected WMI process execution patterns associated with lateral movement.
+
+The specific query results observed were:
+- **Time Generated:** `Aug 1, 2026 6:43:16 PM`
+- **Account:** `ROOT\DC$`
+- **Command Line:** `C:\Windows\system32\wbem\wmiprvse.exe -Embedding`
+- **Computer:** `DC.root.project`
+- **New Process Name:** `C:\Windows\system32\wbem\WmiPrvSE.exe`
+- **Parent Process Name:** `C:\Windows\system32\svchost.exe`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker initiates remote WMI connection
+          │
+          ▼
+WMI Provider Host (WmiPrvSE.exe) spawned via svchost.exe
+(Execution / Lateral Movement)
+          │
+          ▼
+Remote command or process executed
+          │
+          ▼
+Process creation logged by OS
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 126 |
+| **Incident Name** | WMI Lateral Movement Detection |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 126 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the WMI activity on the Domain Controller.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\DC$`
+- 💻 **Device:** `DC.root.project`
+
+This allows analysts to quickly understand the connection between the system account and the Domain Controller.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\DC$` |
+| **Device** | `DC.root.project` |
+
+The graph allows the SOC analyst to visually pivot between the device and account entities during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\DC$` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified process activity as part of the evidence.
+
+The query results provided important forensic information regarding the execution context:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Computer** | `DC.root.project` |
+| **Account** | `ROOT\DC$` |
+| **Command Line** | `C:\Windows\system32\wbem\wmiprvse.exe -Embedding` |
+| **Parent Process** | `C:\Windows\system32\svchost.exe` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'WMI Lateral Movement Detection' was automatically correlated to incident 126 at Aug 1, 2026 6:46 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Determine the originating source machine that triggered the WMI call on `DC.root.project`. Review network connection logs (SMB, RPC, WinRM) hitting the DC at `Aug 1, 2026 6:43:16 PM`.
+- ⚙️ Inspect WMI repository modifications or permanent event subscriptions, as attackers frequently use WMI for fileless persistence.
+- 👤 Check if the account `ROOT\DC$` or any associated user account was leveraged from an external or lower-privileged host.
+- 🔍 Look for secondary child processes spawned by `WmiPrvSE.exe` (such as `cmd.exe`, `powershell.exe`, or suspicious scripts) which indicate what command was executed remotely.
+- 🚨 Isolate the source workstation if malicious remote execution is confirmed.
+
+---
+
+# 🎯 Security Impact
+
+WMI lateral movement allows attackers to execute code across network boundaries using built-in administrative protocols, making it difficult to detect without specialized monitoring.
+
+Detecting this behavior allows SOC analysts to intercept remote execution before payloads can execute fully in memory.
+
+If successful and left undetected, this attack could lead to:
+
+- 🔄 Unauthorized Remote Code Execution
+- 🛡️ Fileless Persistence via WMI Event Consumers
+- ⬆️ Further Privilege Escalation
+- 🏢 Domain Compromise
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
