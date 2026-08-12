@@ -740,4 +740,297 @@ By detecting excessive failed logon attempts at an early stage, Microsoft Sentin
 
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
+---# 🚨 Mimikatz → PsExec Correlation Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a high-confidence attack sequence where **Mimikatz** activity is followed by **PsExec** execution on the same endpoint.
+
+The correlation analytics rule automatically linked both activities and generated a **High severity alert**, allowing SOC analysts to investigate the complete attack chain involving credential access and lateral movement.
+
 ---
+
+## 📖 Attack Scenario
+
+Attackers commonly use **Mimikatz** to obtain credentials after compromising a Windows system. These credentials can then be abused with tools such as **PsExec** to execute commands remotely and move laterally across the environment.
+
+Microsoft Sentinel correlated the Mimikatz and PsExec activity because both events were associated with the same account and computer within the configured correlation window.
+
+This provides stronger detection confidence than investigating the two activities separately.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | correlation 3 |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Credential Access, Lateral Movement |
+| **Analytics Rule** | correlation 3 |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected **Mimikatz** activity followed shortly by **PsExec** activity.
+
+The correlation rule identified the sequence as:
+
+**Mimikatz → PsExec**
+
+The activity involved:
+
+- 👤 **Account:** `ROOT\SecManager`
+- 💻 **Computer:** `Vm1.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access
+          │
+          ▼
+Executes Mimikatz
+(Credential Access)
+          │
+          ▼
+Credentials potentially obtained
+          │
+          ▼
+Executes PsExec
+(Remote Execution)
+          │
+          ▼
+Microsoft Sentinel Correlation Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 86 |
+| **Incident Name** | correlation 3 |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 2 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically grouped **two related alerts** into Incident 86.
+
+The incident combines both stages of the attack:
+
+- 🔑 **Mimikatz** — Credential Access
+- 🖥️ **PsExec** — Remote Execution / Lateral Movement
+
+This provides analysts with a centralized investigation workspace containing the related alerts, entities, assets, and activities.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 💻 Device: `Vm1.root.project`
+- 👤 User: `ROOT\SecManager`
+- 🚨 Correlated Alerts
+
+This allows analysts to quickly understand the relationship between the affected account and endpoint.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **Device** | `Vm1.root.project` |
+| **User** | `ROOT\SecManager` |
+
+The graph allows the SOC analyst to pivot between related entities during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device** | `Vm1.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\SecManager` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender did not identify additional evidence in the Evidence & Response section at the time of investigation.
+
+However, the query results provided important forensic information.
+
+| Property | Value |
+|----------|-------|
+| **Account** | `ROOT\SecManager` |
+| **Computer** | `Vm1.root.project` |
+| **Mimikatz Time** | Jul 29, 2026 10:46:28 PM |
+| **PsExec Time** | Jul 29, 2026 10:51:29 PM |
+
+The timestamps show that the PsExec activity occurred approximately **5 minutes after** the Mimikatz activity.
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert automatically correlated into Incident 86
+- 🚨 Second related alert automatically correlated
+- 🏷️ Incident tagged **Triage Required**
+- 🤖 Activities performed by Microsoft Defender XDR automation
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify whether Mimikatz execution was authorized.
+- 👤 Identify the user responsible for the activity.
+- 💻 Review activity on `Vm1.root.project`.
+- 🔐 Investigate how Mimikatz was executed.
+- 🧾 Determine whether credentials were successfully accessed or dumped.
+- 🖥️ Review PsExec activity following the Mimikatz execution.
+- 🌐 Identify any additional systems targeted through PsExec.
+- 🔍 Search for similar Mimikatz and PsExec activity across the environment.
+- ⬆️ Check for privilege escalation and persistence.
+- 🔑 Reset compromised credentials if malicious activity is confirmed.
+- 🚨 Isolate affected endpoints when required.
+
+---
+
+# 🎯 Security Impact
+
+Credential access followed by remote execution can indicate an active attack chain.
+
+Correlating **Mimikatz** and **PsExec** allows Microsoft Sentinel to provide stronger context and helps SOC analysts identify potentially malicious activity earlier.
+
+If successful, this attack chain could lead to:
+
+- 🔑 Credential Compromise
+- ⬆️ Privilege Escalation
+- 🔄 Lateral Movement
+- 🛡️ Persistence
+- 🏢 Domain Compromise
+- 💣 Ransomware Deployment
+- 📤 Data Exfiltration
+
+Early detection and investigation can help defenders contain the attacker before the activity progresses further.
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+
