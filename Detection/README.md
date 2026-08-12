@@ -26,7 +26,7 @@ Each alert includes enriched entities, related events, and investigation context
 | **[Kerberoasting Detection](#-kerberoasting-detection)** | High | ✅ Yes | ✅ Validated | Generated when attempts to request Kerberos service tickets for offline password cracking were detected. |
 | **[Mshta Execution](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-mshta-execution-detection)** | High | ✅ Yes | ✅ Validated | Generated after suspicious execution of `mshta.exe` utilizing local scripts or remote payloads. |
 | **[Pass-the-Hash Detection](#-pass-the-hash-detection)** | High | ✅ Yes | ✅ Validated | Generated after detecting anomalous NTLM network authentication patterns indicating lateral movement. |
-| **[Network Discovery](#-network-discovery)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of commands aimed at mapping internal network topologies and connections. |
+| **[Network Discovery](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-network-discovery-detection)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of commands aimed at mapping internal network topologies and connections. |
 | **[Password Spray Detection](#-password-spray-detection)** | High | ✅ Yes | ✅ Validated | Generated when password spraying was detected across multiple accounts from a single IP address. |
 | **[PowerShell Download](#-powershell-download)** | High | ✅ Yes | ✅ Validated | Generated when PowerShell execution was used specifically to download files from remote locations. |
 | **[SMB Admin Share Access](#-smb-admin-share-access)** | High | ✅ Yes | ✅ Validated | Generated when access to administrative SMB shares (e.g., C$, ADMIN$, IPC$) was detected for lateral movement. |
