@@ -24,7 +24,7 @@ Each alert includes enriched entities, related events, and investigation context
 | **[Correlation 3](#-correlation-3)** | High | ✅ Yes | ✅ Validated | Generated after correlating high-confidence multi-stage attack sequences. |
 | **[Firewall Disabled](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-firewall-disabled-detection)** | Medium | ✅ Yes | ✅ Validated | Generated after system modifications that turn off or impair the Windows Defender Firewall. |
 | **[Kerberoasting Detection](#-kerberoasting-detection)** | High | ✅ Yes | ✅ Validated | Generated when attempts to request Kerberos service tickets for offline password cracking were detected. |
-| **[Mshta Execution](#-mshta-execution)** | High | ✅ Yes | ✅ Validated | Generated after suspicious execution of `mshta.exe` utilizing local scripts or remote payloads. |
+| **[Mshta Execution](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-mshta-execution-detection)** | High | ✅ Yes | ✅ Validated | Generated after suspicious execution of `mshta.exe` utilizing local scripts or remote payloads. |
 | **[Pass-the-Hash Detection](#-pass-the-hash-detection)** | High | ✅ Yes | ✅ Validated | Generated after detecting anomalous NTLM network authentication patterns indicating lateral movement. |
 | **[Network Discovery](#-network-discovery)** | Medium | ✅ Yes | ✅ Validated | Generated after execution of commands aimed at mapping internal network topologies and connections. |
 | **[Password Spray Detection](#-password-spray-detection)** | High | ✅ Yes | ✅ Validated | Generated when password spraying was detected across multiple accounts from a single IP address. |
