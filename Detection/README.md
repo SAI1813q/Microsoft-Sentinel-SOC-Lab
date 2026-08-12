@@ -1308,3 +1308,275 @@ If successful, this attack chain could lead to:
 
 
 ---
+# 🚨 Encoded PowerShell Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the execution of **Base64-encoded PowerShell commands**. Using the `-EncodedCommand` parameter is a common defense evasion technique employed by attackers to hide malicious scripts, bypass string-based security filters, and obfuscate their activity from defenders.
+
+The analytics rule automatically identified the suspicious PowerShell execution and generated a **High severity alert**, allowing SOC analysts to investigate the obfuscated command and determine its true intent.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers frequently use PowerShell to execute payloads, establish persistence, or move laterally. To avoid detection by antivirus solutions and command-line logging, they convert their plain-text scripts into Base64 format. When executed using the `-EncodedCommand` (or similar aliases like `-e` or `-enc`) flag, PowerShell decodes and runs the script directly in memory.
+
+Microsoft Sentinel detected this activity by monitoring process execution logs for PowerShell instances launched with these specific encoding parameters.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Encoded PowerShell |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Execution |
+| **Analytics Rule** | Encoded PowerShell Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected the execution of Base64-encoded PowerShell commands.
+
+The specific command line observed included the `-EncodedCommand` parameter followed by a Base64 string:
+`"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -EncodedCommand SQB...`
+
+The activity involved:
+
+- 👤 **Account:** `Vm1\Sia123`
+- 💻 **Computer:** `Vm1`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access / establishes foothold
+          │
+          ▼
+Executes Obfuscated Script
+(Defense Evasion / Execution)
+          │
+          ▼
+PowerShell -EncodedCommand executed
+          │
+          ▼
+Script decoded and run in memory
+          │
+          ▼
+Microsoft Sentinel Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 35 |
+| **Incident Name** | Encoded PowerShell |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 35 based on the scheduled detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the encoded command execution, the origin of the process, and the affected endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 💻 **Device:** `Vm1`
+- ⚙️ **Process:** `"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Encod...`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and identify the suspicious process.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **Device** | `Vm1` |
+| **Process** | `powershell.exe` |
+
+The graph allows the SOC analyst to visually pivot between the host and the executed encoded process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `Vm1\Sia123` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `Vm1\Sia123` |
+| **Computer** | `Vm1` |
+| **Time Generated** | Jul 24, 2026 5:13:49 PM |
+| **Command Line** | `"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -EncodedCommand <Base64_String>` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Encoded PowerShell' was automatically correlated to incident 35.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Extract the Base64 string from the command line and decode it (e.g., using CyberChef) to reveal the actual executed script.
+- ⚙️ Identify the parent process that spawned the PowerShell instance to uncover how the encoded command was delivered (e.g., cmd.exe, a malicious macro in Word, a scheduled task).
+- 👤 Confirm if the user `Vm1\Sia123` or an administrator was performing authorized administrative tasks that use encoded commands (though rare).
+- 🔍 Analyze the decoded script to understand its intent (e.g., downloading further payloads, modifying registry keys, dumping credentials).
+- 🚨 Isolate the affected endpoint (`Vm1`) if the decoded script proves to be malicious.
+- 🌐 Check network logs for any external connections initiated by the PowerShell process if the decoded script acts as a downloader.
+
+---
+
+# 🎯 Security Impact
+
+Encoded PowerShell commands are a strong indicator of defense evasion and obfuscation. 
+
+Detecting this behavior allows SOC analysts to uncover hidden malicious activity that might otherwise bypass standard string-matching defenses.
+
+If successful and left undetected, this execution could lead to:
+
+- 🥷 Defense Evasion (bypassing AV/EDR detections)
+- 📥 Silent Execution of Malware or Ransomware
+- 📡 Establishing Command and Control (C2)
+- 🔄 Lateral Movement
+- 🛡️ Establishing Persistence within the environment
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
