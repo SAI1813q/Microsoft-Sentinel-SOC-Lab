@@ -78,7 +78,10 @@ This project replicates a production enterprise security operations setup. It de
 ## 📸 Architecture Screenshots
 
 * **Azure Resource Group Overview:**
-  ![Resource Group Inventory](./images/Screenshot%202026-08-05%20192245.png)
+  ![Resource Group Inventory]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192253" src="https://github.com/user-attachments/assets/5ac1d8ac-bf0d-4c85-afb9-1e67fe0d6988" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192245" src="https://github.com/user-attachments/assets/eb076887-4130-4b02-997b-0d487e2e3c20" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192302" src="https://github.com/user-attachments/assets/a3c62f43-02ad-4d20-a34c-a36fe701f0ad" />
+
 
 * **Virtual Machine Specifications (`Vm1`):**
   ![VM1 Properties](./images/Screenshot%202026-08-05%20192429.png)
