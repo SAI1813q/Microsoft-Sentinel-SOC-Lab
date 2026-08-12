@@ -13,24 +13,26 @@ This project replicates a production enterprise security operations setup. It de
 ## ☁️ Azure Infrastructure
 * **Resource Group:** Centralized management via a dedicated resource group (`ResourceGrp`) hosted in **Central India**.
 * **Subscription Management:** Deployed using an active Azure subscription with unified identity and resource tracking.
-
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192253" src="https://github.com/user-attachments/assets/5ac1d8ac-bf0d-4c85-afb9-1e67fe0d6988" />
 ---
 
 ## 🌐 Network Architecture
 * **Virtual Network (VNet):** Configured with a dedicated address space (`10.0.0.0/16`) named `VNet1`.
 * **Network Security Groups (NSGs):** Configured with granular security rules across `DC-nsg`, `Vm1-nsg`, and `vm2-nsg` to control traffic flows.
 * **Public IP Endpoints:** Dedicated public IPs (`DC-ip`, `Vm1-ip`) attached to virtual machines to purposely simulate exposure and draw external attack traffic.
-
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 193853" src="https://github.com/user-attachments/assets/233890b0-f778-422d-ba1e-f5d615a50271" />
 ---
 
 ## 🖥️ Virtual Machines
 * **Domain Controller (`DC`):** 
   * **OS:** Windows Server 2022 Datacenter.
   * **Extensions:** Configured with the **AzureMonitorWindowsAgent**.
-* **Honeypot Workstation (`Vm1`):** 
+  <img width="1920" height="1020" alt="Screenshot 2026-08-05 192429" src="https://github.com/user-attachments/assets/b9d659dc-7560-4933-a2a1-73040a7d76e1" />
+
+* **Workstation (`Vm1`):** 
   * **OS:** Windows 10 Pro (Standard B2als v2 size, 2 vCPUs, 4 GiB RAM).
   * **Extensions:** Integrated with the **AzureMonitorWindowsAgent** to stream operating system telemetry.
-
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 192342" src="https://github.com/user-attachments/assets/467cae40-70cc-4e9f-84e1-b83793cfc654" />
 ---
 
 ## 🏢 Active Directory
@@ -53,12 +55,12 @@ This project replicates a production enterprise security operations setup. It de
 
 ## 📊 Log Analytics Workspace (LAW)
 * **Central Repository (`LAW-Project1`):** Serves as the core hub for security event storage, analytical query processing, and 30-day retention management.
-
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 193204" src="https://github.com/user-attachments/assets/2c0ba554-8b6b-4d34-845c-b936652ae2e7" />
 ---
 
 ## 📥 Data Collection Rules (DCR)
 * **Targeted Ingestion Rules:** Configured via `dcr-windows` targeting scope subscriptions and specific resource groups (`ResourceGrp`) for `DC` and `Vm1`.
-
+<img width="1920" height="1020" alt="Screenshot 2026-08-05 193622" src="https://github.com/user-attachments/assets/4572dc20-211e-4092-aeb2-4d1f23e83244" />
 ---
 
 ## 🤖 Automation Components
@@ -78,7 +80,7 @@ This project replicates a production enterprise security operations setup. It de
 ## 📸 Architecture Screenshots
 
 * **Azure Resource Group Overview:**
-  ![Resource Group Inventory]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192253" src="https://github.com/user-attachments/assets/5ac1d8ac-bf0d-4c85-afb9-1e67fe0d6988" />
+  ![Resource Group Inventory]
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192245" src="https://github.com/user-attachments/assets/eb076887-4130-4b02-997b-0d487e2e3c20" />
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192302" src="https://github.com/user-attachments/assets/a3c62f43-02ad-4d20-a34c-a36fe701f0ad" />
 
@@ -87,7 +89,6 @@ This project replicates a production enterprise security operations setup. It de
   ![VM1 Properties]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192455" src="https://github.com/user-attachments/assets/4369aca4-f895-4fbb-92ac-51475b088b34" />
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192451" src="https://github.com/user-attachments/assets/1fd683ac-022b-4032-a095-bafbea0430d7" />
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192435" src="https://github.com/user-attachments/assets/1386db52-4d26-4b9c-be54-6966d44bb0eb" />
-<img width="1920" height="1020" alt="Screenshot 2026-08-05 192429" src="https://github.com/user-attachments/assets/b9d659dc-7560-4933-a2a1-73040a7d76e1" />
 
 
 * **VM1 Agent Extensions:**
@@ -96,7 +97,7 @@ This project replicates a production enterprise security operations setup. It de
 * **Domain Controller Setup (`DC`):**
   ![DC Properties]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192408" src="https://github.com/user-attachments/assets/7a398bd2-53db-455f-9fcf-c6d4b71e6e08" />
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192402" src="https://github.com/user-attachments/assets/46b543db-a796-4687-ba0c-04c28a387602" />
-<img width="1920" height="1020" alt="Screenshot 2026-08-05 192342" src="https://github.com/user-attachments/assets/467cae40-70cc-4e9f-84e1-b83793cfc654" />
+
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192413" src="https://github.com/user-attachments/assets/0a82020d-194b-450d-9479-f023d08aeaba" />
 
 
@@ -108,11 +109,11 @@ This project replicates a production enterprise security operations setup. It de
 
 
 * **Network Security Groups:**
-  ![NSGs]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193853" src="https://github.com/user-attachments/assets/233890b0-f778-422d-ba1e-f5d615a50271" />
+  ![NSGs]
 
 
 * **Microsoft Sentinel Workspace & Defender XDR Integration:**
-  ![Sentinel Defender Hub]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192743" src="https://github.com/user-attachments/assets/fd58fd3f-c214-45c3-b21f-2671701c8b7c" /><img width="1920" height="1020" alt="Screenshot 2026-08-05 193204" src="https://github.com/user-attachments/assets/2c0ba554-8b6b-4d34-845c-b936652ae2e7" />
+  ![Sentinel Defender Hub]<img width="1920" height="1020" alt="Screenshot 2026-08-05 192743" src="https://github.com/user-attachments/assets/fd58fd3f-c214-45c3-b21f-2671701c8b7c" />
 
 
 
@@ -122,7 +123,7 @@ This project replicates a production enterprise security operations setup. It de
 
 
 * **Data Collection Rules (DCR) Scope Configuration:**
-  ![DCR Wizard Scope]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193622" src="https://github.com/user-attachments/assets/4572dc20-211e-4092-aeb2-4d1f23e83244" /><img width="1920" height="1020" alt="Screenshot 2026-08-05 193550" src="https://github.com/user-attachments/assets/d2a40419-5688-47ce-8d0b-56d644db0449" />
+  ![DCR Wizard Scope]<img width="1920" height="1020" alt="Screenshot 2026-08-05 193550" src="https://github.com/user-attachments/assets/d2a40419-5688-47ce-8d0b-56d644db0449" />
 
 
 
