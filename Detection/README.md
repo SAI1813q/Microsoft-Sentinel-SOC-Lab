@@ -2916,3 +2916,279 @@ If successful and left undetected, this execution could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Pass-the-Hash Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a potential **Pass-the-Hash (PtH)** attack. Pass-the-Hash is a lateral movement technique where an attacker uses a captured NTLM hash to authenticate to a remote server or service without needing the user's plaintext password.
+
+The analytics rule automatically identified anomalous NTLM authentication activity (specifically a Network Logon - Type 3) originating from a potentially compromised endpoint and generated a **High severity alert**. This allows SOC analysts to investigate unauthorized lateral movement, particularly toward critical infrastructure like Domain Controllers.
+
+---
+
+## 📖 Attack Scenario
+
+After successfully dumping credentials on a compromised machine (e.g., using Mimikatz to extract NTLM hashes from memory), the attacker bypasses standard authentication. They inject the stolen hash of a highly privileged account into their current session and attempt to access a remote system.
+
+In this scenario, Microsoft Sentinel detected the attacker using the stolen hash of a privileged account (`ROOT\SecManager`) to perform a network logon (Logon Type 3) using the NTLM authentication package against the Domain Controller (`DC.root.project`) from the source IP `10.0.0.4`.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Pass-the-Hash Detection |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Lateral Movement |
+| **Analytics Rule** | Pass-the-Hash Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected authentication patterns indicative of a Pass-the-Hash lateral movement attempt.
+
+The query results confirmed a Network Logon via NTLM. The activity involved:
+
+- 👤 **Account:** `ROOT\SecManager`
+- 💻 **Computer:** `DC.root.project`
+- 🌐 **IP Address:** `10.0.0.4`
+- 🔑 **Authentication Package:** `NTLM`
+- ⚙️ **Logon Type:** `3`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker dumps NTLM hash from initial host
+          │
+          ▼
+Injects hash into session (Pass-the-Hash)
+(Lateral Movement)
+          │
+          ▼
+Initiates Network Logon (Type 3) via NTLM
+          │
+          ▼
+Authentication request hits Domain Controller
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 159 |
+| **Incident Name** | Pass-the-Hash Detection |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 159 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the compromised source IP, the targeted Domain Controller, and the exploited administrative account.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\SecManager`
+- 💻 **Device:** `DC.root.project`
+- 🌐 **IP Address:** `10.0.0.4`
+
+This allows analysts to quickly map the trajectory of the lateral movement from the source IP to the targeted asset.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\SecManager` |
+| **Device** | `DC.root.project` |
+| **IP Address** | `10.0.0.4` |
+
+The graph allows the SOC analyst to visually pivot between the compromised identity, the source of the attack, and the targeted Domain Controller.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `DC.root.project` (Displayed as `DC`) |
+| **Risk Level** | None |
+| **Exposure Level** | Low |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\SecManager` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious IP address and logon event as part of the evidence.
+
+The query results provided important forensic information regarding the authentication context:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | IP Address |
+| **Verdict** | Suspicious |
+| **Time Generated** | Aug 1, 2026 6:57:38 PM |
+| **Account** | `ROOT\SecManager` |
+| **Computer** | `DC.root.project` |
+| **IP Address** | `10.0.0.4` |
+| **Logon Type** | `3` (Network) |
+| **Auth Package** | `NTLM` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Pass-the-Hash Detection' was automatically correlated to incident 159 at Aug 1, 2026 7:00 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the source IP address (`10.0.0.4`). Determine what endpoint this belongs to (e.g., `Vm1`) and if it is an authorized administrative jump box.
+- ⚙️ Review preceding alerts on the source endpoint (`10.0.0.4`) for signs of credential dumping (e.g., Mimikatz, LSASS memory access, Log Cleared).
+- 👤 Confirm if the `ROOT\SecManager` user actively initiated a legitimate network session using NTLM at that exact time. 
+- 🌐 Monitor `DC.root.project` for post-exploitation actions taken by `ROOT\SecManager` immediately following the successful logon (e.g., DCSync, adding new users, modifying group policies).
+- 🚨 Isolate the source endpoint (`10.0.0.4`) to cut off the attacker's foothold.
+- 🔑 Immediately rotate the password for the `ROOT\SecManager` account (and any other privileged accounts active on the compromised endpoint), as changing the password invalidates the stolen NTLM hash.
+
+---
+
+# 🎯 Security Impact
+
+Pass-the-Hash is a critical lateral movement technique that allows attackers to traverse a network and access resources exactly as the compromised user would, without ever needing to crack the password.
+
+Detecting this behavior allows SOC analysts to identify and stop lateral movement toward Tier 0 assets (like Domain Controllers).
+
+If successful and left undetected, this execution could lead to:
+
+- 🔄 Lateral Movement to Domain Controllers and high-value servers
+- ⬆️ Complete Privilege Escalation (if a Domain Admin hash is passed)
+- 🎫 Enabling further attacks like DCSync to extract all Active Directory hashes
+- 🏢 Complete network and domain compromise
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
