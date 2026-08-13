@@ -5191,6 +5191,9 @@ Attackers frequently use encoded PowerShell commands (using flags like `-enc` or
 ## 🔥 Severity
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160644" src="https://github.com/user-attachments/assets/da84ae34-9d3c-42a0-8e77-76dd1d412e2f" />
+
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -5198,6 +5201,12 @@ Attackers frequently use encoded PowerShell commands (using flags like `-enc` or
 |---------|-----------|--------------|
 | Execution | Command and Scripting Interpreter: PowerShell | T1059.001 |
 | Persistence, Privilege Escalation | Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder | T1547.001 |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160713" src="https://github.com/user-attachments/assets/47501093-d87e-4fa3-971e-c79d7ab17bc6" />
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160720" src="https://github.com/user-attachments/assets/baddc746-e769-4bf5-9343-07d8ab39494c" />
+
+
 
 ---
 
@@ -5229,6 +5238,8 @@ The following advanced KQL query correlates encoded PowerShell process execution
     | where RunKeyTime between (PSTime .. PSTime + 10m)
     | project Computer, Account, PSTime, RunKeyTime
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160757" src="https://github.com/user-attachments/assets/9135f64e-9e6f-4a5f-9065-3b7825fa4899" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -5239,6 +5250,9 @@ The following advanced KQL query correlates encoded PowerShell process execution
 | **Lookup Data From** | Last 6 Minutes | Incorporates a 1-minute overlap buffer to accommodate log ingestion latency. |
 | **Severity** | High | Encoded execution paired with registry persistence is a definitive sign of malicious compromise. |
 | **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160954" src="https://github.com/user-attachments/assets/d5f0485d-9823-4d88-ba49-0f79e65885dd" />
 
 ---
 
@@ -5253,6 +5267,9 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Host:** Identifies the endpoint where the encoded script ran and the registry was modified.
 * **Account:** Identifies the user security context executing the attack chain.
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160813" src="https://github.com/user-attachments/assets/cbc5907d-647d-4a8a-9517-bbd4bbfd68e8" />
 
 ---
 
@@ -5297,16 +5314,24 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Correlating encoded execution directly with registry persistence represents a critical, high-fidelity intrusion. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 162315" src="https://github.com/user-attachments/assets/79224b1d-a2d7-4bd1-9800-5d08860de488" />
+
 ---
+
 
 ## 🤖 Automated Responses
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161206" src="https://github.com/user-attachments/assets/0a3864f0-a207-473e-8012-44fa79383a5d" />
+
 ---
 
 ## ✅ Validation
 This rule can be validated in a controlled lab environment by executing an encoded PowerShell command (e.g., base64 encoding a benign command) followed immediately by adding a test entry to `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Sentinel will correlate the timestamps and generate a high-severity alert.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161213" src="https://github.com/user-attachments/assets/aea76e1d-985c-4580-8947-86c6e2483e99" />
 
 ---
 
@@ -5316,32 +5341,6 @@ This correlation rule helps security teams:
 * Cut through noise by verifying multi-stage attacker behavior.
 * Rapidly isolate compromised endpoints before payloads execute on reboot.
 
----
-
-## 📸 Screenshots
-
-### Rule Overview & Description
-> *(Screenshot 2026-08-04 161718.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 161737.png)*
-> *(Screenshot 2026-08-04 161747.png)*
-
-### KQL Query Logic
-> *(Screenshot 2026-08-04 161802.png)*
-
-### Entity Mapping & Scheduling
-> *(Screenshot 2026-08-04 161811.png)*
-> *(Screenshot 2026-08-04 161825.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 161834.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 161841.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 161847.png)*
 
 ---
 
@@ -5363,6 +5362,8 @@ Advanced threat actors rarely rely on a single isolated action. A common kill ch
 ## 🔥 Severity
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161718" src="https://github.com/user-attachments/assets/f75cd577-cf4e-463f-81ea-de49b9caf78b" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -5371,6 +5372,9 @@ Advanced threat actors rarely rely on a single isolated action. A common kill ch
 | Credential Access | Brute Force | T1110 |
 | Initial Access, Defense Evasion, Persistence, Privilege Escalation | Valid Accounts | T1078 |
 | Persistence | Create Account | T1136 |
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161747" src="https://github.com/user-attachments/assets/3edde3e0-3674-4633-9dac-ae423558f4ad" />
 
 ---
 
@@ -5408,6 +5412,8 @@ The following advanced KQL query uses multiple `let` statements and inner joins 
     | where UserCreatedTime between (LoginTime .. LoginTime + 10m)
     | project Account, Computer, FailedAttempts, LoginTime, UserCreatedTime
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161802" src="https://github.com/user-attachments/assets/f944c890-9cfd-442b-bf35-e48460b1e10a" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -5418,6 +5424,9 @@ The following advanced KQL query uses multiple `let` statements and inner joins 
 | **Lookup Data From** | Last 6 Minutes | Includes a 1-minute overlap buffer to capture trailing ingested logs safely. |
 | **Severity** | High | A brute-force attack followed by successful access and local account creation indicates active compromise. |
 | **Status** | Enabled | Ensures the correlation rule is actively running. |
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161825" src="https://github.com/user-attachments/assets/1991e075-ea61-46fc-afc8-2b2fcf89b6ab" />
 
 ---
 
@@ -5432,6 +5441,9 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Account:** Identifies the target user account compromised during the brute-force attack and used to spawn the new user.
 * **Host:** Highlights the specific endpoint or domain controller where the entire sequence took place.
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161811" src="https://github.com/user-attachments/assets/7cc2e7bd-00cb-4501-a9f3-09355352d551" />
 
 ---
 
@@ -5477,16 +5489,24 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Multi-stage attacks represent high-priority intrusions. Disabling alert grouping ensures that every unique correlated attack chain triggers an immediate, individual incident ticket for the SOC without merging related alerts.
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 162315" src="https://github.com/user-attachments/assets/0034ba42-e026-465c-84b6-06d06284ae88" />
+
 ---
 
 ## 🤖 Automated Responses
 This core correlation rule is integrated with the following automation:
 * **Add Triage Tag:** Automatically appends triage tags upon incident creation to prioritize analytical review.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161841" src="https://github.com/user-attachments/assets/6fb77600-a40c-400d-af0a-aa73d14937cf" />
+
+
 ---
 
 ## ✅ Validation
 This rule can be validated in a test lab by simulating the exact sequence: executing 10+ failed password attempts on a test account, logging in successfully with the correct password immediately after, and creating a new local user via `net user`. Sentinel will join the timeline and trigger the correlated high-severity alert.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161847" src="https://github.com/user-attachments/assets/04a38b17-263d-43bf-9d78-2739615ca3f4" />
 
 ---
 
@@ -5498,33 +5518,7 @@ This correlation rule helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview & Name Description
-> *(Screenshot 2026-08-04 160644.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 160713.png)*
-> *(Screenshot 2026-08-04 160720.png)*
-
-### KQL Query Logic
-> *(Screenshot 2026-08-04 160730.png)*
-> *(Screenshot 2026-08-04 160757.png)*
-
-### Entity Mapping & Scheduling
-> *(Screenshot 2026-08-04 160813.png)*
-> *(Screenshot 2026-08-04 160954.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 161002.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 161206.png)*
-
-### Review & Create / Validation Summary
-> *(Screenshot 2026-08-04 161213.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
@@ -5544,6 +5538,9 @@ Once threat actors escalate privileges, their primary objective is often harvest
 ## 🔥 Severity
 **High**
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163838" src="https://github.com/user-attachments/assets/d6ab8947-112b-4e85-a16c-55d9f501bf99" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -5552,7 +5549,13 @@ Once threat actors escalate privileges, their primary objective is often harvest
 | Credential Access | OS Credential Dumping | T1003 |
 | Lateral Movement | Remote Services | T1021 |
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163846" src="https://github.com/user-attachments/assets/73a38a06-5d7f-4f06-9dd2-5c911fa4d918" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163855" src="https://github.com/user-attachments/assets/8e672d43-63c1-428d-8fe0-8a6f09aad7bd" />
+
 ---
+
+
 
 ## 📂 Data Sources
 * Windows Security Event Logs:
@@ -5581,6 +5584,8 @@ The following advanced KQL query correlates credential dumping activity with sub
     | where PsExecTime between (MimikatzTime .. MimikatzTime + 15m)
     | project Computer, Account, MimikatzTime, PsExecTime
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163907" src="https://github.com/user-attachments/assets/1f8aa82b-c1db-4df6-a114-74d3843532f8" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -5591,6 +5596,8 @@ The following advanced KQL query correlates credential dumping activity with sub
 | **Lookup Data From** | Last 6 Minutes | Incorporates a 1-minute overlap buffer to accommodate log ingestion latency. |
 | **Severity** | High | Credential theft paired with remote execution indicates an active, severe network breach. |
 | **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163930" src="https://github.com/user-attachments/assets/f56acb9f-1915-4e64-84ea-60d54eb96fc9" />
 
 ---
 
@@ -5605,6 +5612,9 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Host:** Identifies the endpoint where credentials were dumped and lateral movement was initiated.
 * **Account:** Identifies the user security context executing the attack chain.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163916" src="https://github.com/user-attachments/assets/fcc97168-3027-423c-a443-2ad0e1636323" />
+
 
 ---
 
@@ -5649,16 +5659,23 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Correlating credential dumping directly with lateral movement tools represents a critical, high-priority intrusion. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC without merging related alerts.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163945" src="https://github.com/user-attachments/assets/198eb5b9-1d17-49c3-9b10-ca03abb223d4" />
+
 ---
 
 ## 🤖 Automated Responses
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
+
+
 ---
 
 ## ✅ Validation
 This rule can be validated in a controlled lab environment by running safe simulated checks or testing string detection for credential tools followed by administrative execution binaries. Sentinel will correlate the timestamps and generate a high-severity alert.
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164043" src="https://github.com/user-attachments/assets/ef85f600-629d-465d-9874-213ed00b945e" />
 
 ---
 
@@ -5670,32 +5687,7 @@ This correlation rule helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview & Name Description
-> *(Screenshot 2026-08-04 163838.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 163846.png)*
-> *(Screenshot 2026-08-04 163855.png)*
-
-### KQL Query Logic
-> *(Screenshot 2026-08-04 163907.png)*
-
-### Entity Mapping & Scheduling
-> *(Screenshot 2026-08-04 163916.png)*
-> *(Screenshot 2026-08-04 163930.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 163945.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 163950.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 164043.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
@@ -5717,6 +5709,8 @@ When adversaries successfully install a new Windows service (Event IDs `4697` or
 ## 🔥 Severity
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164349" src="https://github.com/user-attachments/assets/0eb48829-9291-458f-a71c-d77f6b06b424" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -5724,6 +5718,10 @@ When adversaries successfully install a new Windows service (Event IDs `4697` or
 |---------|-----------|--------------|
 | Persistence, Privilege Escalation | Create or Modify System Process: Windows Service | T1543.003 |
 | Defense Evasion | Indicator Removal on Host: Clear Windows Event Logs | T1070.001 |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164401" src="https://github.com/user-attachments/assets/d78aa841-29ec-4e38-a252-16c8c103abfb" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164410" src="https://github.com/user-attachments/assets/5e707f8d-d763-4cab-a62c-0468c1028124" />
+
 
 ---
 
@@ -5753,6 +5751,10 @@ The following advanced KQL query correlates new service installations with subse
     | where ClearTime between (ServiceTime .. ServiceTime + 30m)
     | project Computer, Account, ServiceTime, ClearTime
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164419" src="https://github.com/user-attachments/assets/4d1c6ca9-b26a-41bc-a3e5-d7f71aae27ad" />
+
+
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -5775,6 +5777,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Account:** Identifies the user account responsible for installing the service and clearing logs.
 * **Host:** Highlights the endpoint where the service persistence and log deletion occurred.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164428" src="https://github.com/user-attachments/assets/9f3328fd-97c2-42f6-9318-a3367ad21945" />
 
 ---
 
@@ -5819,16 +5823,25 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Correlating persistence mechanisms directly with log clearing is a critical indicator of compromise. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164443" src="https://github.com/user-attachments/assets/d609a9de-166a-4b72-8c13-d0bf03455d61" />
+
+
 ---
 
 ## 🤖 Automated Responses
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164449" src="https://github.com/user-attachments/assets/2a8b10dc-7f4f-4a2c-954d-d5aee2ff4bae" />
+
+
 ---
 
 ## ✅ Validation
 This rule can be validated in a controlled lab environment by installing a test service and subsequently clearing the security event log using administrative tools. Sentinel will correlate the sequence and generate a high-severity alert.
+
+
+
 
 ---
 
@@ -5840,32 +5853,7 @@ This correlation rule helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview & Name Description
-> *(Screenshot 2026-08-04 164349.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 164401.png)*
-> *(Screenshot 2026-08-04 164410.png)*
-
-### KQL Query Logic
-> *(Screenshot 2026-08-04 164419.png)*
-
-### Entity Mapping & Scheduling
-> *(Screenshot 2026-08-04 164428.png)*
-> *(Screenshot 2026-08-04 164531.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 164443.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 164449.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 164541.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
@@ -5885,12 +5873,16 @@ Attackers frequently abuse native Windows binaries (LOLBins) to bypass security 
 ## 🔥 Severity
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164623" src="https://github.com/user-attachments/assets/d662a1c9-99ba-43af-b07f-e6060506abb0" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
 | Command And Control, Defense Evasion | Ingress Tool Transfer | T1105 |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164630" src="https://github.com/user-attachments/assets/991d0ad5-1829-4c3a-95f6-5e3c5f330747" />
 
 ---
 
@@ -5922,6 +5914,9 @@ The following advanced KQL query correlates `certutil` download activity with su
     | where MshtaTime between (CertutilTime .. CertutilTime + 10m)
     | project Computer, Account, CertutilTime, MshtaTime
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164642" src="https://github.com/user-attachments/assets/4c3b5933-2e18-4dd1-ad91-1a4f609c7964" />
+
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -5932,6 +5927,9 @@ The following advanced KQL query correlates `certutil` download activity with su
 | **Lookup Data From** | Last 6 Minutes | Incorporates a 1-minute overlap buffer to accommodate log ingestion latency. |
 | **Severity** | High | Using native tools for download and execution represents an active, high-risk intrusion attempt. |
 | **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164728" src="https://github.com/user-attachments/assets/ee081c7b-0ff6-443a-ae6d-a0fc246d7d9c" />
+
 
 ---
 
@@ -5946,6 +5944,9 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Host:** Identifies the endpoint where the file was downloaded via certutil and executed via mshta.
 * **Account:** Identifies the user security context executing the attack chain.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164652" src="https://github.com/user-attachments/assets/ead89bf8-eba1-4eaa-8050-3edd7513c5a9" />
+
 
 ---
 
@@ -5990,16 +5991,25 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Correlating native tool downloads directly with script execution engines represents a critical, high-priority indicator of compromise. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164737" src="https://github.com/user-attachments/assets/0e78a614-b1a2-4cf6-ba7e-5f13720e9628" />
+
+
 ---
 
 ## 🤖 Automated Responses
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164742" src="https://github.com/user-attachments/assets/646af3ca-a1f8-4b98-932d-2f394cb830bc" />
+
+
 ---
 
 ## ✅ Validation
 This rule can be validated in a controlled lab environment by executing a benign certutil download command followed immediately by launching mshta. Sentinel will correlate the timestamps and generate a high-severity alert.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164747" src="https://github.com/user-attachments/assets/f3001e52-2e05-4936-9c59-3828683f4703" />
+
 
 ---
 
@@ -6011,32 +6021,7 @@ This correlation rule helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview & Name Description
-> *(Screenshot 2026-08-04 164623.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 164630.png)*
-
-### KQL Query Logic
-> *(Screenshot 2026-08-04 164642.png)*
-
-### Entity Mapping & Scheduling
-> *(Screenshot 2026-08-04 164652.png)*
-> *(Screenshot 2026-08-04 164719.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 164728.png)*
-> *(Screenshot 2026-08-04 164737.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 164742.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 164747.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
