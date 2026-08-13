@@ -116,6 +116,8 @@ The Incident Status section provides a breakdown of incidents based on their cur
 
 This provides a quick indication of the current SOC workload and the number of incidents requiring analyst attention.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174648" src="https://github.com/user-attachments/assets/ce25fd07-9879-4aa7-9d1c-40a406030f49" />
+
 ---
 
 ## 📈 Incident Trends
@@ -157,6 +159,8 @@ This section shows how incidents are distributed across severity levels.
 | 🔵 Informational | 1 |
 
 The distribution allows analysts to quickly assess the overall severity of detected activity and prioritize high-impact incidents.
+
+<img width="1680" height="389" alt="Screenshot 2026-08-08 174657" src="https://github.com/user-attachments/assets/6d45cefa-800d-494b-93d5-b32be1810cd7" />
 
 ---
 
@@ -208,6 +212,8 @@ This section identifies accounts associated with the highest volume of detected 
 
 Monitoring targeted accounts helps identify accounts repeatedly involved in authentication attempts and security events.
 
+<img width="1709" height="515" alt="Screenshot 2026-08-08 174703" src="https://github.com/user-attachments/assets/a9d090ae-b14f-4833-aa22-1a56bbf2ca31" />
+
 ---
 
 ## 🧠 SOC Investigation Workflow
@@ -245,22 +251,6 @@ The workbook can be used by SOC analysts for:
 - 🔎 **Detection Monitoring** — Determine which analytics rules are triggering most frequently.
 - 📈 **Trend Analysis** — Identify spikes and changes in security activity.
 - 🕵️ **Investigation Support** — Use dashboard findings to pivot into Sentinel incidents and KQL investigations.
-
----
-
-## 📸 Workbook Screenshots
-
-### 📊 SOC Summary
-
-![SOC Summary](./Images/SOC-Summary.png)
-
-### 📈 Incident Trends & Severity Distribution
-
-![Incident Trends](./Images/Incident-Trends.png)
-
-### 🔎 Top Alert Rules & Targeted Accounts
-
-![Top Alert Rules](./Images/Top-Alert-Rules.png)
 
 ---
 
@@ -371,6 +361,9 @@ Examples include:
 
 Monitoring targeted accounts can help identify accounts that may be exposed to password spraying, brute-force attempts, or other authentication-based attacks.
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174557" src="https://github.com/user-attachments/assets/1b3ee6ef-2f5b-4e2c-95dd-23ceefa7c4df" />
+
 ---
 
 ## 💻 Endpoint Threats
@@ -419,6 +412,9 @@ Monitors events associated with Windows event log clearing.
 
 Clearing event logs can be used by attackers to remove evidence of malicious activity and hinder security investigations.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174606" src="https://github.com/user-attachments/assets/1b21e2d7-8691-4e8f-a3d5-f68b732ee780" />
+
+
 ---
 
 ## 🧠 SOC Investigation Workflow
@@ -458,21 +454,6 @@ The Threat Detection Dashboard supports the following SOC activities:
 - 🧹 **Defense Evasion Monitoring** — Identify event log clearing.
 - 🕵️ **Threat Investigation** — Pivot from dashboard observations into Sentinel incidents and KQL queries.
 
----
-
-## 📸 Dashboard Screenshots
-
-### 🔐 Detection Summary & Authentication Activity
-
-![Detection Summary and Authentication Activity](./Images/Threat-Detection-Summary.png)
-
-### 🌐 Attack Activity & Endpoint Threats
-
-![Attack Activity and Endpoint Threats](./Images/Threat-Detection-Activity.png)
-
-### 🔀 Lateral Movement
-
-![Lateral Movement](./Images/Lateral-Movement.png)
 
 ---
 
@@ -543,6 +524,9 @@ The Incident Status visualization shows the distribution of incidents between ne
 | 📊 Total | **260** |
 
 This helps analysts understand the current incident workload and identify the number of incidents that remain unresolved.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174450" src="https://github.com/user-attachments/assets/b350622c-bdf2-4b0e-a760-6f97aab70a15" />
+
 
 ### ⚠️ Severity Distribution
 
@@ -636,6 +620,8 @@ This helps analysts monitor:
 - 🕒 Incident lifecycle progression
 - 📊 Overall response performance
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174456" src="https://github.com/user-attachments/assets/fa67eb4b-3bd7-4c6c-924e-cf6663ade028" />
+
 ---
 
 ## 🧠 SOC Investigation & Response Workflow
@@ -675,21 +661,6 @@ The Incident Response & Automation Dashboard supports:
 
 ---
 
-## 📸 Dashboard Screenshots
-
-### 🚨 Response Summary & Incident Management
-
-![Response Summary and Incident Management](./Images/Incident-Response-Summary.png)
-
-### ⚙️ Automation & Playbook Activity
-
-![Automation and Playbook Activity](./Images/Automation-Activity.png)
-
-### 🕒 Response Timeline
-
-![Response Timeline](./Images/Response-Timeline.png)
-
----
 
 ## 🏁 Outcome
 
