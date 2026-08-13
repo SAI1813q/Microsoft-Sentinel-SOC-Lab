@@ -93,7 +93,8 @@ This workbook acts as the **SOC command-center dashboard**, allowing an analyst 
 > **What is happening, how severe it is, what systems are affected, and which accounts are being targeted.**
 ---
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-07 120642" src="https://github.com/user-attachments/assets/917c9c68-93e9-4240-b24f-00d3059f4071" /><img width="1920" height="1020" alt="Screenshot 2026-08-07 120642" src="https://github.com/user-attachments/assets/a6724976-4f58-4b79-b03c-78f997ba0d9d" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174648" src="https://github.com/user-attachments/assets/35844a73-ced4-42ac-9b0f-fde39dd4d9f6" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174657" src="https://github.com/user-attachments/assets/5ead11d1-35ad-4003-af7c-0497a13664fc" />
 
 
 
@@ -155,7 +156,12 @@ This workbook is designed for the **detection and investigation phase of SOC ope
 
 ---
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-06 205355" src="https://github.com/user-attachments/assets/ea224228-062c-4937-8363-02c7a0d76971" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174557" src="https://github.com/user-attachments/assets/3fbd2e5f-3800-4729-8b78-7605e60745ea" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174606" src="https://github.com/user-attachments/assets/00d45e1b-b5be-4d8c-a956-6043d071e40d" />
+
+
+
+
 
 [⬆️ Back to Top](#Workbook-Overview)
 
@@ -220,8 +226,10 @@ rather than treating detection as the end of the process.
 
 ---
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-07 120447" src="https://github.com/user-attachments/assets/00c67f2b-6fc1-46ca-94b4-26af14fb2865" />
-<img width="1920" height="1020" alt="Screenshot 2026-08-07 120456" src="https://github.com/user-attachments/assets/46899784-ff2a-4ad1-849f-f1a79b091cc4" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174450" src="https://github.com/user-attachments/assets/98688781-9258-4e25-a1ad-08f6ddc73ddc" />
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 174456" src="https://github.com/user-attachments/assets/f7cb3195-4375-45a8-8ee7-4a14c98c3706" />
+
 
 
 [⬆️ Back to Top](#Workbook-Overview)
