@@ -2857,6 +2857,7 @@ AS-REP Roasting is a credential theft technique targeting Active Directory accou
 
 ## 🔥 Severity
 **High**
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 180707" src="https://github.com/user-attachments/assets/a83b0ca1-f2fb-483f-b4fa-10db64c391d2" />
 
 ---
 
@@ -2884,6 +2885,7 @@ SecurityEvent
 | where EventData contains "sqlsvc"
 | project TimeGenerated, Computer, Account, IpAddress, EventData
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 180730" src="https://github.com/user-attachments/assets/21f1c585-9968-4c32-958c-3213fac6e345" />
 
 ---
 
@@ -2911,6 +2913,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the specific vulnerable account (e.g., `sqlsvc`) being targeted for offline cracking.
 * **Host:** Highlights the Domain Controller processing the ticket request.
 * **IP:** Traces the network origin of the attacker initiating the roasting requests.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 181157" src="https://github.com/user-attachments/assets/76265b5d-5684-494f-ab88-1422097bb4fa" />
 
 ---
 
@@ -2957,11 +2961,13 @@ An alert is generated when all of the following conditions are met:
 
 ### Why group alerts by IP?
 In a production environment, adversaries will use automated tools to roast every vulnerable account in the domain simultaneously. By grouping alerts by the originating IP Address, the SOC receives a single consolidated incident containing the entire roasting campaign, rather than a separate ticket for every individual account queried.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 181216" src="https://github.com/user-attachments/assets/8ada0676-4224-43b3-92bf-df995ad23107" />
 
 ---
 
 ## ✅ Validation
 This detection can be validated by identifying an account with "Do not require Kerberos preauthentication" checked in Active Directory (e.g., `sqlsvc`), and running a tool like Impacket's `GetNPUsers.py` or Rubeus (`Rubeus.exe asreproast /user:sqlsvc`) from an attacking machine. Sentinel will capture the 4768 event and generate the incident.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 180839" src="https://github.com/user-attachments/assets/1eb42425-cc51-4bb9-a034-5eee987e0f19" />
 
 ---
 
@@ -2973,15 +2979,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Entity Mapping (Updated)
-> *(Insert Screenshot 2026-08-03 181157.png)*
-
-### Incident Settings (Updated)
-> *(Insert Screenshot 2026-08-03 181216.png)*
-
----
 
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
@@ -3001,6 +2999,7 @@ Kerberoasting is a post-compromise credential access technique. An adversary who
 
 ## 🔥 Severity
 **High**
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 181932" src="https://github.com/user-attachments/assets/bf1d8157-3dc3-4ce8-b90c-b07682a5a6a5" />
 
 ---
 
@@ -3028,6 +3027,8 @@ The following query monitors for Kerberos TGS requests targeting a specific serv
     | where EventData contains "sqlsvc"
     | project TimeGenerated, Computer, Account, EventData, IpAddress
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 182004" src="https://github.com/user-attachments/assets/916029ec-84b4-4a5c-8703-12523192d0c6" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -3054,6 +3055,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the compromised user account making the TGS request.
 * **Host:** Highlights the Domain Controller or system processing the ticket request.
 * **IP:** Traces the network origin of the attacker initiating the Kerberoasting requests.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 182020" src="https://github.com/user-attachments/assets/318cb93b-067e-45a3-a810-f278d1031eff" />
 
 ---
 
@@ -3100,11 +3102,14 @@ An alert is generated when all of the following conditions are met:
 
 ### Why group alerts by IP?
 In a production environment, attackers use automated scripts (like Invoke-Kerberoast) to request tickets for *all* vulnerable SPNs in the domain at once. Grouping by IP Address ensures that a massive burst of 4769 events from a single compromised endpoint is bundled into a single, actionable incident ticket for the SOC, drastically reducing alert fatigue.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 182037" src="https://github.com/user-attachments/assets/d4e45747-8e07-4a2c-8301-c1e312e78181" />
 
 ---
 
 ## ✅ Validation
 This detection can be validated by running an SPN extraction and TGS request tool like Rubeus (`Rubeus.exe kerberoast /user:sqlsvc`) or Impacket (`GetUserSPNs.py`) from an attacking machine within the lab environment against the `sqlsvc` account. Microsoft Sentinel will capture the 4769 event and generate the incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 182047" src="https://github.com/user-attachments/assets/29d323de-d3e5-41f8-b1d2-d58c4ce9584e" />
 
 ---
 
@@ -3116,25 +3121,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 181932.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 181943.png)*
-
-### KQL Query & Entity Mapping
-> *(Insert Screenshot 2026-08-03 182004.png)*
-> *(Insert Screenshot 2026-08-03 182020.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 182037.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 182047.png)*
-
----
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
@@ -3152,6 +3138,8 @@ The Domain Admins group holds unrestricted access to the entire Active Directory
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 183346" src="https://github.com/user-attachments/assets/34cb86c6-1aaf-4d0c-8f4e-b6fdf190d197" />
 
 ---
 
@@ -3184,6 +3172,8 @@ The following query monitors for additions to the Domain Admins group by matchin
         GroupName = TargetUserName,
         Activity
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 183426" src="https://github.com/user-attachments/assets/1644f6da-8f79-487b-9fdf-05b7f1d112d9" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -3208,6 +3198,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Account (SubjectAccount):** Identifies the administrator (or compromised admin account) that performed the action.
 * **Host:** Highlights the Domain Controller where the group modification was processed.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 183725" src="https://github.com/user-attachments/assets/ee1f8bce-8312-457e-a0e8-a54dc856bb8e" />
 
 ---
 
@@ -3251,11 +3243,14 @@ An alert is generated when all of the following conditions are met:
 
 ### Why disable alert grouping?
 Modifications to the Domain Admins group should be exceptionally rare in a healthy, mature IT environment. Because this represents the highest level of privilege escalation, the SOC must be notified immediately of *every* distinct occurrence without delay or grouping constraints.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 183455" src="https://github.com/user-attachments/assets/bc42650f-1323-4543-b70c-4b5fe131b97a" />
 
 ---
 
 ## ✅ Validation
 This detection can be validated by logging into a Domain Controller with administrative privileges, opening Active Directory Users and Computers (ADUC) or an elevated PowerShell prompt, and temporarily adding a test user account to the Domain Admins group. Microsoft Sentinel will capture the 4728 event and immediately generate an incident. *(Ensure the test user is removed immediately after validation).*
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 183512" src="https://github.com/user-attachments/assets/caf58a5a-ca31-43f3-b541-a1bff95963fc" />
 
 ---
 
@@ -3267,30 +3262,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 183346.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 183400.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 183426.png)*
-
-### Entity Mapping
-> *(Insert image_6666f7.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 183455.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 183502.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 183512.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -3309,6 +3281,7 @@ Adversaries frequently use built-in Windows tools like PowerShell to download se
 
 ## 🔥 Severity
 **High**
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 185017" src="https://github.com/user-attachments/assets/f1025369-2d1d-4b22-9e56-54b5a56a3641" />
 
 ---
 
@@ -3345,6 +3318,8 @@ The following query monitors for process creation events where the command line 
         NewProcessName,
         CommandLine
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 185230" src="https://github.com/user-attachments/assets/96fdd1f9-d923-4795-83ea-ceb539a71677" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -3366,6 +3341,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 | Host | HostName | Computer |
 | Account | Name | Account |
 | Process | CommandLine | CommandLine |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 185249" src="https://github.com/user-attachments/assets/3000fcd6-e2f3-41af-8768-b6caf21a37f9" />
 
 ---
 
@@ -3412,10 +3389,14 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by all matching entities?
 If a malicious script executes multiple download commands in rapid succession on the same host using the same account and identical command line syntax, this setting consolidates them into a single incident, significantly reducing alert fatigue.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 185655" src="https://github.com/user-attachments/assets/b4fcba78-fdfa-4e03-94f5-7f87fe7e9076" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by opening PowerShell on a monitored endpoint and executing a benign download command, such as `Invoke-WebRequest -Uri "https://example.com" -OutFile "C:\temp\test.txt"`. Microsoft Sentinel will capture the 4688 event containing the command and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 185836" src="https://github.com/user-attachments/assets/1705d2b5-42bf-4e17-a53a-85dce7f70e79" />
 
 ---
 
@@ -3427,31 +3408,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 185017.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 185040.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 185052.png)*
-> *(Insert Screenshot 2026-08-03 185230.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 185249.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 185655.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 185828.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 185836.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -3471,6 +3428,7 @@ Traditional brute-force attacks target a single account with many passwords, whi
 
 ## 🔥 Severity
 **High**
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 191418" src="https://github.com/user-attachments/assets/7b460672-e315-40c7-848b-dd5fa2539042" />
 
 ---
 
@@ -3511,6 +3469,7 @@ The following query aggregates failed logon events (excluding computer accounts 
         FailedUsers,
         FailedAttempts,
         TargetedAccounts
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 191442" src="https://github.com/user-attachments/assets/d154dfd7-50f6-4c62-8522-b6b69f96e030" />
 
 ---
 
@@ -3522,6 +3481,7 @@ The following query aggregates failed logon events (excluding computer accounts 
 | **Lookup Data From** | Last 11 Minutes | Provides a 1-minute overlap buffer to account for ingestion delays. |
 | **Severity** | High | Successful credential access leads directly to lateral movement and privilege escalation. |
 | **Status** | Enabled | Ensures the detection is currently active. |
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 191522" src="https://github.com/user-attachments/assets/8f814a50-c186-4ef1-8519-3b126ba24506" />
 
 ---
 
@@ -3538,6 +3498,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **IP:** Identifies the source machine performing the password spray.
 * **Account:** Attaches the set of targeted accounts to the incident so the SOC knows exactly who was attacked. *(Note: Because `TargetedAccounts` is generated via `make_set`, Sentinel will map the array of targeted users to the incident).*
 * **Host:** Identifies the Domain Controller or endpoint registering the failed authentication attempts.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 191513" src="https://github.com/user-attachments/assets/89787692-4672-40f8-941c-a419453070a7" />
 
 ---
 
@@ -3585,10 +3547,14 @@ An alert is generated when all of the following conditions are met:
 ### Why this grouping configuration?
 Password sprays can sometimes be conducted "low and slow" over several days. By grouping alerts over a large 5-day window, the SOC can track persistent, repeated brute-force attempts from the same source IP against the same infrastructure in a single unified incident ticket.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 191549" src="https://github.com/user-attachments/assets/295b7c73-0f8e-4c63-8ef5-f9bf39d77073" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by attempting to log in to 3 or more distinct, valid user accounts (e.g., `User1`, `User2`, `User3`) with incorrect passwords from the same attacking machine within a 10-minute window. Sentinel will aggregate the 4625 events and generate an incident pinpointing the attacking IP.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 191606" src="https://github.com/user-attachments/assets/9ec4e6cf-a2c5-4441-9077-fbf839bdc723" />
 
 ---
 
@@ -3600,33 +3566,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 191418.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 191428.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 191442.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 191513.png)*
-
-### Query Scheduling
-> *(Insert Screenshot 2026-08-03 191522.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 191549.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 191555.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 191606.png)*
-
----
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
@@ -3644,6 +3584,8 @@ Before dropping ransomware, establishing persistence, or running noisy post-expl
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 213617" src="https://github.com/user-attachments/assets/7d4bea9a-19a3-43a2-a70b-f74be1759f52" />
 
 ---
 
@@ -3677,6 +3619,8 @@ The following query monitors for process creation events where the command line 
     )
     | project TimeGenerated, Computer, Account, NewProcessName, CommandLine
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 213642" src="https://github.com/user-attachments/assets/705a3bc9-07b2-413d-bf6b-1e0a6429f175" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -3687,6 +3631,8 @@ The following query monitors for process creation events where the command line 
 | **Lookup Data From** | Last 6 Minutes | Provides a 1-minute overlap buffer to account for ingestion delays. |
 | **Severity** | High | Intentionally disabling endpoint protection is a critical indicator of an active attack. |
 | **Status** | Enabled | Ensures the detection is currently active. |
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 213706" src="https://github.com/user-attachments/assets/48fde0b3-c9be-47a4-bc66-486ff74d4342" />
+
 
 ---
 
@@ -3703,6 +3649,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Host:** Identifies the specific endpoint that is currently unprotected and vulnerable.
 * **Account:** Identifies the compromised administrative account executing the commands.
 * **Process:** Extracts the exact `CommandLine` used, revealing which specific Defender features the attacker attempted to disable.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 213653" src="https://github.com/user-attachments/assets/f18e4ef6-5c88-4fc1-99ba-c60e6e79fabf" />
 
 ---
 
@@ -3749,10 +3697,14 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by Account and Host?
 Attackers or automated malware scripts will often run multiple commands in rapid succession to ensure various layers of Defender (Real-time monitoring, IOAV, Behavioral) are all completely disabled. Grouping by Account and Host consolidates these sequential commands into one actionable incident ticket for the SOC.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 213717" src="https://github.com/user-attachments/assets/b5065db7-6139-4090-97ad-6e1a624638c5" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a controlled lab environment by opening an elevated PowerShell prompt and executing `Set-MpPreference -DisableRealtimeMonitoring $true` (ensure you immediately revert this by running the same command with `$false`). Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 213732" src="https://github.com/user-attachments/assets/99953099-e266-44c4-8e99-2e03c8d14ad0" />
 
 ---
 
@@ -3764,30 +3716,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 213617.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 213629.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 213642.png)*
-
-### Entity Mapping & Scheduling
-> *(Insert Screenshot 2026-08-03 213653.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 213706.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 213717.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 213726.png)*
-> *(Insert Screenshot 2026-08-03 213732.png)*
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -3806,6 +3734,8 @@ When credentials are stolen (via phishing, credential stuffing, or malware), thr
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214212" src="https://github.com/user-attachments/assets/0ba15276-d8e4-4171-9ca2-2e2a95787ce6" />
 
 ---
 
@@ -3856,6 +3786,9 @@ The following query calculates the distance and time difference between sequenti
               City, Country, DistanceKm, TimeDiffHours, RequiredSpeedKmh,
               IPAddress, AppDisplayName, DeviceDetail
     | order by RequiredSpeedKmh desc
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214300" src="https://github.com/user-attachments/assets/744fa0d9-27bb-42b2-8d47-ba23fe56d9a9" />
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214308" src="https://github.com/user-attachments/assets/0a749d2d-116d-4d56-83d6-ffedcad8f041" />
 
 ---
 
@@ -3881,6 +3814,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Account:** Identifies the compromised user whose credentials are being abused from multiple locations.
 * **IP:** Identifies the network origin of the anomalous authentication attempt.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214321" src="https://github.com/user-attachments/assets/948144c5-4a92-4912-94a6-724034919e9f" />
 
 ---
 
@@ -3932,16 +3867,22 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by all matching entities?
 If an attacker utilizes an automated script via a VPN or proxy that triggers multiple impossible travel conditions from the same IP against the same user account, grouping consolidates these into a single incident to prevent alert fatigue.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214335" src="https://github.com/user-attachments/assets/4ac7f0c9-0b53-49e5-8de0-e408d1601dd8" />
+
 ---
 
 ## 🤖 Automation Rules
 This rule is linked to the following automated response:
 * **known ip addreess:** Triggers when an incident is created to change the incident status (useful for whitelisting expected corporate VPN gateways or known egress points).
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214341" src="https://github.com/user-attachments/assets/2da25af3-ecf4-440d-8df8-ba94d88918ac" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by logging into a monitored Entra ID account from your local workstation, immediately connecting to a VPN with an egress node in a different country (e.g., over 500km away), and logging in again successfully within a few minutes. Sentinel will detect the geographic velocity anomaly and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214351" src="https://github.com/user-attachments/assets/a5fc154c-6b43-4ea4-95d4-8ec97da090ae" />
 
 ---
 
@@ -3953,31 +3894,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 214212.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 214231.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 214300.png)*
-> *(Insert Screenshot 2026-08-03 214308.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 214321.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 214335.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 214341.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 214351.png)*
-
----
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
@@ -3995,6 +3911,8 @@ Adversaries frequently disable host-based firewalls to facilitate network reconn
 
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214851" src="https://github.com/user-attachments/assets/3951a42e-9788-4b77-8c17-0d502b7781c5" />
 
 ---
 
@@ -4024,6 +3942,7 @@ The following query monitors for process creation events where the command line 
         "Disable-NetFirewall"
     )
     | project TimeGenerated, Computer, Account, Process, CommandLine
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214914" src="https://github.com/user-attachments/assets/588dc538-1d58-4967-84be-9d70485791c5" />
 
 ---
 
@@ -4051,6 +3970,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the user account executing the firewall modification.
 * **Host:** Highlights the endpoint that has had its network protections weakened.
 * **Process:** Extracts the exact `CommandLine` arguments used to disable the profiles.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214923" src="https://github.com/user-attachments/assets/63832465-b8ed-4e36-b01b-b03725f4fcc4" />
 
 ---
 
@@ -4096,15 +4016,21 @@ An alert is generated when all of the following conditions are met:
 
 ### Why group alerts by Account and Host?
 If multiple firewall profiles (Domain, Private, Public) are turned off sequentially in a single script execution, grouping by Account and Host combines these events into one coherent incident ticket.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214937" src="https://github.com/user-attachments/assets/27507c1e-c90e-4d4a-a4f2-8a183768b5e2" />
 
 ---
 ## 🤖 Automation Rules
 This rule is linked to an automated response:
 * **firewall disabled:** Triggers automatically upon incident creation to add a predefined triage task for the SOC analyst.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214945" src="https://github.com/user-attachments/assets/a71a87b3-a588-426c-8e83-a7d052401cad" />
+
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by opening an elevated Command Prompt or PowerShell window and executing `netsh advfirewall set allprofiles state off` (ensure you immediately revert this afterward by running `netsh advfirewall set allprofiles state on`). Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 214951" src="https://github.com/user-attachments/assets/0ce911f8-8a63-48af-8cbc-b640a1a3953f" />
 
 ---
 
@@ -4114,34 +4040,6 @@ This detection helps security teams:
 * Identify defense evasion attempts designed to clear paths for lateral movement.
 * Spot compromised hosts losing their perimeter protection layers.
 * Enforce compliance and rapid remediation on unprotected endpoints.
-
----
-
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 214851.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 214903.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 214914.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 214923.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 214937.png)*
-
-### Automation Response
-> *(Insert Screenshot 2026-08-03 214945.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 214951.png)*
-
----
-⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
 
@@ -4159,6 +4057,8 @@ This rule detects the abuse of the legitimate `certutil.exe` administrative bina
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 215444" src="https://github.com/user-attachments/assets/a62da438-355f-43ac-8163-aba4233cb06a" />
 
 ---
 
@@ -4186,6 +4086,8 @@ The following query monitors for process creation events involving `certutil.exe
     | where CommandLine has_any ("-urlcache", "-split", "http://", "https://")
     | project TimeGenerated, Computer, Account, Process, CommandLine
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 215528" src="https://github.com/user-attachments/assets/541ad731-fada-4afa-b41c-1656400b8dd9" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -4212,6 +4114,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the user or compromised account executing the download.
 * **Host:** Highlights the endpoint where the external file is being downloaded.
 * **Process:** Extracts the exact `CommandLine` arguments, revealing the specific URL and download flags used.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 215539" src="https://github.com/user-attachments/assets/d6a6d06f-9e38-446a-84e4-63e75b4d89ed" />
 
 ---
 
@@ -4259,10 +4163,15 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by Account and Host?
 If an adversary executes multiple download commands or queries cache states sequentially on the same host, grouping by Account and Host bundles these related events into a single unified incident ticket for the analyst.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 215548" src="https://github.com/user-attachments/assets/a1176e40-55c5-47d7-8361-0480d45c3ce8" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by opening an elevated command prompt and executing a benign test download command, such as `certutil.exe -urlcache -split -f http://example.com/test.txt`. Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 215601" src="https://github.com/user-attachments/assets/bde97f09-cb3f-4c3c-8aea-2691cb8e6d51" />
+
 
 ---
 
@@ -4272,30 +4181,6 @@ This detection helps security teams:
 * Capture external URLs and threat actor infrastructure leveraged during the ingress tool transfer stage.
 * Stop malware and secondary payloads from landing on sensitive corporate endpoints.
 
----
-
-## 📸 Screenshots
-
-### Rule Overview
-> *(Screenshot 2026-08-03 215444.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-03 215500.png)*
-
-### KQL Query
-> *(Screenshot 2026-08-03 215528.png)*
-
-### Entity Mapping
-> *(Screenshot 2026-08-03 215539.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-03 215548.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-03 215555.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-03 215601.png)*
 ---
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -4316,6 +4201,8 @@ After gaining initial access to a system, threat actors frequently perform inter
 
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221138" src="https://github.com/user-attachments/assets/3da534d1-ba6f-4493-9785-7e9b2d34f0fb" />
 
 ---
 
@@ -4344,6 +4231,8 @@ The following query monitors for process creation events where native network di
     | where Process has_any ("ipconfig.exe", "arp.exe", "netstat.exe", "route.exe", "nslookup.exe", "ping.exe")
     | project TimeGenerated, Computer, Account, Process, CommandLine
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221218" src="https://github.com/user-attachments/assets/a63520d8-0d3e-45fa-badf-fbfc0a96772e" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -4370,6 +4259,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the user or compromised identity performing the network scan.
 * **Host:** Highlights the endpoint where the reconnaissance commands were run.
 * **Process:** Extracts the exact `CommandLine` arguments used during the discovery phase.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221227" src="https://github.com/user-attachments/assets/db5dd2a2-ccb5-468e-b6df-a340011317da" />
 
 ---
 
@@ -4415,11 +4306,15 @@ An alert is generated when all of the following conditions are met:
 
 ### Why group alerts by Account and Host?
 Adversaries typically run scripts that execute multiple discovery commands back-to-back (`ipconfig` followed by `arp`, then `netstat`). Grouping by Account and Host bundles these sequential queries into a single consolidated incident.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221244" src="https://github.com/user-attachments/assets/bab5b8d8-8a56-4b09-85aa-0dcd4f2cb71c" />
+
 
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by opening a command prompt and executing a network discovery command such as `ipconfig /all` or `arp -a`. Microsoft Sentinel will capture the 4688 event and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221259" src="https://github.com/user-attachments/assets/72e944d0-2d17-4de3-a666-3618641f16b3" />
 
 ---
 
@@ -4431,30 +4326,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Screenshot 2026-08-03 221138.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-03 221200.png)*
-
-### KQL Query
-> *(Screenshot 2026-08-03 221218.png)*
-
-### Entity Mapping
-> *(Screenshot 2026-08-03 221227.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-03 221244.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-03 221252.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-03 221259.png)*
-
----
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
