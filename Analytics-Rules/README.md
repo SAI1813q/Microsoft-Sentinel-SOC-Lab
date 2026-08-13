@@ -6056,6 +6056,10 @@ Before executing noisy or high-privilege activities such as credential harvestin
 ## 🔥 Severity
 **High**
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164837" src="https://github.com/user-attachments/assets/bfecf593-fb22-4e82-9345-2d208ecd5321" />
+
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -6063,6 +6067,9 @@ Before executing noisy or high-privilege activities such as credential harvestin
 |---------|-----------|--------------|
 | Defense Evasion | Impair Defenses | T1562 |
 | Credential Access | OS Credential Dumping | T1003 |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164847" src="https://github.com/user-attachments/assets/9bbe0055-ce49-488a-819c-a21aab57afa5" />
+
 
 ---
 
@@ -6103,6 +6110,12 @@ The following advanced KQL query uses multiple `let` statements and inner joins 
     | where MimikatzTime between (FirewallTime .. FirewallTime + 15m)
     | project Computer, Account, DefenderTime, FirewallTime, MimikatzTime
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164858" src="https://github.com/user-attachments/assets/5ddb0ff0-1b11-4839-a372-5101f7c3343b" />
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164906" src="https://github.com/user-attachments/assets/907a7d5c-0a84-41ac-add2-e4457b8cc1c2" />
+
+
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -6125,6 +6138,10 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Host:** Identifies the target endpoint where defenses were stripped and credentials were targeted.
 * **Account:** Identifies the user security context executing the tampering and dumping sequence.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164915" src="https://github.com/user-attachments/assets/4e59c277-3f29-4b57-8b77-6a73f5bc7db2" />
+
+
 
 ---
 
@@ -6173,16 +6190,24 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Stripping multiple security controls before dumping credentials is a definitive high-priority indicator of compromise. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164937" src="https://github.com/user-attachments/assets/94a1e140-9d3b-4033-b311-19f8e9c83580" />
+
+
 ---
 
 ## 🤖 Automated Responses
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164942" src="https://github.com/user-attachments/assets/b2da55bf-30d4-4fc2-b4bb-323652473db2" />
+
 ---
 
 ## ✅ Validation
 This rule can be validated in a secure test environment by executing safe verification steps matching the process command lines. Sentinel will successfully correlate the multi-stage sequence across the time windows and generate a high-severity alert.
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164948" src="https://github.com/user-attachments/assets/a5b8d1db-d411-4667-98dc-94dafc180fd1" />
 
 ---
 
@@ -6191,33 +6216,6 @@ This correlation rule helps security teams:
 * Detect premeditated defense tampering before severe credential theft occurs.
 * Catch complex multi-phase kill chains instantly via NRT evaluation.
 * Ensure immediate, unbundled incident generation for critical adversary campaigns.
-
----
-
-## 📸 Screenshots
-
-### Rule Overview & Name Description
-> *(Screenshot 2026-08-04 164837.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 164847.png)*
-
-### KQL Query Logic
-> *(Screenshot 2026-08-04 164858.png)*
-> *(Screenshot 2026-08-04 164906.png)*
-
-### Entity Mapping & Scheduling
-> *(Screenshot 2026-08-04 164915.png)*
-> *(Screenshot 2026-08-04 164929.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 164937.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 164942.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 164948.png)*
 
 ---
 
