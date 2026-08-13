@@ -4474,6 +4474,7 @@ When endpoints are compromised, malware or threat actors frequently establish ou
 
 ## 🔥 Severity
 **Medium**
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221802" src="https://github.com/user-attachments/assets/88541bd3-8357-47b6-8521-c8934c325c75" />
 
 ---
 
@@ -4505,6 +4506,8 @@ The following query correlates successful outbound device connections with activ
     ) on $left.RemoteIP == $right.IndicatorIP
     | project Timestamp, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine, RemoteIP, RemotePort, Description, ConfidenceScore
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221828" src="https://github.com/user-attachments/assets/c0cfb9e2-0d9b-4e8e-a097-5f4d255f5180" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -4527,6 +4530,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 
 ### Why map this entity?
 * **Host:** Identifies the exact endpoint on the internal network that successfully connected to the malicious external IP address.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221849" src="https://github.com/user-attachments/assets/82bb90bf-04e3-4ef1-9e7e-a8f2fc13f029" />
 
 ---
 
@@ -4568,10 +4573,14 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Outbound communication with known malicious threat intelligence infrastructure indicates a high-priority risk. Disabling alert grouping ensures every unique connection attempt generates an independent incident ticket for immediate SOC visibility.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221855" src="https://github.com/user-attachments/assets/c8568962-426f-4048-8498-9232997c9265" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by simulating an outbound connection attempt from a test machine to a safe, controlled threat intelligence test IP or a custom indicator injected into the Threat Intelligence workspace table. Sentinel will evaluate the join condition and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 221909" src="https://github.com/user-attachments/assets/5c8609a5-2f6e-4811-911b-b8e278a3e5ab" />
 
 ---
 
@@ -4583,30 +4592,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Screenshot 2026-08-03 221802.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-03 221811.png)*
-
-### KQL Query
-> *(Screenshot 2026-08-03 221828.png)*
-
-### Entity Mapping
-> *(Screenshot 2026-08-03 221849.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-03 221855.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-03 221901.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-03 221909.png)*
-
----
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
 ---
@@ -4624,6 +4610,8 @@ Adversaries frequently create or modify Windows services to establish persistent
 
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154122" src="https://github.com/user-attachments/assets/9377445b-4936-4fc1-a18b-d4d8a1e2e9b1" />
 
 ---
 
@@ -4648,6 +4636,7 @@ The following query monitors for service installation events (`4697` and `7045`)
     SecurityEvent
     | where EventID in (4697, 7045)
     | project TimeGenerated, Computer, SubjectAccount, EventID, Activity
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154141" src="https://github.com/user-attachments/assets/b5e4c958-60df-462e-b250-4aa770741c0f" />
 
 ---
 
@@ -4673,6 +4662,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Host:** Identifies the target endpoint or server where the new service was installed.
 * **Account:** Identifies the user account or administrator context that registered the service.
+<img width="1022" height="349" alt="Screenshot 2026-08-04 154151" src="https://github.com/user-attachments/assets/12b44956-e38d-4f32-938b-5044a05771fd" />
+
 
 ---
 
@@ -4717,10 +4708,14 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Service installations are generally infrequent in locked-down production environments. Disabling grouping ensures that every new service installation generates a distinct, immediate ticket for verification.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154158" src="https://github.com/user-attachments/assets/dabfe3b2-780f-4382-97fd-5e826ea5842a" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by installing a temporary test service using an elevated prompt (e.g., `sc.exe create TestService binPath= "cmd.exe"`). Microsoft Sentinel will capture the event and generate an incident. *(Ensure you delete the test service immediately after validation using `sc.exe delete TestService`).*
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154212" src="https://github.com/user-attachments/assets/69477517-9873-4c0c-b039-5c1b98ea5c4c" />
 
 ---
 
@@ -4732,30 +4727,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Screenshot 2026-08-04 154122.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 154135.png)*
-
-### KQL Query
-> *(Screenshot 2026-08-04 154141.png)*
-
-### Entity Mapping (Updated)
-> *(Screenshot 2026-08-04 154151.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 154158.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 154203.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 154212.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
@@ -4776,6 +4748,8 @@ To prevent security analysts and SIEM solutions from detecting malicious post-ex
 
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154345" src="https://github.com/user-attachments/assets/0440abe8-71b0-46b6-8fc6-32f468347a55" />
 
 ---
 
@@ -4801,6 +4775,8 @@ The following query monitors for the specific event ID indicating that the event
     | where EventID == 1100
     | project TimeGenerated, Computer, SubjectAccount, Activity, EventID
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154403" src="https://github.com/user-attachments/assets/2f3c5893-0958-46da-86d8-a049e55e1186" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -4825,6 +4801,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Account:** Identifies the user account or security context responsible for stopping the event logging service.
 * **Host:** Highlights the specific system or endpoint where logging was disabled.
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154412" src="https://github.com/user-attachments/assets/d395a4b5-b644-4ffe-8825-3785f943eef1" />
 
 ---
 
@@ -4869,10 +4846,14 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Tampering with core logging services is a critical indicator of compromise. Disabling grouping ensures that every occurrence generates an immediate, independent incident ticket for the SOC.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154417" src="https://github.com/user-attachments/assets/53af12dc-13f0-4369-855a-5956a5983ba7" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by testing administrative service controls or observing log generation patterns when the event log service state changes. Microsoft Sentinel will capture the 1100 event and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154538" src="https://github.com/user-attachments/assets/1b34a848-1672-4b9d-b6d8-cf280db49e1b" />
 
 ---
 
@@ -4882,32 +4863,7 @@ This detection helps security teams:
 * Identify rogue administrators or compromised accounts trying to hide secondary malicious payloads.
 * Maintain strict visibility over core endpoint telemetry channels.
 
----
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Screenshot 2026-08-04 154345.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 154357.png)*
-
-### KQL Query
-> *(Screenshot 2026-08-04 154403.png)*
-
-### Entity Mapping
-> *(Screenshot 2026-08-04 154412.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 154417.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 154422.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 154538.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
@@ -4926,6 +4882,8 @@ Privilege escalation is a critical phase in an attack lifecycle. Once an adversa
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154850" src="https://github.com/user-attachments/assets/f746bb4c-2b7c-413f-ae56-fb5cc713f011" />
 
 ---
 
@@ -4951,6 +4909,9 @@ The following query monitors for security event IDs 4732 and 4728 to track addit
     | where EventID in (4732, 4728)
     | project TimeGenerated, Computer, SubjectAccount, TargetAccount, Activity
 
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154915" src="https://github.com/user-attachments/assets/4fc5a9ef-6258-42ee-af4a-05ed5c61bcbe" />
+
 ---
 
 ## ⚙️ Rule Configuration
@@ -4961,6 +4922,8 @@ The following query monitors for security event IDs 4732 and 4728 to track addit
 | **Lookup Data From** | Last 6 Minutes | Provides a 1-minute overlap buffer to handle log ingestion delays safely. |
 | **Severity** | High | Unauthorized local admin additions represent an immediate threat to endpoint integrity. |
 | **Status** | Enabled | Ensures the detection is currently active. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154935" src="https://github.com/user-attachments/assets/36606bdc-1969-49f3-bcf7-6b329d4f2e8e" />
 
 ---
 
@@ -4975,6 +4938,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 ### Why map these entities?
 * **Host:** Identifies the specific endpoint where the local group modification occurred.
 * **Account:** Identifies the target user account that was elevated to administrative privileges.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154920" src="https://github.com/user-attachments/assets/2029890f-0e82-49fa-8ff9-f43374567f2b" />
 
 ---
 
@@ -5019,10 +4984,13 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Modifications to local administrator groups should be tightly controlled and rare. Disabling alert grouping ensures that every individual account elevation generates a distinct, immediate ticket for verification.
 
+
 ---
 
 ## ✅ Validation
 This detection can be validated in a lab environment by opening an elevated command prompt and adding a user to the local administrators group (e.g., `net localgroup Administrators TestUser /add`). Microsoft Sentinel will capture the event and generate an incident. *(Ensure you remove the user immediately after validation using `net localgroup Administrators TestUser /delete`).*
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 154954" src="https://github.com/user-attachments/assets/db987921-df35-4ef7-869f-0d12feb6e268" />
 
 ---
 
@@ -5031,34 +4999,6 @@ This detection helps security teams:
 * Intercept local privilege escalation attempts early in the kill chain.
 * Audit unauthorized administrative account creation across endpoints.
 * Protect critical assets from rogue user elevations and insider threats.
-
----
-
-## 📸 Screenshots
-
-### Rule Overview
-> *(Screenshot 2026-08-04 154850.png)*
-
-### MITRE ATT&CK Mapping
-> *(Screenshot 2026-08-04 154859.png)*
-
-### KQL Query
-> *(Screenshot 2026-08-04 154915.png)*
-
-### Entity Mapping
-> *(Screenshot 2026-08-04 154920.png)*
-
-### Query Scheduling
-> *(Screenshot 2026-08-04 154935.png)*
-
-### Incident Settings
-> *(Screenshot 2026-08-04 154947.png)*
-
-### Automated Response
-> *(Screenshot 2026-08-04 154947.png)*
-
-### Review & Create
-> *(Screenshot 2026-08-04 154954.png)*
 
 ---
 
