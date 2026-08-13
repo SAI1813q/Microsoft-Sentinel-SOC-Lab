@@ -50,7 +50,7 @@ The dashboards are built using **Azure Workbooks + KQL** and are connected to th
 
 The **SOC Overview Dashboard** provides a centralized view of the overall security posture and incident activity within the Microsoft Sentinel environment.
 
-### Key Metrics
+### 📊 Key Metrics
 
 - Total incidents
 - Active incidents
@@ -61,7 +61,7 @@ The **SOC Overview Dashboard** provides a centralized view of the overall securi
 - Incident trends
 - Severity distribution
 
-### Attack Activity
+### 🎯 Attack Activity
 
 The dashboard also provides visibility into:
 
@@ -70,7 +70,7 @@ The dashboard also provides visibility into:
 - Authentication activity
 - Attack trends over time
 
-### Endpoint Threats
+### 💻 Endpoint Threats
 
 The Endpoint Threats section provides visibility into important endpoint-based detections:
 
@@ -79,14 +79,14 @@ The Endpoint Threats section provides visibility into important endpoint-based d
 - Registry Persistence
 - Scheduled Tasks Created
 
-### Lateral Movement
+### 🔀 Lateral Movement
 
 The dashboard also tracks lateral movement-related activity:
 
 - PsExec Activity
 - Event Log Cleared
 
-### Purpose
+### 🎯 Purpose
 
 This workbook acts as the **SOC command-center dashboard**, allowing an analyst to quickly understand:
 
@@ -107,7 +107,7 @@ This workbook acts as the **SOC command-center dashboard**, allowing an analyst 
 
 The **Threat Detection Dashboard** focuses specifically on security detections generated from Windows Security Events and Microsoft Sentinel analytics rules.
 
-## Detection Summary
+## 🔎 Detection Summary
 
 The dashboard provides visibility into:
 
@@ -119,19 +119,19 @@ The dashboard provides visibility into:
 
 This allows analysts to identify authentication anomalies and potential brute-force activity.
 
-## Attack Activity
+## 🎯 Attack Activity
 
-### Top Source IPs
+### 🌐 Top Source IPs
 
 Displays the IP addresses generating the highest volume of security activity.
 
-### Top Target Accounts
+### 👤 Top Target Accounts
 
 Displays accounts most frequently targeted by authentication attempts.
 
 This helps identify potentially targeted privileged or administrative accounts.
 
-## Endpoint Threats
+## 💻 Endpoint Threats
 
 The Endpoint Threats section contains detection trends for:
 
@@ -142,14 +142,14 @@ The Endpoint Threats section contains detection trends for:
 | Registry Persistence | Detect persistence through registry mechanisms |
 | Scheduled Tasks Created | Identify scheduled-task-based persistence |
 
-## Lateral Movement
+## 🔀  Lateral Movement
 
 The dashboard monitors activity associated with lateral movement techniques:
 
 - PsExec Activity
 - Event Log Clearing
 
-### Purpose
+### 🎯 Purpose
 
 This workbook is designed for the **detection and investigation phase of SOC operations**, allowing analysts to move from high-level trends into specific attack techniques and detection categories.
 
@@ -164,7 +164,7 @@ This workbook is designed for the **detection and investigation phase of SOC ope
 
 The **Incident Response & Automation Dashboard** provides visibility into the incident lifecycle and automation capabilities implemented in Microsoft Sentinel.
 
-## Response Summary
+## 📊 Response Summary
 
 Key metrics include:
 
@@ -173,7 +173,7 @@ Key metrics include:
 - Playbooks triggered
 - Closed incidents
 
-## Incident Management
+## 🚨 Incident Management
 
 The dashboard visualizes:
 
@@ -182,7 +182,7 @@ The dashboard visualizes:
 - New vs. closed incidents
 - High and medium severity incidents
 
-## Automation Overview
+## 🤖 Automation Overview
 
 The automation section tracks:
 
@@ -191,7 +191,7 @@ The automation section tracks:
 - Unassigned incidents
 - Playbook executions
 
-## Playbook Activity
+## ▶️ Playbook Activity
 
 The dashboard provides visibility into playbook execution associated with security incidents.
 
@@ -202,7 +202,7 @@ Examples include automation associated with:
 - Incident assignment
 - Incident enrichment
 
-## Response Timeline
+## 🕒 Response Timeline
 
 The workbook also provides:
 
@@ -210,7 +210,7 @@ The workbook also provides:
 - Incident closure trends
 - Automation execution activity
 
-### Purpose
+### 🎯 Purpose
 
 This workbook demonstrates how the SOC moves from:
 
