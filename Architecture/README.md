@@ -14,6 +14,7 @@ This project replicates a production enterprise security operations setup. It de
 * **Resource Group:** Centralized management via a dedicated resource group (`ResourceGrp`) hosted in **Central India**.
 * **Subscription Management:** Deployed using an active Azure subscription with unified identity and resource tracking.
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192253" src="https://github.com/user-attachments/assets/5ac1d8ac-bf0d-4c85-afb9-1e67fe0d6988" />
+
 ---
 
 ## 🌐 Network Architecture
@@ -21,6 +22,7 @@ This project replicates a production enterprise security operations setup. It de
 * **Network Security Groups (NSGs):** Configured with granular security rules across `DC-nsg`, `Vm1-nsg`, and `vm2-nsg` to control traffic flows.
 * **Public IP Endpoints:** Dedicated public IPs (`DC-ip`, `Vm1-ip`) attached to virtual machines to purposely simulate exposure and draw external attack traffic.
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 193853" src="https://github.com/user-attachments/assets/233890b0-f778-422d-ba1e-f5d615a50271" />
+
 ---
 
 ## 🖥️ Virtual Machines
@@ -33,11 +35,14 @@ This project replicates a production enterprise security operations setup. It de
   * **OS:** Windows 10 Pro (Standard B2als v2 size, 2 vCPUs, 4 GiB RAM).
   * **Extensions:** Integrated with the **AzureMonitorWindowsAgent** to stream operating system telemetry.
 <img width="1920" height="1020" alt="Screenshot 2026-08-05 192342" src="https://github.com/user-attachments/assets/467cae40-70cc-4e9f-84e1-b83793cfc654" />
+
 ---
 
 ## 🏢 Active Directory
 * **Domain Structure:** Managed under the `root.project` forest using Active Directory Users and Computers (ADUC).
 * **Simulated Users & Security Roles:** Configured with dedicated organizational accounts including custom security tiers (`SOC analyst L1 User`, `SOC analyst L3 User`, `Security Manager`), standard users, and service accounts to generate realistic authentication logs and internal event histories.
+
+<img width="1599" height="720" alt="WhatsApp Image 2026-08-05 at 7 57 56 PM" src="https://github.com/user-attachments/assets/c2117ae0-e333-4819-8f2d-34ad710d4c26" />
 
 ---
 
@@ -56,7 +61,10 @@ This project replicates a production enterprise security operations setup. It de
 
 ## 📊 Log Analytics Workspace (LAW)
 * **Central Repository (`LAW-Project1`):** Serves as the core hub for security event storage, analytical query processing, and 30-day retention management.
-<img width="1920" height="1020" alt="Screenshot 2026-08-05 193204" src="https://github.com/user-attachments/assets/2c0ba554-8b6b-4d34-845c-b936652ae2e7" />
+
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-08 234655" src="https://github.com/user-attachments/assets/ed952c04-4341-45b3-a499-0729a41bfbc3" />
+
 ---
 
 ## 📥 Data Collection Rules (DCR)
