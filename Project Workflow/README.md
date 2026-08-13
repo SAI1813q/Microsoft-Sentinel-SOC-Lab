@@ -75,13 +75,13 @@ This section explains the complete lifecycle of log collection, threat detection
 
 ---
 
-# Workflow Explanation
+## 🗺️ Workflow Explanation
 
-## 1. Attack Simulation
+## 1. 🎯 Attack Simulation
 
 The lab simulates real-world attacker behavior using multiple offensive security tools to generate telemetry for detection engineering.
 
-### Tools Used
+### 🧰 Tools Used
 
 - Atomic Red Team
 - Mimikatz
@@ -93,7 +93,7 @@ These attacks generate Windows Security Events, Sysmon Events, and System Logs.
 
 ---
 
-## 2. Azure Monitor Agent (AMA)
+## 2. 📡 Azure Monitor Agent (AMA)
 
 Azure Monitor Agent is installed on every Windows endpoint and Domain Controller.
 
@@ -108,7 +108,7 @@ The agent securely forwards telemetry to Azure Monitor.
 
 ---
 
-## 3. Data Collection Rules (DCR)
+ ## 3. 📋 Data Collection Rules (DCR)
 
 Data Collection Rules define which events should be ingested into Log Analytics.
 
@@ -123,7 +123,7 @@ Filtering unnecessary events reduces storage costs while improving query perform
 
 ---
 
-## 4. Log Analytics Workspace
+## 4. 🗄️ Log Analytics Workspace
 
 All collected telemetry is stored in a centralized Log Analytics Workspace.
 
@@ -139,7 +139,7 @@ The workspace enables:
 
 ---
 
-## 5. Microsoft Sentinel
+## 5. 🛡️ Microsoft Sentinel
 
 Microsoft Sentinel provides the cloud-native SIEM and SOAR capabilities for the lab.
 
@@ -153,7 +153,7 @@ Primary functions include:
 
 ---
 
-## 6. Analytics Rules
+## 6. 🔎 Analytics Rules
 
 Custom KQL-based Analytics Rules continuously monitor incoming telemetry.
 
@@ -173,7 +173,7 @@ Each rule is mapped to the MITRE ATT&CK Framework.
 
 ---
 
-## 7. Correlation Rules
+## 7. 🔗 Correlation Rules
 
 Correlation Rules combine multiple suspicious activities into a single high-confidence incident.
 
@@ -188,7 +188,7 @@ This significantly reduces false positives while improving detection fidelity.
 
 ---
 
-## 8. Incident Creation
+## 8. 🚨 Incident Creation
 
 When an Analytics Rule or Correlation Rule is triggered, Microsoft Sentinel automatically creates an incident.
 
@@ -203,7 +203,7 @@ Each incident contains:
 
 ---
 
-## 9. Automated Response
+## 9. 🤖 Automated Response
 
 Logic Apps automate incident response by performing predefined actions.
 
@@ -217,7 +217,7 @@ Automation reduces analyst response time and improves operational efficiency.
 
 ---
 
-## 10. Investigation & Monitoring
+## 10. 🕵️  Investigation & Monitoring
 
 SOC analysts investigate incidents using:
 
@@ -231,7 +231,7 @@ These tools provide complete visibility into attacker activity throughout the en
 
 ---
 
-# End-to-End Process
+# 🔄 End-to-End Process
 
 1. Attacker executes malicious activity.
 2. Windows generates security events.
