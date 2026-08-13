@@ -40,7 +40,7 @@ The dashboards are built using **Azure Workbooks + KQL** and are connected to th
 
 | Workbook | Purpose | Key Areas |
 |---|---|---|
-| [SOC Overview Dashboard](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Workbook%20&%20Dashboard/README.md#%EF%B8%8F-1-soc-overview-dashboard) | Provides a high-level view of the SOC environment | Incidents, severity, affected hosts, attack activity |
+| [SOC Overview Dashboard](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Workbook%20&%20Dashboard/README.md#-soc-overview-workbook) | Provides a high-level view of the SOC environment | Incidents, severity, affected hosts, attack activity |
 | [Threat Detection Dashboard](#-2-threat-detection-dashboard) | Provides visibility into security detections and attacker activity | Authentication, endpoint threats, lateral movement |
 | [Incident Response & Automation Dashboard](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Workbook%20&%20Dashboard/README.md#%EF%B8%8F-3-incident-response--automation-dashboard) | Tracks incident handling and SOC automation | Incident lifecycle, assignments, playbooks, response activity |
 
