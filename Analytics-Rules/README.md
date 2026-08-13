@@ -5158,18 +5158,26 @@ Utilizing rule templates and ML behavior analytics helps security teams:
 ## 📸 Screenshots
 
 ### Anomalous RDP Login Detections
-* **General & Description:** *(Screenshot 2026-08-04 155346.png)*
-* **Automated Response:** *(Screenshot 2026-08-04 155353.png)*
-* **Review & Create:** *(Screenshot 2026-08-04 155402.png)*
+* **General & Description:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155346" src="https://github.com/user-attachments/assets/c984eb26-a8ba-4949-bcb1-b66c47b7acf8" />
+
+* **Automated Response:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155353" src="https://github.com/user-attachments/assets/3aa5a6f5-c336-45eb-a195-e485db3e79b2" />
+
+* **Review & Create:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155402" src="https://github.com/user-attachments/assets/a58fd2e8-a708-4e0b-99d4-c8897ae478db" />
+
 
 ### Anomalous SSH Login Detection
-* **General Configuration:** *(Screenshot 2026-08-04 155455.png)*
-* **Automated Response:** *(Screenshot 2026-08-04 155504.png)*
-* **Review & Create:** *(Screenshot 2026-08-04 155513.png)*
+* **General Configuration:**<img width="1920" height="1020" alt="Screenshot 2026-08-04 155455" src="https://github.com/user-attachments/assets/c3c5556d-7d30-4d28-9b1c-b271b907f1e8" />
+
+* **Automated Response:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155504" src="https://github.com/user-attachments/assets/585329b0-bd8c-4373-9bf1-95815fde3c8f" />
+
+* **Review & Create:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155513" src="https://github.com/user-attachments/assets/64a668df-ceb1-4a21-9df0-4c65734268a5" />
+
 
 ### Microsoft Defender Threat Intelligence Analytics
-* **General Configuration:** *(Screenshot 2026-08-04 155426.png)*
-* **Review & Create:** *(Screenshot 2026-08-04 155435.png)*
+* **General Configuration:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155426" src="https://github.com/user-attachments/assets/3c311bb0-0787-4c4a-9949-19520ff8b788" />
+
+* **Review & Create:** <img width="1920" height="1020" alt="Screenshot 2026-08-04 155435" src="https://github.com/user-attachments/assets/a32895df-379c-4de1-820c-4e1e177a3b97" />
+
 
 ---
 
