@@ -5191,7 +5191,7 @@ Attackers frequently use encoded PowerShell commands (using flags like `-enc` or
 ## 🔥 Severity
 **High**
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 160644" src="https://github.com/user-attachments/assets/da84ae34-9d3c-42a0-8e77-76dd1d412e2f" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161718" src="https://github.com/user-attachments/assets/d03a01f8-724b-4c1f-b66f-ef537ff37715" />
 
 
 ---
@@ -5202,9 +5202,6 @@ Attackers frequently use encoded PowerShell commands (using flags like `-enc` or
 | Execution | Command and Scripting Interpreter: PowerShell | T1059.001 |
 | Persistence, Privilege Escalation | Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder | T1547.001 |
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 160713" src="https://github.com/user-attachments/assets/47501093-d87e-4fa3-971e-c79d7ab17bc6" />
-
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 160720" src="https://github.com/user-attachments/assets/baddc746-e769-4bf5-9343-07d8ab39494c" />
 
 
 
@@ -5238,7 +5235,7 @@ The following advanced KQL query correlates encoded PowerShell process execution
     | where RunKeyTime between (PSTime .. PSTime + 10m)
     | project Computer, Account, PSTime, RunKeyTime
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 160757" src="https://github.com/user-attachments/assets/9135f64e-9e6f-4a5f-9065-3b7825fa4899" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161802" src="https://github.com/user-attachments/assets/11a21ba0-e3df-44ee-99f5-450b223b179a" />
 
 ---
 
@@ -5252,7 +5249,7 @@ The following advanced KQL query correlates encoded PowerShell process execution
 | **Status** | Enabled | Ensures the correlation rule is actively evaluating incoming telemetry. |
 
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 160954" src="https://github.com/user-attachments/assets/d5f0485d-9823-4d88-ba49-0f79e65885dd" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161825" src="https://github.com/user-attachments/assets/9362df6e-738b-4bfc-a33f-68b8c3c9f3cd" />
 
 ---
 
@@ -5269,7 +5266,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the user security context executing the attack chain.
 
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 160813" src="https://github.com/user-attachments/assets/cbc5907d-647d-4a8a-9517-bbd4bbfd68e8" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161811" src="https://github.com/user-attachments/assets/0373f567-e8a0-4c8b-b25f-f856da1b5202" />
 
 ---
 
@@ -5315,7 +5312,7 @@ An alert is generated when all of the following conditions are met:
 Correlating encoded execution directly with registry persistence represents a critical, high-fidelity intrusion. Disabling alert grouping ensures every unique detection triggers an immediate, standalone incident ticket for the SOC.
 
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 162315" src="https://github.com/user-attachments/assets/79224b1d-a2d7-4bd1-9800-5d08860de488" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 162110" src="https://github.com/user-attachments/assets/646712f9-818f-43a4-8bb2-788523adbd94" />
 
 ---
 
@@ -5324,14 +5321,14 @@ Correlating encoded execution directly with registry persistence represents a cr
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161206" src="https://github.com/user-attachments/assets/0a3864f0-a207-473e-8012-44fa79383a5d" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161841" src="https://github.com/user-attachments/assets/a8ce1afc-be95-4e0c-b548-afcf71b50aee" />
 
 ---
 
 ## ✅ Validation
 This rule can be validated in a controlled lab environment by executing an encoded PowerShell command (e.g., base64 encoding a benign command) followed immediately by adding a test entry to `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Sentinel will correlate the timestamps and generate a high-severity alert.
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161213" src="https://github.com/user-attachments/assets/aea76e1d-985c-4580-8947-86c6e2483e99" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161847" src="https://github.com/user-attachments/assets/378e7a4b-1b97-46a4-ba6f-1d286bfa5b38" />
 
 ---
 
@@ -5362,19 +5359,17 @@ Advanced threat actors rarely rely on a single isolated action. A common kill ch
 ## 🔥 Severity
 **High**
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161718" src="https://github.com/user-attachments/assets/f75cd577-cf4e-463f-81ea-de49b9caf78b" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160644" src="https://github.com/user-attachments/assets/af238672-eec3-4a46-a6b6-684d45669dfe" />
 
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
-| Credential Access | Brute Force | T1110 |
-| Initial Access, Defense Evasion, Persistence, Privilege Escalation | Valid Accounts | T1078 |
-| Persistence | Create Account | T1136 |
+| Credential Access | Brute Force: Password Guessing | T1110.001 |
+| Initial Access | Valid Accounts | T1078 |
+| Persistence | Create Account: Local Account | T1136.001 |
 
-
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161747" src="https://github.com/user-attachments/assets/3edde3e0-3674-4633-9dac-ae423558f4ad" />
 
 ---
 
@@ -5412,7 +5407,7 @@ The following advanced KQL query uses multiple `let` statements and inner joins 
     | where UserCreatedTime between (LoginTime .. LoginTime + 10m)
     | project Account, Computer, FailedAttempts, LoginTime, UserCreatedTime
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161802" src="https://github.com/user-attachments/assets/f944c890-9cfd-442b-bf35-e48460b1e10a" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160757" src="https://github.com/user-attachments/assets/555fd850-ede8-4c90-a471-daaffe5558af" />
 
 ---
 
@@ -5425,8 +5420,8 @@ The following advanced KQL query uses multiple `let` statements and inner joins 
 | **Severity** | High | A brute-force attack followed by successful access and local account creation indicates active compromise. |
 | **Status** | Enabled | Ensures the correlation rule is actively running. |
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160954" src="https://github.com/user-attachments/assets/cb20efb6-3ca4-4b3e-ba2d-7835f2309b18" />
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161825" src="https://github.com/user-attachments/assets/1991e075-ea61-46fc-afc8-2b2fcf89b6ab" />
 
 ---
 
@@ -5443,7 +5438,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Host:** Highlights the specific endpoint or domain controller where the entire sequence took place.
 
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161811" src="https://github.com/user-attachments/assets/7cc2e7bd-00cb-4501-a9f3-09355352d551" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 160813" src="https://github.com/user-attachments/assets/d23e059a-c63e-459d-b6ed-0e946b8286e4" />
 
 ---
 
@@ -5490,7 +5485,7 @@ An alert is generated when all of the following conditions are met:
 Multi-stage attacks represent high-priority intrusions. Disabling alert grouping ensures that every unique correlated attack chain triggers an immediate, individual incident ticket for the SOC without merging related alerts.
 
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 162315" src="https://github.com/user-attachments/assets/0034ba42-e026-465c-84b6-06d06284ae88" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 162315" src="https://github.com/user-attachments/assets/fcef389a-4ad3-4c85-af41-d69c2a1d7d8c" />
 
 ---
 
@@ -5498,15 +5493,14 @@ Multi-stage attacks represent high-priority intrusions. Disabling alert grouping
 This core correlation rule is integrated with the following automation:
 * **Add Triage Tag:** Automatically appends triage tags upon incident creation to prioritize analytical review.
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161841" src="https://github.com/user-attachments/assets/6fb77600-a40c-400d-af0a-aa73d14937cf" />
-
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161206" src="https://github.com/user-attachments/assets/28ae47a9-43c6-453d-8ddc-4758d6a34797" />
 
 ---
 
 ## ✅ Validation
 This rule can be validated in a test lab by simulating the exact sequence: executing 10+ failed password attempts on a test account, logging in successfully with the correct password immediately after, and creating a new local user via `net user`. Sentinel will join the timeline and trigger the correlated high-severity alert.
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 161847" src="https://github.com/user-attachments/assets/04a38b17-263d-43bf-9d78-2739615ca3f4" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 161213" src="https://github.com/user-attachments/assets/e19198d5-93dd-4782-bb83-ff28a59d597d" />
 
 ---
 
@@ -5547,11 +5541,8 @@ Once threat actors escalate privileges, their primary objective is often harvest
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
 | Credential Access | OS Credential Dumping | T1003 |
-| Lateral Movement | Remote Services | T1021 |
+| Execution | System Services: Service Execution | T1569.002 |
 
-
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 163846" src="https://github.com/user-attachments/assets/73a38a06-5d7f-4f06-9dd2-5c911fa4d918" />
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 163855" src="https://github.com/user-attachments/assets/8e672d43-63c1-428d-8fe0-8a6f09aad7bd" />
 
 ---
 
@@ -5667,6 +5658,7 @@ Correlating credential dumping directly with lateral movement tools represents a
 This correlation rule is linked to the following automation:
 * **Add Triage Tag:** Automatically tags the incident upon creation to streamline analyst triage workflows.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 163950" src="https://github.com/user-attachments/assets/c2345f87-ce46-48bb-819b-761f1d3640c6" />
 
 
 ---
@@ -5719,8 +5711,6 @@ When adversaries successfully install a new Windows service (Event IDs `4697` or
 | Persistence, Privilege Escalation | Create or Modify System Process: Windows Service | T1543.003 |
 | Defense Evasion | Indicator Removal on Host: Clear Windows Event Logs | T1070.001 |
 
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 164401" src="https://github.com/user-attachments/assets/d78aa841-29ec-4e38-a252-16c8c103abfb" />
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 164410" src="https://github.com/user-attachments/assets/5e707f8d-d763-4cab-a62c-0468c1028124" />
 
 
 ---
@@ -5841,6 +5831,7 @@ This correlation rule is linked to the following automation:
 This rule can be validated in a controlled lab environment by installing a test service and subsequently clearing the security event log using administrative tools. Sentinel will correlate the sequence and generate a high-severity alert.
 
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 164531" src="https://github.com/user-attachments/assets/58dc2845-4eb8-4403-a922-cc6ad75349b8" />
 
 
 ---
@@ -5880,9 +5871,8 @@ Attackers frequently abuse native Windows binaries (LOLBins) to bypass security 
 ## 🛡️ MITRE ATT&CK Mapping
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
-| Command And Control, Defense Evasion | Ingress Tool Transfer | T1105 |
-
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 164630" src="https://github.com/user-attachments/assets/991d0ad5-1829-4c3a-95f6-5e3c5f330747" />
+| Command and Control | Ingress Tool Transfer | T1105 |
+| Defense Evasion | System Binary Proxy Execution: Mshta | T1218.005 |
 
 ---
 
@@ -6052,8 +6042,6 @@ Before executing noisy or high-privilege activities such as credential harvestin
 |---------|-----------|--------------|
 | Defense Evasion | Impair Defenses | T1562 |
 | Credential Access | OS Credential Dumping | T1003 |
-
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 164847" src="https://github.com/user-attachments/assets/9bbe0055-ce49-488a-819c-a21aab57afa5" />
 
 
 ---
