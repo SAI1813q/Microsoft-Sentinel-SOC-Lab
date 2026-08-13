@@ -247,6 +247,6 @@ These tools provide complete visibility into attacker activity throughout the en
 
 ---
 
-## Outcome
+# ✅ Outcome
 
 This workflow demonstrates the complete Security Operations Center lifecycle, from attack simulation and telemetry collection to detection engineering, incident creation, automated response, and threat investigation using Microsoft Sentinel.
