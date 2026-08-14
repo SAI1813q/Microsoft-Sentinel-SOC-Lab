@@ -4090,8 +4090,6 @@ After gaining initial access to a system, threat actors frequently perform inter
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
 | Discovery | System Network Configuration Discovery | T1016 |
-| Discovery | Network Service Discovery | T1046 |
-| Discovery | System Information Discovery | T1082 |
 
 ---
 
