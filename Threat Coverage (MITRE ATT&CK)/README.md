@@ -245,9 +245,11 @@ KQL Analytics Rule
                               │
                               ▼
                     Automation / Response
-```text
+
 
 ```
+---
+
 ## 🧪 Detection Validation
 
 Detection validation includes controlled simulations and testing of behaviors such as:
