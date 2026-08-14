@@ -1255,6 +1255,8 @@ Mimikatz is a widely used post-exploitation tool that extracts plaintext passwor
 ## 🔥 Severity
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 111601" src="https://github.com/user-attachments/assets/29ecd70e-3b85-45bd-bf14-af2565ff622d" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -1292,6 +1294,7 @@ SecurityEvent
     ParentProcessName
 | order by TimeGenerated desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 111641" src="https://github.com/user-attachments/assets/4c4eda2c-eef5-43f7-8a12-55764899c421" />
 
 
 ---
@@ -1319,6 +1322,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents. *(Note
 ### Why map these entities?
 * **Host & Account:** Identifying the compromised machine and context limits the scope of the attacker's credential harvesting capabilities.
 * **Process:** Extracting the exact `CommandLine` string allows incident responders to decode the Base64 payload and analyze the exact parameters the attacker attempted to pass.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 111651" src="https://github.com/user-attachments/assets/d7feef95-9a5a-4df4-a274-2c1bf46ca1a6" />
 
 ---
 
@@ -1366,11 +1371,14 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 
 ### Why group alerts by Account?
 If a script recursively attempts to execute credential dumping techniques across multiple sessions or iterations, grouping them by the target account condenses the alerts into a single incident ticket spanning a 5-hour window.
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 111733" src="https://github.com/user-attachments/assets/e1d793bb-25b0-43be-b100-f47fce547727" />
 
 ---
 
 ## ✅ Validation
 This detection can be validated by opening a Command Prompt on a monitored endpoint and safely executing a benign command wrapped in one of the targeted string flags (e.g., executing a simple string using `-EncodedCommand`). Microsoft Sentinel will process the 4688 event and trigger the NRT detection alert.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 111752" src="https://github.com/user-attachments/assets/5ebccdc5-83a4-4129-8648-c0f451ddc52e" />
 
 ---
 
@@ -1382,30 +1390,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 111842.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 111620.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 111641.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 111651.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 111733.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 111742.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 111752.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -1432,6 +1417,8 @@ Detects modifications to common Windows Registry Run Keys that attackers frequen
 ### Why Medium?
 While registry Run Key modifications are commonly used by malware and attackers to maintain persistence, legitimate software installers and administrative tools may also create these entries. Investigation is required to determine whether the activity is authorized or malicious.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 120103" src="https://github.com/user-attachments/assets/850b54ad-dede-4496-bf33-9cfedb75beae" />
+
 ---
 
 ## 🔍 Detection Logic
@@ -1453,6 +1440,7 @@ SecurityEvent
           OperationType
 | order by TimeGenerated desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 120129" src="https://github.com/user-attachments/assets/bca50bb1-28b4-43ac-a7c5-a583722a6da6" />
 
 ---
 
@@ -1464,6 +1452,8 @@ SecurityEvent
 | Lookup Data From | **Last 6 Minutes** |
 | Start Running | **Automatically** |
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 120153" src="https://github.com/user-attachments/assets/922db50c-0167-4eb3-b5dc-7eb41be8224b" />
+
 ---
 
 ## 🗂️ Entity Mapping
@@ -1472,6 +1462,8 @@ SecurityEvent
 |---------|------------|-------|
 | Host | HostName | Computer |
 | Account | Name | Account |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 120145" src="https://github.com/user-attachments/assets/1e82e8bb-71b2-41d7-968a-c513309f32df" />
 
 ---
 
@@ -1488,6 +1480,8 @@ SecurityEvent
 ### Why Host + Account?
 
 Registry Run Key persistence often generates multiple registry modification events during a single attack. Grouping alerts by **Host** and **Account** consolidates related persistence activity into one incident, reducing alert fatigue while giving analysts a complete view of the attack on a specific endpoint.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 120414" src="https://github.com/user-attachments/assets/e787015a-8223-44c3-b060-e197d7ba08d0" />
 
 ---
 
@@ -1515,6 +1509,8 @@ Adversaries frequently abuse the Windows Task Scheduler to achieve persistence, 
 ## 🔥 Severity
 **Medium**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 121451" src="https://github.com/user-attachments/assets/17d64718-f325-4be0-8f31-3ef9d49cf783" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -1541,6 +1537,7 @@ SecurityEvent
 | where EventID == 4698
 | project TimeGenerated,Computer,SubjectAccount,EventID,Activity
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 121512" src="https://github.com/user-attachments/assets/227a1352-b732-41aa-9cc3-333bacbcde7e" />
 
 ---
 
@@ -1554,6 +1551,7 @@ SecurityEvent
 | **Lookup Period** | Lookup data from the last 6 Minutes | A 1-minute overlap prevents events from being missed due to slight ingestion delays. |
 | **Alert Threshold** | Trigger alert if query returns more than 0 results | Generates an alert immediately upon finding a matching execution. |
 | **Event Grouping** | Trigger an alert for each event | Maintains individual records for every newly created task. |
+
 
 ---
 
@@ -1570,6 +1568,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Host:** Identifies the specific endpoint where the scheduled task was created, indicating the system that may be compromised.
 * **Account:** Identifies the user account that authorized or executed the task creation.
 * **Process:** Attempts to tie the creation event to a specific identifier (mapped to EventID in this configuration) for correlation.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 121525" src="https://github.com/user-attachments/assets/bd9c63dd-70c2-464c-b214-f50f104877ce" />
 
 ---
 
@@ -1616,12 +1616,16 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 ### Why group alerts by Host and Account?
 Legitimate administrative scripts, system updates, or configuration management tools (like SCCM) can sometimes generate multiple scheduled tasks on a machine in rapid succession. By grouping alerts based on the specific Host and Account over a 5-hour window, the SOC receives a single consolidated incident per endpoint. This drastically reduces alert fatigue while still bringing the persistence activity to the analyst's attention for review.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 121854" src="https://github.com/user-attachments/assets/5d0059ad-0756-46ae-b9ce-72ddfa6bf00e" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by opening a Command Prompt with administrative privileges on a monitored endpoint and executing the native `schtasks` command:
 `schtasks /create /tn "SentinelTestTask" /tr "cmd.exe /c echo test" /sc daily /st 12:00`
 Within 5 minutes, Microsoft Sentinel will evaluate the logs, detect Event ID 4698, and generate the corresponding incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 121547" src="https://github.com/user-attachments/assets/1232810c-61b3-46ad-8aba-1efaa66ef71c" />
 
 ---
 
@@ -1633,30 +1637,7 @@ This detection is essential for security operations as it helps teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 121451.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 121501.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 121512.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 121525.png)*
-
-### Incident Settings
-> *(Insert image_8d73bf.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 121540.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 121547.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
 
@@ -1675,6 +1656,8 @@ Once adversaries establish a foothold on a machine, their first priority is situ
 
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 122433" src="https://github.com/user-attachments/assets/3f993b1d-18b9-4bbe-b50d-ab20237822b8" />
 
 ---
 
@@ -1705,6 +1688,7 @@ SecurityEvent
 | where Process has_any ("systeminfo.exe", "hostname.exe", "wmic.exe", "ver.exe")
 | project TimeGenerated, Computer, Account, Process, CommandLine
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 122453" src="https://github.com/user-attachments/assets/e04c720a-7005-4993-b729-6f0e838ebc17" />
 
 ---
 
@@ -1732,6 +1716,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies which compromised user or service account is being used to query the system.
 * **Host:** Highlights the specific machine the attacker has landed on.
 * **Process:** Extracts the exact `CommandLine` arguments, showing precisely what information the attacker asked for (e.g., `wmic useraccount get name,sid`).
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 122522" src="https://github.com/user-attachments/assets/d27d77eb-1bbf-425d-997f-392994592107" />
 
 ---
 
@@ -1781,6 +1767,8 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 ### Why group alerts by Account and Host?
 Attackers rarely run just one discovery command. They typically execute a quick succession of commands to gather system details, network routes, and domain configurations. By grouping these alerts by the Host and Account over a 5-hour window, the SOC receives a single incident containing the entire chain of reconnaissance commands, rather than being bombarded by multiple fragmented tickets.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 122550" src="https://github.com/user-attachments/assets/4e58ef39-e83e-4396-81ff-551486e9a55f" />
+
 ---
 
 ## ✅ Validation
@@ -1789,6 +1777,8 @@ This detection can be validated by opening a standard Command Prompt on a monito
 `hostname`
 `wmic process list`
 Microsoft Sentinel will instantly detect the 4688 process creation events, generate alerts for each command, and roll them into a single consolidated incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 122604" src="https://github.com/user-attachments/assets/af11ad2a-235d-4872-9a05-fbca48ecc705" />
 
 ---
 
@@ -1800,30 +1790,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 122433.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 122445.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 122453.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 122522.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 122550.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 122556.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 122604.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -1843,6 +1809,8 @@ Once adversaries establish a foothold in an Active Directory environment, they n
 
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 164346" src="https://github.com/user-attachments/assets/486b8fce-7669-41ca-93fb-2ea88a2d6e95" />
 
 ---
 
@@ -1881,6 +1849,7 @@ SecurityEvent
     ProcessId
 | order by TimeGenerated desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 164453" src="https://github.com/user-attachments/assets/b6c0caec-2dfc-49e6-9bd8-8cf7a86ad940" />
 
 ---
 
@@ -1906,14 +1875,20 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 | Host | HostName | Computer |
 | Process | CommandLine | CommandLine |
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 164505" src="https://github.com/user-attachments/assets/c2141a5f-1406-4512-8883-60d57dfabc80" />
+
+
 ### Custom Details
 The following parameters have been surfaced directly into the alerts for faster triage:
 * **Process:** `NewProcessName`
 * **ParentProcess:** `ParentProcessName`
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 164515" src="https://github.com/user-attachments/assets/32b05ba5-de14-4931-8d1c-32ba5f21955a" />
+
 ### Why map these entities & details?
 * **Account & Host:** Identifies the compromised user and endpoint being used as a staging ground for the AD scan.
 * **Process / Parent Process:** Mapping the executing process and its parent allows analysts to quickly spot suspicious execution chains (e.g., `cmd.exe` spawning `powershell.exe` to run the query).
+
 
 ---
 
@@ -1963,12 +1938,16 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 ### Why group alerts by Account and Host?
 AD enumeration tools often execute hundreds of queries iteratively. By grouping alerts based on the specific Host and Account over a 5-hour window, the SOC receives a single consolidated incident containing the entire reconnaissance session, effectively preventing alert fatigue.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 164539" src="https://github.com/user-attachments/assets/d150c04f-b90a-42e7-b5e9-18c4fe6eabd8" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by opening a PowerShell prompt on a monitored endpoint (which has the ActiveDirectory module installed) and running the command:
 `Get-ADComputer -Filter *`
 Microsoft Sentinel will instantly detect the process creation event containing the cmdlet, generate an alert, and create the consolidated incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 164554" src="https://github.com/user-attachments/assets/f7d9472f-9536-417c-9850-5a8875be07f3" />
 
 ---
 
@@ -1980,31 +1959,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 164346.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 164410.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 164453.png)*
-
-### Entity Mapping & Custom Details
-> *(Insert Screenshot 2026-08-03 164505.png)*
-> *(Insert Screenshot 2026-08-03 164515.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 164539.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 164547.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 164554.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -2023,6 +1977,8 @@ Administrative shares (`C$`, `ADMIN$`, `IPC$`) are hidden network shares intende
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 174034" src="https://github.com/user-attachments/assets/688c899e-37d9-4321-b80b-f812fe6af4e4" />
 
 ---
 
@@ -2055,6 +2011,7 @@ SecurityEvent
     RelativeTargetName
 | order by TimeGenerated desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 174057" src="https://github.com/user-attachments/assets/3989a360-ded4-4bbf-9949-f02b1f0ce4c6" />
 
 ---
 
@@ -2081,6 +2038,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents.
 ### Why map these entities?
 * **Host:** Identifies the target endpoint whose admin share was accessed.
 * **Account & IP:** Details the compromised identity and the network origin of the attacker initiating the SMB connection.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 174106" src="https://github.com/user-attachments/assets/ed9cef77-e4d0-46e7-984e-053b6c52df40" />
 
 ---
 
@@ -2128,10 +2087,14 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by Account and Host?
 Attackers using tools like Impacket will trigger multiple 5140/5145 events rapidly as they authenticate, map the IPC$ share to create a named pipe, map the ADMIN$ share to drop a binary, and execute. Grouping by Account and Host consolidates the entire tactical sequence into one incident.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 174115" src="https://github.com/user-attachments/assets/fc90cc85-828b-40e7-9ea6-cbe0ecb2e195" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by mapping an administrative share from one machine to another using standard Windows commands (e.g., `net use \\TargetMachine\C$ /user:Domain\AdminUser Password`). Microsoft Sentinel will detect the 5140/5145 events and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 174127" src="https://github.com/user-attachments/assets/f0aa176e-8022-4d4d-850d-a27eaa49eec6" />
 
 ---
 
@@ -2140,31 +2103,6 @@ This detection helps security teams:
 * Identify automated lateral movement tools propagating across the network.
 * Intercept the delivery stage of ransomware or remote access trojans (RATs).
 * Enforce least privilege by identifying non-administrative accounts gaining access to administrative shares.
-
----
-
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 174034.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 174046.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 174057.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 174106.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 174115.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 174120.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 174127.png)*
 
 ---
 
@@ -2185,6 +2123,8 @@ Pass-the-Hash (PtH) is a lateral movement technique where an attacker extracts a
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-07-31 175422" src="https://github.com/user-attachments/assets/a0c2dea6-0ec7-4122-887a-2621443e1050" />
 
 ---
 
@@ -2217,6 +2157,7 @@ SecurityEvent
     LogonType,
     AuthenticationPackageName
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-07-31 175449" src="https://github.com/user-attachments/assets/ba5e19c4-f31a-4280-bda2-2bb9a7d2357d" />
 
 ---
 
@@ -2243,6 +2184,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents.
 ### Why map these entities?
 * **Account:** Identifies whose compromised hash is being utilized.
 * **Host & IP:** Highlights the targeted endpoint and traces the network origin of the PtH attack.
+
+<img width="1920" height="1020" alt="Screenshot 2026-07-31 175458" src="https://github.com/user-attachments/assets/f2b4aa96-9c7c-4492-9b1b-566ae221cf54" />
 
 ---
 
@@ -2288,10 +2231,14 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by IP and Account?
 In enterprise environments, legitimate legacy systems may still use NTLM. By grouping alerts by the source IP Address and the Account, the SOC receives a single consolidated incident representing a PtH campaign, preventing massive alert fatigue from repetitive network authentications.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 171819" src="https://github.com/user-attachments/assets/655ff2ce-61f8-463e-917b-fba97fd8d16b" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by utilizing a tool like Mimikatz or CrackMapExec in a controlled lab environment to execute a Pass-the-Hash attack against a target server. Microsoft Sentinel will detect the resulting Event ID 4624 (Logon Type 3, NTLM) and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-07-31 175518" src="https://github.com/user-attachments/assets/515c5625-d16d-4058-ba26-9f0f72bf3ff3" />
 
 ---
 
@@ -2303,12 +2250,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview & Incident Settings
-> *(Insert related video screenshots and image_722ddc.png here)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
