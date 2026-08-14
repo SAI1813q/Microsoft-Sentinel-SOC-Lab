@@ -14,7 +14,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | Detection Rule | Severity | MITRE ATT&CK | Description |
 |---------------|----------|--------------|-------------|
 | **[Brute Force Login Detection](#-brute-force-login-detection)** | High | T1110 | Detects repeated failed Windows logon attempts that may indicate password guessing or brute-force attacks. |
-| **[Successful Login After Brute Force](#-successful-login-after-brute-force)** | High | T1078 | Detects successful authentication immediately following multiple failed login attempts. |
+| **[Successful Login After Brute Force](#-successful-login-after-brute-force)** | High | T1078,T1110.001 | Detects successful authentication immediately following multiple failed login attempts. |
 | **[New Local User Creation](#-new-local-user-creation)** | Medium | T1136 | Detects creation of new local user accounts on Windows systems. |
 | **[Encoded PowerShell Detection](#-encoded-powershell-detection)** | High | T1059.001 | Detects execution of Base64-encoded PowerShell commands. |
 | **[Download Cradle Detection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-download-cradle-detection)** | High | T1105 | Detects PowerShell commands used to download payloads from remote servers. |
@@ -39,7 +39,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Impossible Travel](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-impossible-travel)** | High | T1078.004 | Detects user logins from geographically distant locations in an impossibly short timeframe. |
 | **[Firewall Disabled](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-firewall-disabled)** | Medium | T1562.004 | Detects system modifications that turn off or impair the Windows Defender Firewall. |
 | **[Certutil Download](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-certutil-download)** | High | T1105 | Detects the abuse of the certutil.exe administrative tool to download malicious external files. |
-| **[Network Discovery](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-network-discovery)** | Medium | T1082 | Detects execution of commands aimed at mapping internal network topologies and connections. |
+| **[Network Discovery](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-network-discovery)** | Medium | T1016 | Detects execution of commands aimed at mapping internal network topologies and connections. |
 | **[Suspicious Outbound Connection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-suspicious-outbound-connection)** | Medium | T1071 | Detects unusual outbound network connections potentially indicating Command and Control (C2) traffic. |
 | **[Create or Modify System Process](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-create-or-modify-system-process)** | Medium | T1543 | Detects the creation or modification of system-level processes to establish persistence. |
 | **[Event Logging Service Shut Down](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-event-logging-service-shut-down)** | Medium | T1562.001 | Detects the manual termination of the Windows Event logging service to hide malicious activity. |
