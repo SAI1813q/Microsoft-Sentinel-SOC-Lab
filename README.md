@@ -8,7 +8,7 @@ An Azure-based Security Operations Center (SOC) lab built with Microsoft Sentine
 
 ## 🎯 Project Overview
 
-This project demonstrates the design and implementation of a cloud-based SOC using Microsoft Sentinel, Azure Monitor Agent (AMA), Log Analytics, Windows endpoints, Active Directory, Sysmon, KQL, and Logic Apps.
+This project demonstrates the design and implementation of a cloud-based SOC using Microsoft Sentinel, Azure Monitor Agent (AMA), Log Analytics, Windows Server and Windows 10 virtual machines, including an Active Directory domain controller, send Windows Security Event telemetry through Azure Monitor Agent and Data Collection Rules into a centralized Log Analytics Workspace connected to Microsoft Sentinel.
 
 The lab simulates real-world attack techniques and builds detections, correlations, investigations, dashboards, and automated response workflows around them.
 
