@@ -4041,6 +4041,13 @@ This detection helps security teams:
 * Spot compromised hosts losing their perimeter protection layers.
 * Enforce compliance and rapid remediation on unprotected endpoints.
 
+
+---
+
+
+
+⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
+
 ---
 
 # 📥 Certutil Download
