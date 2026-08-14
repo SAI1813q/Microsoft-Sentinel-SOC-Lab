@@ -166,6 +166,13 @@ allowing analysts to quickly understand how the entities are connected.
 
 ---
 
+## 📸 Attack Story
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 184235" src="https://github.com/user-attachments/assets/8c1707f4-40ed-42a0-8e9d-d63a2f0c1eb3" />
+
+
+---
+
 
 
 # 🔍 Investigation Graph
@@ -180,14 +187,7 @@ Observed entities include:
 
 This visualization helps analysts pivot between related entities during an investigation.
 
----
 
-## 📸 Investigation Graph
-
-<img width="1920" height="1020" alt="Screenshot 2026-08-04 184235" src="https://github.com/user-attachments/assets/8c1707f4-40ed-42a0-8e9d-d63a2f0c1eb3" />
-
-
----
 
 # 💻 Impacted Assets
 
