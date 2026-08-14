@@ -3045,19 +3045,7 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
-
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220216" src="https://github.com/user-attachments/assets/41c105a2-cb3c-4fd5-8289-a79f1ad050c5" />
 
 ---
 
@@ -3088,7 +3076,7 @@ The incident successfully grouped 2 active alerts related to network discovery i
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220248" src="https://github.com/user-attachments/assets/aa4928f7-ae77-466d-b708-22c4f78130c2" />
 
 ---
 
@@ -3106,11 +3094,7 @@ This allows analysts to quickly understand the execution chain on the affected e
 
 ---
 
-## 📸 Attack Story
 
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -3129,11 +3113,7 @@ The graph highlights that the user sequentially executed IP configuration checks
 
 ---
 
-## 📸 Investigation Graph
 
-> *(Insert Investigation Graph Screenshot)*
-
----
 
 # 💻 Impacted Assets
 
@@ -3159,13 +3139,15 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220315" src="https://github.com/user-attachments/assets/8b8cc433-66a7-4745-b86c-bc8f2ed17aa7" />
+
 
 ---
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220320" src="https://github.com/user-attachments/assets/5109e176-7bd2-44df-af74-c65109fbe39e" />
+
 
 ---
 
@@ -3188,7 +3170,8 @@ The query results provided important forensic information regarding the event ti
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220324" src="https://github.com/user-attachments/assets/3e5fa6e6-df37-4d6d-81b7-745d52d433bf" />
+
 
 ---
 
@@ -3202,12 +3185,6 @@ For this incident:
 - 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
 
 The activity history provides an audit trail of the automated incident workflow.
-
----
-
-## 📸 Activities
-
-> *(Insert Activities Screenshot)*
 
 ---
 
@@ -3313,19 +3290,7 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
-
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220523" src="https://github.com/user-attachments/assets/6ab54574-6160-48db-af34-b60228666d5d" />
 
 ---
 
@@ -3356,7 +3321,8 @@ This incident provides the analyst with a centralized workspace to investigate t
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220554" src="https://github.com/user-attachments/assets/c8e30dc1-28cd-4952-876b-94fdf967d151" />
+
 
 ---
 
@@ -3373,11 +3339,6 @@ This allows analysts to clearly see that a single external entity is fanning out
 
 ---
 
-## 📸 Attack Story
-
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -3394,11 +3355,6 @@ The graph allows the SOC analyst to visually pivot between the source of the att
 
 ---
 
-## 📸 Investigation Graph
-
-> *(Insert Investigation Graph Screenshot)*
-
----
 
 # 💻 Impacted Assets
 
@@ -3416,7 +3372,8 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220621" src="https://github.com/user-attachments/assets/9ce19d71-02d9-42ec-96e0-f86aa1860e4c" />
+
 
 ---
 
@@ -3440,7 +3397,7 @@ The query results provided important forensic information regarding the event ti
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+<img width="1120" height="409" alt="Screenshot 2026-08-04 220535" src="https://github.com/user-attachments/assets/9bb7f44f-9c87-4a43-8bae-2f8ae6803fbe" />
 
 ---
 
@@ -3457,11 +3414,6 @@ The activity history provides an audit trail of the automated incident workflow.
 
 ---
 
-## 📸 Activities
-
-> *(Insert Activities Screenshot)*
-
----
 
 # 🛡️ SOC Analyst Investigation
 
@@ -3574,19 +3526,7 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
-
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 220952" src="https://github.com/user-attachments/assets/67ebcd5d-7280-4021-8f10-db427a33d8eb" />
 
 ---
 
@@ -3617,7 +3557,8 @@ This incident provides the analyst with the necessary workspace to investigate t
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221029" src="https://github.com/user-attachments/assets/80b8ce95-b029-4748-a064-79f8cf40d56b" />
+
 
 ---
 
@@ -3635,11 +3576,7 @@ This allows analysts to quickly understand the execution chain on the affected e
 
 ---
 
-## 📸 Attack Story
 
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -3657,11 +3594,7 @@ The graph allows the SOC analyst to visually pivot between the host, the executi
 
 ---
 
-## 📸 Investigation Graph
 
-> *(Insert Investigation Graph Screenshot)*
-
----
 
 # 💻 Impacted Assets
 
@@ -3686,13 +3619,15 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221046" src="https://github.com/user-attachments/assets/645e0c00-ba2b-4525-9f37-9887c14d1e28" />
+
 
 ---
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221052" src="https://github.com/user-attachments/assets/5367ad9c-dfb1-4a69-96e5-393a506236b8" />
+
 
 ---
 
@@ -3715,7 +3650,8 @@ The query results provided important forensic information regarding the event ti
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221058" src="https://github.com/user-attachments/assets/8d22574a-f53a-41b1-8b06-e130353bd53a" />
 
 ---
 
@@ -3730,12 +3666,7 @@ For this incident:
 
 The activity history provides an audit trail of the automated incident workflow.
 
----
-
-## 📸 Activities
-
-> *(Insert Activities Screenshot)*
-
+-
 ---
 
 # 🛡️ SOC Analyst Investigation
@@ -3847,19 +3778,7 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
-
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221302" src="https://github.com/user-attachments/assets/fcb7a3dc-093c-4aad-aae2-8b29635b1907" />
 
 ---
 
@@ -3890,7 +3809,8 @@ This incident provides the analyst with a centralized workspace to investigate t
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221323" src="https://github.com/user-attachments/assets/c2c18c0a-2fd1-4168-8153-c2f499eed84c" />
+
 
 ---
 
@@ -3908,11 +3828,7 @@ This allows analysts to quickly understand the execution context and the adminis
 
 ---
 
-## 📸 Attack Story
 
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -3930,11 +3846,7 @@ The graph allows the SOC analyst to visually pivot between the user identity, th
 
 ---
 
-## 📸 Investigation Graph
 
-> *(Insert Investigation Graph Screenshot)*
-
----
 
 # 💻 Impacted Assets
 
@@ -3960,13 +3872,15 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221342" src="https://github.com/user-attachments/assets/48782535-7df9-4a42-80b6-7c36f183394d" />
+
 
 ---
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221347" src="https://github.com/user-attachments/assets/2cc7594c-3a17-46ae-8a1e-82957d092e3d" />
+
 
 ---
 
@@ -3990,9 +3904,10 @@ The query results provided important forensic information regarding the event ti
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
 
----
+
+---<img width="1920" height="1020" alt="Screenshot 2026-08-04 221356" src="https://github.com/user-attachments/assets/b9032e00-bfdd-49d0-9733-8144512499dd" />
+
 
 # 📋 Activities
 
@@ -4007,11 +3922,6 @@ The activity history provides an audit trail of the automated incident workflow.
 
 ---
 
-## 📸 Activities
-
-> *(Insert Activities Screenshot)*
-
----
 
 # 🛡️ SOC Analyst Investigation
 
@@ -4123,19 +4033,8 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221552" src="https://github.com/user-attachments/assets/27a22860-7b0e-46cf-827c-1387d2e981ab" />
 
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
 
 ---
 
@@ -4166,7 +4065,8 @@ This incident provides the analyst with a centralized workspace to investigate t
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221605" src="https://github.com/user-attachments/assets/e951ac7e-00db-41b2-96a3-6dd8621a9be5" />
+
 
 ---
 
@@ -4181,11 +4081,6 @@ Microsoft Defender associated:
 
 This allows analysts to quickly understand the execution chain on the affected endpoint.
 
----
-
-## 📸 Attack Story
-
-> *(Insert Attack Story Screenshot)*
 
 ---
 
@@ -4204,11 +4099,7 @@ The graph allows the SOC analyst to visually pivot between the host and the sche
 
 ---
 
-## 📸 Investigation Graph
 
-> *(Insert Investigation Graph Screenshot)*
-
----
 
 # 💻 Impacted Assets
 
@@ -4226,7 +4117,8 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221621" src="https://github.com/user-attachments/assets/8e0fe119-056d-4d30-b48e-a110c304970f" />
+
 
 ---
 
@@ -4248,7 +4140,8 @@ The query results provided important forensic information regarding the event ti
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221627" src="https://github.com/user-attachments/assets/9d9b4cd7-2af2-4ad6-b2a6-e33c7baac204" />
+
 
 ---
 
@@ -4265,11 +4158,6 @@ The activity history provides an audit trail of the automated incident workflow.
 
 ---
 
-## 📸 Activities
-
-> *(Insert Activities Screenshot)*
-
----
 
 # 🛡️ SOC Analyst Investigation
 
@@ -4382,19 +4270,8 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221724" src="https://github.com/user-attachments/assets/af650524-306c-4f30-a1c9-7187ceb7944d" />
 
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
 
 ---
 
@@ -4425,7 +4302,7 @@ This incident provides the analyst with a centralized workspace to investigate t
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221737" src="https://github.com/user-attachments/assets/7eeab322-d391-44a5-ac59-8c125e7c6f98" />
 
 ---
 
@@ -4443,11 +4320,7 @@ This allows analysts to quickly map the trajectory of the lateral movement from 
 
 ---
 
-## 📸 Attack Story
 
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -4465,11 +4338,6 @@ The graph allows the SOC analyst to visually pivot between the source of the att
 
 ---
 
-## 📸 Investigation Graph
-
-> *(Insert Investigation Graph Screenshot)*
-
----
 
 # 💻 Impacted Assets
 
@@ -4495,13 +4363,13 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221752" src="https://github.com/user-attachments/assets/34aa9f29-da7b-49ad-be18-53999c935067" />
 
 ---
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221758" src="https://github.com/user-attachments/assets/e38b76ce-8bab-4935-ba71-7646337f5bc7" />
 
 ---
 
@@ -4525,7 +4393,8 @@ The query results provided important forensic information regarding the event co
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221804" src="https://github.com/user-attachments/assets/71931494-b4bd-45ba-b8cf-72a74c91b54c" />
+
 
 ---
 
@@ -4542,11 +4411,7 @@ The activity history provides an audit trail of the automated incident workflow.
 
 ---
 
-## 📸 Activities
 
-> *(Insert Activities Screenshot)*
-
----
 
 # 🛡️ SOC Analyst Investigation
 
@@ -4657,19 +4522,7 @@ Microsoft Defender Incident Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
-
----
-
-## 📸 Alert Details
-
-> *(Insert Alert Details Screenshot)*
-
----
-
-## 📸 Query Results
-
-> *(Insert Query Results Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221928" src="https://github.com/user-attachments/assets/8086ed2e-b806-481b-a9be-884b148634db" />
 
 ---
 
@@ -4700,7 +4553,8 @@ This incident provides the analyst with a centralized workspace to investigate t
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 221952" src="https://github.com/user-attachments/assets/d4f8fbb7-1c1e-477b-98df-def8f90ee0d4" />
+
 
 ---
 
@@ -4717,11 +4571,7 @@ This allows analysts to clearly see which account executed the unauthorized chan
 
 ---
 
-## 📸 Attack Story
 
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -4735,12 +4585,6 @@ The Investigation Graph automatically maps the entities associated with the inci
 | **Device** | `DC.root.project` |
 
 The graph allows the SOC analyst to visually pivot between the identity that performed the action and the domain infrastructure.
-
----
-
-## 📸 Investigation Graph
-
-> *(Insert Investigation Graph Screenshot)*
 
 ---
 
@@ -4767,13 +4611,14 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 222012" src="https://github.com/user-attachments/assets/f36a62da-c90b-4e10-892d-eb8b815fbbcf" />
+
 
 ---
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 222018" src="https://github.com/user-attachments/assets/85ad6dc3-ac9c-40f9-8902-56ad70bca9d0" />
 
 ---
 
@@ -4796,7 +4641,7 @@ However, the query results provided the critical forensic information:
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+<img width="1150" height="370" alt="Screenshot 2026-08-04 221935" src="https://github.com/user-attachments/assets/ecf90fc8-2154-4b86-b5f4-f98072ad73e3" />
 
 ---
 
@@ -4813,11 +4658,7 @@ The activity history provides an audit trail of the automated incident workflow.
 
 ---
 
-## 📸 Activities
 
-> *(Insert Activities Screenshot)*
-
----
 
 # 🛡️ SOC Analyst Investigation
 
