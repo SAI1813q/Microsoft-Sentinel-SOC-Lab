@@ -73,6 +73,8 @@ Monitoring failed authentication events allows Security Operations Center (SOC) 
 
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122149" src="https://github.com/user-attachments/assets/32c0adab-aa76-4175-8b61-19bbaba3494d" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -101,6 +103,7 @@ SecurityEvent
 | where FailedAttempts >= 5
 | order by FailedAttempts desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122209" src="https://github.com/user-attachments/assets/1ef83be9-54e1-4f62-ab3c-1e16d014d458" />
 
 ---
 
@@ -115,6 +118,8 @@ SecurityEvent
 | **Lookup Period** | Last 6 Minutes | The lookup window is intentionally configured **one minute longer than the execution frequency**. This overlap prevents events from being missed due to ingestion latency or slight delays in log collection, ensuring reliable detection. |
 | **Alert Threshold** | More than 0 Results | Generates an alert whenever the query identifies at least one matching brute-force activity. |
 | **Event Grouping** | Trigger an alert for each event | Ensures every qualifying brute-force attempt is individually recorded before incident correlation is applied. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122224" src="https://github.com/user-attachments/assets/505bbed1-920f-4d84-9ee9-97115b35e2ca" />
 
 ---
 
@@ -134,6 +139,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and imp
 - **IP Address:** Identifies the source of the authentication attempts, making it easier to investigate malicious hosts, identify repeated attacks, and perform IP-based blocking if necessary.
 
 Entity mapping also enables Microsoft Sentinel to automatically correlate alerts and build richer investigation graphs, reducing manual analysis during incident response.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122216" src="https://github.com/user-attachments/assets/d19b067b-674d-4c42-bee0-b4b418017d03" />
 
 ---
 
@@ -204,6 +211,8 @@ By grouping alerts using the **Account** entity:
 
 This configuration provides a cleaner and more efficient investigation experience for SOC analysts.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122254" src="https://github.com/user-attachments/assets/d7db6190-7694-4088-b846-b7a712fe76b0" />
+
 ---
 
 ## 🤖 Automated Response
@@ -214,11 +223,15 @@ When an incident is created:
 - Incident ownership is automatically assigned.
 - Additional playbooks, such as email notifications, can be triggered to notify SOC analysts.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122318" src="https://github.com/user-attachments/assets/de10e86b-9ef3-4ca3-a561-f3d70b08b900" />
+
 ---
 
 ## ✅ Validation
 
 The detection was validated by intentionally performing multiple failed Windows logon attempts against the monitored endpoint. Microsoft Sentinel successfully generated an alert, created an incident, and executed the configured automation rule after the detection threshold was reached.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 122325" src="https://github.com/user-attachments/assets/a0c27696-888f-4533-9000-2e5c80adf727" />
 
 ---
 
@@ -234,41 +247,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-
-> *(Insert Screenshot)*
-
-### MITRE ATT&CK Mapping
-
-> *(Insert Screenshot)*
-
-### KQL Query
-
-> *(Insert Screenshot)*
-
-### Entity Mapping
-
-> *(Insert Screenshot)*
-
-### Query Scheduling
-
-> *(Insert Screenshot)*
-
-### Incident Settings
-
-> *(Insert Screenshot)*
-
-### Automation Rule
-
-> *(Insert Screenshot)*
-
-### Review & Create
-
-> *(Insert Screenshot)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -292,6 +271,8 @@ Monitoring for a successful login event (Event ID 4624) that occurs shortly afte
 ## 🔥 Severity
 
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123325" src="https://github.com/user-attachments/assets/747a63b3-625c-46bb-b3cd-dbd47cff88a3" />
 
 ---
 
@@ -355,6 +336,8 @@ FailedLogins
     LastFailedTime
 | order by SuccessTime desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123441" src="https://github.com/user-attachments/assets/6bb3b726-6ed7-4d18-8cd9-1d1950573911" />
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123447" src="https://github.com/user-attachments/assets/0572e181-d891-41ad-b175-7f373873a562" />
 
 ---
 
@@ -385,6 +368,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and imp
 - **IP Address:** Identifies the attacker's source infrastructure, making it easier to correlate with threat intelligence feeds or implement an IP block at the firewall.
 
 Entity mapping also enables Microsoft Sentinel to automatically build richer investigation graphs, tying the failed logon events directly to the successful breach.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123458" src="https://github.com/user-attachments/assets/bdd9e840-b87d-4841-8191-31c9d9c03a76" />
 
 ---
 
@@ -443,6 +428,8 @@ To improve incident management and reduce alert fatigue, Microsoft Sentinel is c
 
 If an attacker establishes initial access, they may trigger multiple successful logins during their lateral movement or discovery phases. Grouping by the **Account** entity ensures that all alerts tied to this specific compromised identity over a 5-hour period are consolidated into a single high-priority incident for the SOC to investigate, rather than flooding the queue with duplicate tickets.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123511" src="https://github.com/user-attachments/assets/3ad785b8-8bcd-4cc9-8bdc-1bfc6b73b2e3" />
+
 ---
 
 ## 🤖 Automated Response
@@ -453,11 +440,15 @@ When an incident is created:
 - Incident tags are automatically appended for easier SOC filtering and triage.
 - Playbooks can subsequently trigger logic to block the malicious IP or force a credential reset in Entra ID.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123518" src="https://github.com/user-attachments/assets/2782c1b2-d647-4969-8251-84196f59f28e" />
+
 ---
 
 ## ✅ Validation
 
 The detection was validated by intentionally performing multiple failed RDP logon attempts against a monitored endpoint using an incorrect password, immediately followed by logging in successfully with the correct password. Microsoft Sentinel successfully correlated the events, generated an alert, created an incident, and executed the automation tagging rule.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 123530" src="https://github.com/user-attachments/assets/a89aa3cb-e234-4b42-8fc9-0e9568997a97" />
 
 ---
 
@@ -469,31 +460,7 @@ This detection is critical for security operations as it helps teams:
 - Provide concrete evidence of the exact time of compromise and the adversary's source IP address for further threat hunting and blocklisting.
 
  ---
- 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot)*
-
-### KQL Query
-> *(Insert Screenshot)*
-
-### Entity Mapping
-> *(Insert Screenshot)*
-
-### Incident Settings
-> *(Insert Screenshot)*
-
-### Automation Rule
-> *(Insert Screenshot)*
-
-### Review & Create
-> *(Insert Screenshot)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -518,6 +485,8 @@ Monitoring for Event ID 4720 (A user account was created) is a critical defensiv
 ## 🔥 Severity
 
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 125146" src="https://github.com/user-attachments/assets/e4320446-5745-4cc3-8a8d-35edd2eeb7d6" />
 
 ---
 
@@ -545,6 +514,7 @@ SecurityEvent
 | where EventID == 4720
 | project TimeGenerated,Computer,SubjectAccount,TargetAccount,Activity
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 125211" src="https://github.com/user-attachments/assets/de07dc3f-fa6b-4ee7-b3ca-302576021014" />
 
 ---
 
@@ -559,6 +529,8 @@ SecurityEvent
 | **Lookup Period** | Lookup data from the last 6 Minutes | A 1-minute overlap accounts for minor ingestion delays to ensure no alerts are missed. |
 | **Alert Threshold** | Trigger alert if query returns more than 0 results | Ensures any occurrence of this event ID generates an alert. |
 | **Event Grouping** | Trigger an alert for each event | Maintains individual records for every newly created account. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 125228" src="https://github.com/user-attachments/assets/3622078f-45e9-4cd1-84c2-e6c28e44ee18" />
 
 ---
 
@@ -575,6 +547,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and imp
 
 - **Host:** Immediately points investigators to the specific endpoint where the local account was provisioned.
 - **Account:** Extracts the name of the newly created account so analysts can check if it aligns with standard naming conventions or appears malicious.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 125218" src="https://github.com/user-attachments/assets/6b5154ac-4286-4f10-8f44-2b4396d99cec" />
 
 ---
 
@@ -630,11 +604,15 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 
 Disabling grouping ensures that if multiple distinct accounts are created in rapid succession on different machines (or by different actors), each instance generates a discrete incident for strict auditing, rather than rolling them into a single ticket that might obscure the scale of the persistence effort.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 125251" src="https://github.com/user-attachments/assets/c712553d-a91c-43c1-8575-8e99df207495" />
+
 ---
 
 ## ✅ Validation
 
 This detection can be validated by opening an administrative Command Prompt or PowerShell session on a monitored endpoint and executing the command: `net user /add TestUser Password123!`. Within 5 minutes, Microsoft Sentinel should successfully ingest Event ID 4720 and generate the corresponding incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 125306" src="https://github.com/user-attachments/assets/abc7df1a-3a20-46c0-8634-1498c5dc894f" />
 
 ---
 
@@ -647,33 +625,7 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
 
-### Rule Overview
-> *(Insert Screenshot 2026-08-02 125146.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-02 125201.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-02 125211.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-02 125218.png)*
-
-### Query Scheduling
-> *(Insert Screenshot 2026-08-02 125228.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-02 125251.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-02 125258.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-02 125306.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -697,6 +649,8 @@ While legitimate administrative scripts occasionally use this method, its presen
 ## 🔥 Severity
 
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 131314" src="https://github.com/user-attachments/assets/6450bc96-ec09-4db9-93c3-8155b9b3aa0f" />
 
 ---
 
@@ -725,6 +679,7 @@ SecurityEvent
 | where CommandLine has_any ("-enc", "-EncodedCommand")
 | project TimeGenerated,Computer,SubjectAccount,NewProcessName,CommandLine,ParentProcessName
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 131341" src="https://github.com/user-attachments/assets/8bebf961-2340-4e57-8c22-158511e9009e" />
 
 ---
 
@@ -739,6 +694,8 @@ SecurityEvent
 | **Lookup Period** | Lookup data from the last 6 Minutes | A 1-minute overlap prevents events from being missed due to slight ingestion delays. |
 | **Alert Threshold** | Trigger alert if query returns more than 0 results | Generates an alert immediately upon finding a matching execution. |
 | **Event Grouping** | Group all events into a single alert | Aggregates results into a single alert payload per query run. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 131412" src="https://github.com/user-attachments/assets/d4809ea9-8124-4e3c-9407-b96e0c72d3d0" />
 
 ---
 
@@ -755,6 +712,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and imp
 
 - **Host:** Identifies the exact endpoint where the encoded script was executed, allowing analysts to target their investigation.
 - **Process (CommandLine):** Captures the exact command string used. This is critical because analysts can immediately extract the Base64 string from the entity and decode it to reveal the attacker's hidden instructions.
+
+<img width="888" height="482" alt="Screenshot 2026-08-02 131401" src="https://github.com/user-attachments/assets/84d630ea-0e3a-4411-826d-06ba11342b25" />
 
 ---
 
@@ -811,6 +770,8 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 
 Disabling alert grouping ensures that if multiple distinct encoded commands are executed (potentially by different users or on different hosts), they each spawn a separate incident. This guarantees that every unique encoded payload is individually reviewed and decoded by an analyst, rather than being buried within a single grouped incident.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 131423" src="https://github.com/user-attachments/assets/061bf108-72d1-4dd8-b2d4-5594a367cbcc" />
+
 ---
 
 ## ✅ Validation
@@ -818,6 +779,8 @@ Disabling alert grouping ensures that if multiple distinct encoded commands are 
 This detection can be validated by opening a Command Prompt on a monitored endpoint and executing a benign Base64 encoded PowerShell command, such as:
 `powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgACIASABlAGwAbABvACAAVwBvAHIAbABkACIA` (which decodes to `Write-Host "Hello World"`).
 Within 5 minutes, Microsoft Sentinel should detect the 4688 event and generate the corresponding incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 131437" src="https://github.com/user-attachments/assets/c3b52bdd-3bad-4041-8564-b0f3104b8d25" />
 
 ---
 
