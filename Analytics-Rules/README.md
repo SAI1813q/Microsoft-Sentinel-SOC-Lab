@@ -793,33 +793,6 @@ This detection is essential for security operations as it helps teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-02 131314.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-02 131331.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-02 131341.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-02 131401.png)*
-
-### Query Scheduling
-> *(Insert Screenshot 2026-08-02 131412.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-02 131423.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-02 131430.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-02 131437.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -840,6 +813,8 @@ Once adversaries compromise a system, they often attempt to hide their presence 
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112252" src="https://github.com/user-attachments/assets/4ca50406-06e1-4822-9e59-fa94dbd3fd17" />
 
 ---
 
@@ -866,6 +841,7 @@ SecurityEvent
 | where EventID==1102
 | project TimeGenerated,Computer,SubjectAccount,Activity,EventID
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112323" src="https://github.com/user-attachments/assets/8eb84a55-0561-4084-ba99-9c9fd14f24b0" />
 
 ---
 
@@ -893,6 +869,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the specific privileged user account that was used to authorize the clearing of the logs.
 * **Host:** Identifies the compromised endpoint where the forensic data was destroyed.
 * **Process:** Correlates the exact event ID and time of destruction.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112331" src="https://github.com/user-attachments/assets/51d3fb6d-279a-42ba-b4bc-b847082bce62" />
 
 ---
 
@@ -941,10 +919,14 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 ### Why group alerts by Account and Host?
 If an attacker repeatedly clears logs on a specific machine using a specific compromised account (e.g., during a prolonged interactive session), grouping by both the Account and Host ensures that all related log-clearing actions within a 5-hour window are condensed into a single high-priority incident for the SOC.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112355" src="https://github.com/user-attachments/assets/e1f5947a-475f-4d60-ae61-123c206a331b" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by opening the Windows Event Viewer on a monitored endpoint, navigating to the `Security` logs, and selecting **Clear Log**. Alternatively, open an administrative PowerShell prompt and run `wevtutil cl Security`. Microsoft Sentinel will detect the resulting Event ID 1102 and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112415" src="https://github.com/user-attachments/assets/7e06ee4e-f238-4d61-aff5-26c77c5fc80b" />
 
 ---
 
@@ -956,30 +938,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 112252.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 112304.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 112323.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 112331.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 112355.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-03 112406.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 112415.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -998,6 +956,8 @@ PsExec is a legitimate Microsoft Sysinternals utility designed for system admini
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112740" src="https://github.com/user-attachments/assets/a2fed7db-6f6f-443d-b40c-39daf4aa19ac" />
 
 ---
 
@@ -1035,6 +995,7 @@ SecurityEvent
     ServiceName
 | order by TimeGenerated desc
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112809" src="https://github.com/user-attachments/assets/5606ebd5-a292-4bc6-85f9-f4a120c954d0" />
 
 ---
 
@@ -1062,6 +1023,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
 * **Account:** Identifies the compromised user credentials being leveraged to authenticate to the remote host.
 * **Host:** Identifies the target system where the remote command was executed.
 * **Process:** Extracts the exact command line arguments passed to PsExec, which often reveals the malicious payload or secondary scripts the attacker is attempting to run.
+  
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112822" src="https://github.com/user-attachments/assets/b4ae1c4b-b0d8-4c96-b9bd-5caef616f11f" />
 
 ---
 
@@ -1109,10 +1072,14 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 ### Why disable alert grouping?
 Lateral movement often happens rapidly across multiple hosts. Disabling alert grouping ensures that if an attacker uses PsExec to pivot to five different servers, the SOC receives discrete incidents for each target. This prevents a single grouped incident from obscuring the true blast radius of the attack.
 
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112831" src="https://github.com/user-attachments/assets/7d42e550-93d4-4e19-9ea8-091bd577d2db" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by downloading the legitimate PsExec tool from Microsoft Sysinternals and executing a harmless remote command against a monitored test machine (e.g., `psexec \\TargetMachine -u Domain\User -p Password cmd.exe /c echo test`). Microsoft Sentinel will detect the resulting 7045 and 4688 events and generate an incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-03 112847" src="https://github.com/user-attachments/assets/0b489b66-0df4-48a3-a8eb-6aa06756dfc5" />
 
 ---
 
@@ -1124,27 +1091,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview
-> *(Insert Screenshot 2026-08-03 112740.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-03 112754.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-03 112809.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-03 112822.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-03 112831.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-03 112847.png)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
@@ -1154,22 +1100,34 @@ This detection helps security teams:
 ## 🎯 Objective
 This rule detects PowerShell commands used to download payloads from remote servers. It enables security teams to identify initial staging actions where an attacker attempts to pull external malicious tools or scripts into the environment.
 
+---
+
 ## 📖 Threat Overview
 Adversaries often use "download cradles" to retrieve malicious payloads from remote infrastructure. By leveraging built-in administrative tools like PowerShell (using cmdlets like `Invoke-WebRequest` or `Net.WebClient`), attackers can execute fileless malware or drop secondary stage implants while blending in with legitimate network traffic. Monitoring process execution for these specific command-line arguments is critical for detecting the ingress of external tools.
 
+---
+
 ## 🔥 Severity
 **Medium**
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 132143" src="https://github.com/user-attachments/assets/9ff5c997-116d-4e09-ad70-965810e4b4ab" />
+
+---
 
 ## 🛡️ MITRE ATT&CK Mapping
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
 | Command And Control | Ingress Tool Transfer | T1105 |
 
+---
+
 ## 📂 Data Sources
 * Windows Security Event Logs
 * Azure Monitor Agent (AMA)
 * Log Analytics Workspace
 * Microsoft Sentinel
+
+---
 
 ## 📑 Detection Logic (KQL)
 The following query identifies process creation events containing common download cradle keywords:
@@ -1180,6 +1138,9 @@ SecurityEvent
 | where CommandLine has_any ("Invoke-WebRequest","DownloadString","Net.WebClient","curl","wget")
 | project TimeGenerated,Computer,SubjectAccount,NewProcessName,CommandLine,ParentProcessName
 ```
+<img width="1655" height="362" alt="Screenshot 2026-08-02 132228" src="https://github.com/user-attachments/assets/462c2003-1f64-48ee-9841-14a5b7196b46" />
+
+---
 
 ## ⚙️ Rule Configuration
 | Setting | Value | Reason |
@@ -1190,6 +1151,10 @@ SecurityEvent
 | **Query Frequency** | Run query every 5 Hours | Periodically scans for download activity. |
 | **Lookup Period** | Lookup data from the last 5 Hours | Evaluates all events within the 5-hour ingestion window. |
 | **Alert Threshold** | Trigger alert if query returns more than 0 results | Ensures any occurrence of these keywords generates an alert. |
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 132235" src="https://github.com/user-attachments/assets/25b93c7f-4f1d-480d-bdf1-2ce0476e6ea6" />
+
+---
 
 ## 🧩 Entity Mapping
 The following entities are mapped to enrich Microsoft Sentinel incidents.
@@ -1202,6 +1167,11 @@ The following entities are mapped to enrich Microsoft Sentinel incidents.
 ### Why map these entities?
 * **Host:** Identifies the endpoint executing the download command.
 * **Process:** Extracts the exact command line so analysts can identify the remote URL and the specific file being downloaded.
+
+  <img width="1064" height="481" alt="Screenshot 2026-08-02 132228" src="https://github.com/user-attachments/assets/1527a33b-a506-43c0-a2e8-ccaa2f860326" />
+
+
+---
 
 ## 🔄 Detection Workflow
 ```text
@@ -1228,12 +1198,15 @@ Incident Created (No alert grouping)
             ▼
 SOC Analyst Assigned & Payload Investigation Begins
 ```
+---
 
 ## 🚨 Alert Trigger Conditions
 An alert is generated when all of the following conditions are met:
 * Windows Security Event **4688** is generated.
 * The `CommandLine` field contains any of the following strings: `"Invoke-WebRequest"`, `"DownloadString"`, `"Net.WebClient"`, `"curl"`, `"wget"`.
 * The scheduled KQL query returns more than 0 results within the 5-hour evaluation window.
+
+---
 
 ## 📋 Incident Configuration
 To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured with the following settings:
@@ -1243,8 +1216,16 @@ To govern how alerts manifest in the SOC queue, Microsoft Sentinel is configured
 ### Why disable alert grouping?
 Disabling alert grouping ensures that every unique download cradle execution spawns a separate incident. This guarantees that analysts investigate each remote download attempt individually, as they may point to different malicious domains or payloads.
 
+<img width="1920" height="981" alt="Screenshot 2026-08-02 132243" src="https://github.com/user-attachments/assets/e54289b5-863a-418b-a621-eeb5fcd08cf9" />
+
+---
+
 ## ✅ Validation
 This detection can be validated by opening a Command Prompt or PowerShell session on a monitored endpoint and executing a benign download command, such as: `powershell.exe Invoke-WebRequest -Uri http://example.com -OutFile test.txt`. During the next 5-hour scheduled run, Microsoft Sentinel will evaluate the logs, detect the keyword, and generate the corresponding incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-08-02 132301" src="https://github.com/user-attachments/assets/9e47b752-8552-4399-90af-c8387440e227" />
+
+---
 
 ## 🎯 Security Impact
 This detection helps security teams:
@@ -1252,32 +1233,9 @@ This detection helps security teams:
 * Identify compromised endpoints actively reaching out to adversary-controlled infrastructure.
 * Extract network indicators (URLs, IP addresses) from the command line to block future access across the corporate network.
 
-## 📸 Screenshots
-### Rule Overview
-> *(Insert Screenshot 2026-08-02 132143.png)*
-
-### MITRE ATT&CK Mapping
-> *(Insert Screenshot 2026-08-02 132154.png)*
-
-### KQL Query
-> *(Insert Screenshot 2026-08-02 132228.png)*
-
-### Entity Mapping
-> *(Insert Screenshot 2026-08-02 132228.png)*
-
-### Query Scheduling
-> *(Insert Screenshot 2026-08-02 132235.png)*
-
-### Incident Settings
-> *(Insert Screenshot 2026-08-02 132243.png)*
-
-### Automation Rule
-> *(Insert Screenshot 2026-08-02 132249.png)*
-
-### Review & Create
-> *(Insert Screenshot 2026-08-02 132301.png)*
-
 ---
+
+
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
