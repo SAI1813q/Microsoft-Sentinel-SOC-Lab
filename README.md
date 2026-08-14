@@ -26,7 +26,7 @@ The lab simulates real-world attack techniques and builds detections, correlatio
 | ATT&CK Tactics | **9** |
 | Sentinel Automation Rules | **6** |
 | Azure Logic Apps | **2** |
-| Brute-Force Events Investigated | **68,000+** |
+
 
 ---
 
