@@ -106,7 +106,8 @@ Incident Automatically Created
 
 ## 📸 Alert Overview
 
-> *(Insert Alert Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 182058" src="https://github.com/user-attachments/assets/67e9d47d-e1aa-4ad3-a94b-7090980fdf41" />
+
 
 ---
 
@@ -146,7 +147,8 @@ instead of requiring multiple independent investigations.
 
 ## 📸 Incident Overview
 
-> *(Insert Incident Overview Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 184255" src="https://github.com/user-attachments/assets/25d5592b-340f-4b1c-8034-c93caea77946" />
+
 
 ---
 
@@ -164,11 +166,7 @@ allowing analysts to quickly understand how the entities are connected.
 
 ---
 
-## 📸 Attack Story
 
-> *(Insert Attack Story Screenshot)*
-
----
 
 # 🔍 Investigation Graph
 
@@ -186,7 +184,8 @@ This visualization helps analysts pivot between related entities during an inves
 
 ## 📸 Investigation Graph
 
-> *(Insert Investigation Graph Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 184235" src="https://github.com/user-attachments/assets/8c1707f4-40ed-42a0-8e9d-d63a2f0c1eb3" />
+
 
 ---
 
@@ -213,13 +212,14 @@ The incident identified the following impacted assets.
 
 ## 📸 Impacted Device
 
-> *(Insert Device Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 184316" src="https://github.com/user-attachments/assets/e4d09793-250f-411c-8b6a-e9059aced9be" />
+
 
 ---
 
 ## 📸 Impacted User
 
-> *(Insert User Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 184321" src="https://github.com/user-attachments/assets/f74ea261-de15-4ad5-96c2-a8222c75e3d2" />
 
 ---
 
@@ -239,7 +239,8 @@ The suspicious process was linked to the alert, providing investigators with add
 
 ## 📸 Evidence & Response
 
-> *(Insert Evidence Screenshot)*
+<img width="1920" height="1020" alt="Screenshot 2026-08-04 184338" src="https://github.com/user-attachments/assets/0b481a03-ec2d-42ac-95f1-74e2c972a313" />
+
 
 ---
 
@@ -255,11 +256,6 @@ For this incident:
 
 This provides an audit trail showing how the incident was created.
 
----
-
-## 📸 Activities
-
-> *(Insert Activities Screenshot)*
 
 ---
 
