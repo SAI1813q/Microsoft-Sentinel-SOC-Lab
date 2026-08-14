@@ -210,67 +210,87 @@ Mapping detections to MITRE ATT&CK provides several benefits:
 
 ---
 
-🔄 Detection Coverage Workflow
+## 🔄 Detection Coverage Workflow
 
+```text
 Adversary Technique
-↓
+        │
+        ▼
 Windows / Active Directory / Defender Telemetry
-↓
+        │
+        ▼
 Azure Monitor Agent / Defender XDR
-↓
+        │
+        ▼
 Log Analytics Workspace
-↓
+        │
+        ▼
 Microsoft Sentinel
-↓
+        │
+        ▼
 KQL Analytics Rule
-↓
-Individual Technique Detection / Multi-Stage Correlation
-↓
-Alert / Incident
-↓
-MITRE ATT&CK Context
-↓
-SOC Investigation
-↓
-Automation / Response
+        │
+        ├──────────────► Individual Technique Detection
+        │
+        └──────────────► Multi-Stage Correlation
+                              │
+                              ▼
+                       Alert / Incident
+                              │
+                              ▼
+                    MITRE ATT&CK Context
+                              │
+                              ▼
+                    SOC Investigation
+                              │
+                              ▼
+                    Automation / Response
+```text
 
-🧪 Detection Validation
+```
+## 🧪 Detection Validation
 
 Detection validation includes controlled simulations and testing of behaviors such as:
 
-Brute-force authentication
-Successful login following failed authentication
-Local account creation
-Encoded PowerShell execution
-Credential dumping
-PsExec execution
-Registry Run Key persistence
-Scheduled task creation
-Windows service installation
-Event log clearing
-Active Directory enumeration
-Pass-the-Hash
-Pass-the-Ticket
-Kerberoasting
-AS-REP Roasting
-Defender modification
-Firewall modification
-Certutil downloads
-Mshta execution
-Multi-stage correlation sequences
+- Brute-force authentication
+- Successful login following failed authentication
+- Local account creation
+- Encoded PowerShell execution
+- Credential dumping
+- PsExec execution
+- Registry Run Key persistence
+- Scheduled task creation
+- Windows service installation
+- Event log clearing
+- Active Directory enumeration
+- Pass-the-Hash
+- Pass-the-Ticket
+- Kerberoasting
+- AS-REP Roasting
+- Defender modification
+- Firewall modification
+- Certutil downloads
+- Mshta execution
+- Multi-stage correlation sequences
 
 Validation screenshots and rule-specific testing details are maintained within the individual analytics-rule documentation.
 
-🔗 Related Documentation
-Analytics Rules — Detection logic, KQL queries, rule configuration, entity mappings, MITRE mappings, and validation.
-Detection — Detection validation and alert evidence.
-Automation & Playbooks — Sentinel automation rules and Logic Apps workflows.
-Workbook & Dashboard — SOC dashboards and visualization.
-Architecture — Azure SOC architecture and telemetry flow.
-📌 Summary
+---
 
-The SOC lab combines individual analytics rules with multi-stage correlation to provide ATT&CK-aligned detection coverage across 9 tactics and 31 unique techniques.
+## 🔗 Related Documentation
+
+- **[Analytics Rules](../Analytics-Rules/README.md)** — Detection logic, KQL queries, rule configuration, entity mappings, MITRE mappings, and validation.
+- **[Detection](../Detection/README.md)** — Detection validation and alert evidence.
+- **[Automation & Playbooks](../Automation%20%26%20Playbooks/README.md)** — Sentinel automation rules and Logic Apps workflows.
+- **[Workbook & Dashboard](../Workbook%20%26%20Dashboard/README.md)** — SOC dashboards and visualization.
+- **[Architecture](../Architecture/README.md)** — Azure SOC architecture and telemetry flow.
+
+---
+
+## 📌 Summary
+
+The SOC lab combines individual analytics rules with multi-stage correlation to provide ATT&CK-aligned detection coverage across **9 tactics and 31 unique techniques**.
 
 The detection architecture focuses on identifying attacker behavior across authentication, execution, persistence, credential access, discovery, lateral movement, defense evasion, privilege escalation, and command-and-control activity.
 
-Threat-intelligence detections that cannot be confidently assigned to a specific ATT&CK technique are explicitly marked N/A instead of being artificially mapped.
+Threat-intelligence detections that cannot be confidently assigned to a specific ATT&CK technique are explicitly marked **N/A** instead of being artificially mapped.
