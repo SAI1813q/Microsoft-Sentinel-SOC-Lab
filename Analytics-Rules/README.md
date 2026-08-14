@@ -49,7 +49,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Correlation 2: Encoded PowerShell → Registry Run Key](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-correlation-2-encoded-powershell--registry-run-key)**  | High | Execution, Boot or Logon Autostart Execution | Tracks obfuscated or encoded PowerShell command execution followed closely by the establishment of persistence via Windows Registry Run Keys. |
 | **[Correlation 3: Mimikatz → PsExec](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-correlation-3-mimikatz--psexec)**  | High | OS Credential Dumping, Remote Services | Links credential harvesting using tools like Mimikatz directly with internal lateral movement utilizing administrative utilities like PsExec. |
 | **[Correlation 4: New Service → Event Log Cleared](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-correlation-4-new-service--event-log-cleared)**  | High | Create or Modify System Process, Indicator Removal on Host | Tracks the installation of a new system service for persistence followed by the clearing or tampering of Windows event logs to wipe forensic evidence. |
-| **[Correlation 5: Certutil Download → Mshta Execution](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-correlation-5-certutil-download--mshta-execution)**  | High | Ingress Tool Transfer | Correlates payload staging and remote file downloads via `certutil.exe` with subsequent execution using native scripting binaries like `mshta.exe`. |
+| **[Correlation 5: Certutil Download → Mshta Execution](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-correlation-5-certutil-download--mshta-execution)**  | High | Ingress Tool Transfer,System Binary Proxy Execution: Mshta | Correlates payload staging and remote file downloads via `certutil.exe` with subsequent execution using native scripting binaries like `mshta.exe`. |
 | **[Correlation 6: Defender Disabled → Firewall Disabled → Mimikatz](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-correlation-6-defender-disabled--firewall-disabled--mimikatz)**  | High | Impair Defenses, OS Credential Dumping | Tracks a multi-phase evasion and extraction campaign combining the deactivation of Microsoft Defender and Windows Firewall prior to executing credential dumping tools. |
 
 # 🔐 Brute Force Login Detection
@@ -5736,9 +5736,9 @@ Before executing noisy or high-privilege activities such as credential harvestin
 ## 🛡️ MITRE ATT&CK Mapping
 | Tactic | Technique | Technique ID |
 |---------|-----------|--------------|
-| Defense Evasion | Impair Defenses | T1562 |
+| Defense Evasion | Impair Defenses: Disable or Modify Tools | T1562.001 |
+| Defense Evasion | Impair Defenses: Disable or Modify System Firewall | T1562.004 |
 | Credential Access | OS Credential Dumping | T1003 |
-
 
 ---
 
