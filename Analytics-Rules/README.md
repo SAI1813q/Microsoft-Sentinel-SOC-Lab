@@ -2270,6 +2270,8 @@ This rule detects the execution of `mshta.exe`. It enables security teams to ide
 ## 🔥 Severity
 **High**
 
+<img width="1920" height="1020" alt="Screenshot 2026-07-24 180853" src="https://github.com/user-attachments/assets/e2b61596-d048-412f-a4e9-5216fbc66a40" />
+
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
@@ -2294,6 +2296,7 @@ SecurityEvent
 | where Process has "mshta.exe"
 | project TimeGenerated, Computer, Account, Process, CommandLine
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-07-24 180921" src="https://github.com/user-attachments/assets/0bc926c9-9ebd-4329-b7b6-54b466f79d7e" />
 
 ---
 
@@ -2320,6 +2323,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents.
 ### Why map these entities?
 * **Account & Host:** Identifies the compromised user and the targeted endpoint where the defense evasion is taking place.
 * **Process:** Extracts the exact `CommandLine` arguments, which usually contain the malicious URL or the embedded script payload being passed to `mshta.exe`.
+
+<img width="1920" height="1020" alt="Screenshot 2026-07-24 180926" src="https://github.com/user-attachments/assets/99cfb745-ee73-440f-b96d-57d16f18917f" />
 
 ---
 
@@ -2367,10 +2372,14 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by Account and Host?
 If a malicious macro or dropper repeatedly attempts to call `mshta.exe` to pull down secondary payloads, grouping by the targeted host and account prevents the SOC queue from flooding and encapsulates the entire infection chain into one ticket.
 
+<img width="1920" height="1020" alt="Screenshot 2026-07-24 181018" src="https://github.com/user-attachments/assets/d74f9d3f-1efa-4fb0-945c-f3f0a6267f0b" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by opening a Command Prompt on a monitored endpoint and executing a benign HTA command, such as `mshta.exe vbscript:Close(Execute("MsgBox ""Test Sentinel Alert"""))`. Microsoft Sentinel will instantly detect the process creation event containing `mshta.exe`, generate an alert, and create the consolidated incident.
+
+<img width="1920" height="1020" alt="Screenshot 2026-07-24 181046" src="https://github.com/user-attachments/assets/c1b997d3-525a-44ae-b120-440978514a1d" />
 
 ---
 
@@ -2380,12 +2389,6 @@ This detection helps security teams:
 * Extract malicious URLs or script contents passed through the `CommandLine`.
 * Identify the initial execution phase of fileless malware infections.
 
----
-
-## 📸 Screenshots
-
-### Rule Overview & Configuration
-> *(Insert related video screenshots here)*
 
 ---
 
@@ -2408,6 +2411,8 @@ WMI is a built-in framework for management and operations on Windows systems. Ad
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181150" src="https://github.com/user-attachments/assets/bda952d6-7972-464c-a050-9a0150f5853e" />
 
 ---
 
@@ -2442,6 +2447,7 @@ SecurityEvent
     ParentProcessName
 | order by TimeGenerated desc
 ```
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181222" src="https://github.com/user-attachments/assets/41e344cc-96e5-4952-b001-e713e1533e22" />
 
 ---
 
@@ -2469,6 +2475,8 @@ The following entities are mapped to enrich Microsoft Sentinel incidents.
 * **Account:** Identifies the privileged account used to establish the WMI connection.
 * **Host:** Identifies the target system executing the payload.
 * **Process:** The `CommandLine` reveals the exact malicious instruction the attacker passed to the `Win32_Process` class for execution.
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181236" src="https://github.com/user-attachments/assets/8b31456c-272f-4489-81bd-60b2794a7094" />
 
 ---
 
@@ -2516,12 +2524,15 @@ An alert is generated when all of the following conditions are met:
 ### Why group alerts by Account and Host?
 Attackers rarely use WMI against a single machine; they often loop through a list of endpoints using compromised credentials to rapidly deploy backdoors. Grouping by Account and Host consolidates these repeated bursts of lateral movement into a single incident per compromised identity and endpoint, drastically reducing SOC queue noise.
 
+
 ---
 
 ## ✅ Validation
 This detection can be validated by opening a Command Prompt with administrative privileges and executing a remote WMI call against another monitored machine in the lab:
 `wmic /node:192.168.1.50 process call create "cmd.exe /c echo WMITest"`
 Microsoft Sentinel will detect the 4688 event containing the WMI parameters and generate the consolidated incident.
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181301" src="https://github.com/user-attachments/assets/5bb68a2c-bd14-46d6-b00f-2aa2d146fc67" />
 
 ---
 
@@ -2531,12 +2542,6 @@ This detection helps security teams:
 * Track the exact payload execution parameters utilized by the adversary.
 * Identify compromised infrastructure where attackers are abusing native system management tools to maintain stealth.
 
----
-
-## 📸 Screenshots
-
-### Rule Overview & Configuration
-> *(Insert related video screenshots here)*
 
 ---
 
@@ -2557,6 +2562,8 @@ In a Pass-the-Ticket attack, an adversary steals a valid Kerberos Ticket Grantin
 
 ## 🔥 Severity
 **High**
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181430" src="https://github.com/user-attachments/assets/2b6ac2d1-13d0-4e03-9b3e-7f73ffc27721" />
 
 ---
 
@@ -2606,6 +2613,7 @@ KerberosTickets
   LogonType
 | order by LogonTime desc
 ```
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181457" src="https://github.com/user-attachments/assets/645f5e8c-2fdf-4916-9ea9-430053f20650" />
 
 ---
 
@@ -2631,12 +2639,17 @@ The following entities are mapped to enrich Microsoft Sentinel incidents.
 | Account | Name | Account |
 | IP | Address | IpAddress |
 
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181520" src="https://github.com/user-attachments/assets/c40249ca-9b80-4776-bb59-1a606b97c0be" />
+
+
 ### Custom Details
 The following parameters have been surfaced directly into the alerts for faster triage:
 * **SourceIp:** `IpAddress`
 * **TargetHost:** `Computer`
 * **ServiceName:** `ServiceName`
 * **LogonType:** `LogonType`
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181530" src="https://github.com/user-attachments/assets/2b072c85-bd84-4505-9743-ab00ef6772b7" />
 
 ---
 
@@ -2679,10 +2692,15 @@ An alert is generated when all of the following conditions are met:
 ### Why disable alert grouping?
 Pass-the-Ticket represents an advanced, high-severity threat. The volume of true positive alerts will be extremely low. Generating a distinct incident for every occurrence ensures immediate, highly focused attention from the SOC without the risk of the alert being buried or delayed by grouping windows.
 
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181538" src="https://github.com/user-attachments/assets/527d5ca0-8dad-4d68-957e-a1aa95cdbf59" />
+
 ---
 
 ## ✅ Validation
 This detection can be validated by utilizing a tool like Rubeus in a controlled lab environment to request a TGT and immediately inject it to authenticate to a target file share. Microsoft Sentinel will correlate the 4768/4770 events with the subsequent 4624 event and generate an incident.
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-14 181550" src="https://github.com/user-attachments/assets/00d36242-f009-4a05-90ad-48f837b84969" />
+
 
 ---
 
@@ -2694,12 +2712,6 @@ This detection helps security teams:
 
 ---
 
-## 📸 Screenshots
-
-### Rule Overview & Configuration
-> *(Insert related video screenshots here)*
-
----
 
 ⬆️ **[Back to Analytics Rule Summary](#-analytics-rule-summary)**
 
