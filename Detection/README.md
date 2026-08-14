@@ -33,7 +33,7 @@ Each alert includes enriched entities, related events, and investigation context
 | **[User Added to Local Administrators](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-user-added-to-local-administrators-detection)** | High | ✅ Yes | ✅ Validated | Generated whenever a user was added to an administrative group or made an administrator. |
 | **[WMI Lateral Movement Detection](#-wmi-lateral-movement-detection)** | High | ✅ Yes | ✅ Validated | Generated after identifying suspicious WMI process execution patterns indicative of remote execution. |
 | **[Active Directory Computer Enumeration Detected](#-active-directory-computer-enumeration-detected)** | Medium | ✅ Yes | ✅ Validated | Generated when discovery or enumeration queries are executed to map out computers within Active Directory. |
-| **[Certutil Download](#-certutil-download)** | High | ✅ Yes | ✅ Validated | Generated when the native `certutil.exe` utility is abused to download files or payloads from remote servers. |
+| **[Certutil Download](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-certutil-download-detection)** | High | ✅ Yes | ✅ Validated | Generated when the native `certutil.exe` utility is abused to download files or payloads from remote servers. |
 
 ---
 
