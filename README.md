@@ -2,8 +2,8 @@
 
 An Azure-based Security Operations Center (SOC) lab built with Microsoft Sentinel to simulate enterprise security monitoring, detection engineering, attack investigation, MITRE ATT&CK mapping, incident response, and SOC automation.
 
-![SOC Architecture](<img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 12_03_31 AM" src="https://github.com/user-attachments/assets/72d51c5a-92ca-41eb-9488-132c95a66443" />
-)
+<img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 12_03_31 AM" src="https://github.com/user-attachments/assets/72d51c5a-92ca-41eb-9488-132c95a66443" />
+
 
 ---
 
