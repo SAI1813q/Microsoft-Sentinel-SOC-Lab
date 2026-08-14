@@ -6,7 +6,7 @@ Welcome to the technical architecture documentation for this cloud-native Securi
 ---
 
 ## 📖 Project Overview
-This project replicates a production enterprise security operations setup. It deploys vulnerable honeypot virtual machines with exposed administrative endpoints to capture live brute-force traffic, streams logs using the Azure Monitor Agent (AMA), consolidates data into a central Log Analytics Workspace, and handles threat analytics and response automation via Microsoft Sentinel and Microsoft Defender XDR.
+This project simulates an enterprise security operations environment. It deploys vulnerable honeypot virtual machines with exposed administrative endpoints to capture live brute-force traffic, streams logs using the Azure Monitor Agent (AMA), consolidates data into a central Log Analytics Workspace, and handles threat analytics and response automation via Microsoft Sentinel and Microsoft Defender XDR.
 
 ---
 
