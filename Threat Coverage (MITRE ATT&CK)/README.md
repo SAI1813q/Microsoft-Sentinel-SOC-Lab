@@ -14,7 +14,7 @@ The analytics rules implemented in this lab provide detection coverage across mu
 | Analytics Rule | MITRE ATT&CK Technique | Technique ID | Tactic |
 |---------------|------------------------|--------------|--------|
 | Brute Force Login Detection | Brute Force | T1110 | Credential Access |
-| Successful Login After Brute Force | Brute Force | T1110 | Credential Access |
+| Successful Login After Brute Force | Password Guessing,Valid Accounts | T1110.001,T1078| Credential Access |
 | New Local User Creation | Create Account | T1136.001 | Persistence |
 | Encoded PowerShell Detection | PowerShell | T1059.001 | Execution |
 | Download Cradle Detection | Ingress Tool Transfer | T1105 | Command and Control |
