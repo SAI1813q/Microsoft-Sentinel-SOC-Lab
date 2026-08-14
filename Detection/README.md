@@ -5814,3 +5814,276 @@ If successful and left undetected, this attack could lead to:
 ⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
 
 ---
+# 🚨 Active Directory Computer Enumeration Detected
+
+## 🎯 Detection Overview
+
+This detection demonstrates Microsoft Sentinel identifying active enumeration of computer objects within Active Directory. 
+
+The analytics rule automatically identified suspicious PowerShell reconnaissance commands and generated a **Medium severity alert**, allowing SOC analysts to investigate potential domain discovery and reconnaissance activities.
+
+---
+
+## 📖 Attack Scenario
+
+After gaining access to a domain environment, attackers frequently perform reconnaissance to map out the network structure, find active domain controllers, workstations, and servers. This is often done using built-in PowerShell Active Directory module cmdlets (such as `Get-AdComputer`) or tools like BloodHound/SharpHound to identify targets for lateral movement.
+
+Microsoft Sentinel detected this activity by monitoring PowerShell execution logs for command-line arguments querying Active Directory computer objects using filters like `-Filter *`.
+
+---
+
+# 🚨 Alert Generated
+
+## Alert Summary
+
+| Property | Value |
+|----------|-------|
+| **Alert Name** | Active Directory Computer Enumeration Detected |
+| **Severity** | Medium |
+| **Status** | New |
+| **Classification** | Not Set |
+| **Detection Source** | NRT rules |
+| **Service Source** | Microsoft Sentinel |
+| **Categories** | Discovery |
+| **Analytics Rule** | Active Directory Computer Enumeration Detected |
+
+---
+
+## Alert Description
+
+The alert was triggered after Microsoft Sentinel detected execution of PowerShell commands commonly used for Active Directory reconnaissance.
+
+The specific command line observed was:
+`"powershell.exe" & {Get-AdComputer -Filter *}`
+
+The activity involved:
+
+- 👤 **Account:** `ROOT\SecManager`
+- 💻 **Computer:** `Vm1.root.project`
+
+---
+
+## Alert Workflow
+
+```text
+Attacker gains access to domain-joined host
+          │
+          ▼
+Executes PowerShell AD enumeration command
+(Discovery / Active Directory Reconnaissance)
+          │
+          ▼
+PowerShell queries Active Directory for computer objects
+          │
+          ▼
+Process execution logged by OS
+          │
+          ▼
+Microsoft Sentinel NRT Analytics Rule
+          │
+          ▼
+Medium Severity Alert Generated
+          │
+          ▼
+Microsoft Defender Incident Created
+```
+
+---
+
+## 📸 Alert Overview
+
+> *(Insert Alert Overview Screenshot)*
+
+---
+
+## 📸 Alert Details
+
+> *(Insert Alert Details Screenshot)*
+
+---
+
+## 📸 Query Results
+
+> *(Insert Query Results Screenshot)*
+
+---
+
+# 🚔 Incident Created
+
+## Incident Summary
+
+| Property | Value |
+|----------|-------|
+| **Incident ID** | 219 |
+| **Incident Name** | Active Directory Computer Enumeration Detected |
+| **Severity** | Medium |
+| **Status** | Active |
+| **Classification** | Unclassified |
+| **Assigned To** | Unassigned |
+| **Active Alerts** | 1 |
+| **Created Automatically** | Yes |
+
+---
+
+## Incident Correlation
+
+Microsoft Defender automatically created Incident 219 based on the Near Real-Time (NRT) detection alert from Microsoft Sentinel. 
+
+This incident provides the analyst with a centralized workspace to investigate the reconnaissance script execution, the user account involved, and the impacted endpoint.
+
+---
+
+## 📸 Incident Overview
+
+> *(Insert Incident Overview Screenshot)*
+
+---
+
+# 🕸️ Attack Story
+
+The Attack Story provides a visual relationship between the entities involved in the incident.
+
+Microsoft Defender associated:
+
+- 👤 **User:** `ROOT\SecManager`
+- 💻 **Device:** `Vm1.root.project`
+- ⚙️ **Process:** `"powershell.exe" & {Get-AdComputer -Filter *}`
+
+This allows analysts to quickly understand the execution chain on the affected endpoint and the context of the user account.
+
+---
+
+## 📸 Attack Story
+
+> *(Insert Attack Story Screenshot)*
+
+---
+
+# 🔍 Investigation Graph
+
+The Investigation Graph automatically maps the entities associated with the incident.
+
+### Observed Entities
+
+| Entity Type | Entity |
+|-------------|--------|
+| **User** | `ROOT\SecManager` |
+| **Device** | `Vm1.root.project` |
+| **Process** | `powershell.exe` |
+
+The graph allows the SOC analyst to visually pivot between the user account, host, and the executed reconnaissance process during the investigation.
+
+---
+
+## 📸 Investigation Graph
+
+> *(Insert Investigation Graph Screenshot)*
+
+---
+
+# 💻 Impacted Assets
+
+The incident identified the following impacted assets.
+
+## Device
+
+| Property | Value |
+|----------|-------|
+| **Device name** | `Vm1.root.project` |
+| **Domain** | `root.project` |
+| **Risk Level** | None |
+| **Exposure Level** | Low |
+
+---
+
+## User
+
+| Property | Value |
+|----------|-------|
+| **User** | `ROOT\SecManager` |
+
+---
+
+## 📸 Impacted Device
+
+> *(Insert Device Screenshot)*
+
+---
+
+## 📸 Impacted User
+
+> *(Insert User Screenshot)*
+
+---
+
+# 🧪 Evidence & Response
+
+Microsoft Defender identified a suspicious process execution as part of the evidence.
+
+The evidence and response tab recorded the following details:
+
+| Property | Value |
+|----------|-------|
+| **Entity Type** | Process |
+| **Verdict** | Suspicious |
+| **First Seen** | Aug 1, 2026 7:24 PM |
+| **Impacted Assets** | `Vm1.root.project` |
+| **Detection Origin** | Active Directory Computer Enumeration Detected |
+
+---
+
+## 📸 Evidence & Response
+
+> *(Insert Evidence Screenshot)*
+
+---
+
+# 📋 Activities
+
+The Activities tab records automated actions performed during the incident lifecycle.
+
+For this incident:
+
+- 🚨 Alert 'Active Directory Computer Enumeration Detected' was automatically correlated to incident 219 at Aug 1, 2026 7:28 PM.
+- 🤖 Activities were performed by Microsoft Defender XDR via automated triggers.
+
+The activity history provides an audit trail of the automated incident workflow.
+
+---
+
+## 📸 Activities
+
+> *(Insert Activities Screenshot)*
+
+---
+
+# 🛡️ SOC Analyst Investigation
+
+During investigation the analyst should:
+
+- 🔎 Verify if the user `ROOT\SecManager` was performing authorized administrative domain auditing or asset discovery.
+- ⚙️ Inspect the parent process of `powershell.exe` to see how the enumeration command was triggered (e.g., interactive prompt, scheduled task, or script execution).
+- 🌐 Monitor `Vm1.root.project` for subsequent enumeration commands targeting user accounts (`Get-AdUser`), groups (`Get-AdGroup`), or organizational units.
+- 🔍 Look for further lateral movement attempts originating from `Vm1.root.project` following the reconnaissance phase.
+- 🚨 Isolate the endpoint if the activity is deemed unauthorized or part of a broader compromise.
+
+---
+
+# 🎯 Security Impact
+
+Active Directory enumeration provides attackers with a roadmap of the enterprise network, helping them target valuable servers and administrative accounts.
+
+Detecting this behavior allows SOC analysts to intercept attackers during the early discovery phase before they can execute targeted lateral movement.
+
+If successful and left uninvestigated, this reconnaissance could lead to:
+
+- 🎯 Identification of high-value internal targets (e.g., Domain Controllers, database servers)
+- 🔄 Coordinated Lateral Movement across the internal network
+- 🔑 Focused credential harvesting against discovered systems
+
+---
+
+⬆️ [**Back to Detection Validation Summary**](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Detection/README.md#-detection-validation-summary)
+
+---
+
