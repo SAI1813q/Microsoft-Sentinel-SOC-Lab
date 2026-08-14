@@ -5659,7 +5659,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
     Automated Response Triggered (Add Triage Tag)
                 │
                 ▼
-    SOC Analyst Assigned & Endpoint Isolation / Payload Removal Initiated
+    SOC Analyst Assigned
 
 ---
 
@@ -5840,7 +5840,7 @@ The following entities are mapped to enrich Microsoft Sentinel incidents and pro
     Automated Response Triggered (Add Triage Tag)
                 │
                 ▼
-    SOC Analyst Assigned & Emergency Incident Response / Host Isolation Initiated
+    SOC Analyst Assigned 
 
 ---
 
