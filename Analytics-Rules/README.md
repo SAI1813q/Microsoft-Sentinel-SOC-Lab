@@ -40,7 +40,7 @@ The detection rules implemented in this lab cover multiple stages of the cyber a
 | **[Firewall Disabled](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-firewall-disabled)** | Medium | T1562.004 | Detects system modifications that turn off or impair the Windows Defender Firewall. |
 | **[Certutil Download](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-certutil-download)** | High | T1105 | Detects the abuse of the certutil.exe administrative tool to download malicious external files. |
 | **[Network Discovery](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-network-discovery)** | Medium | T1016 | Detects execution of commands aimed at mapping internal network topologies and connections. |
-| **[Suspicious Outbound Connection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-suspicious-outbound-connection)** | Medium | T1071 | Detects unusual outbound network connections potentially indicating Command and Control (C2) traffic. |
+| **[Suspicious Outbound Connection](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-suspicious-outbound-connection)** | Medium | N/A | Detects unusual outbound network connections potentially indicating Command and Control (C2) traffic. |
 | **[Create or Modify System Process](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#%EF%B8%8F-create-or-modify-system-process)** | Medium | T1543 | Detects the creation or modification of system-level processes to establish persistence. |
 | **[Event Logging Service Shut Down](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-event-logging-service-shut-down)** | Medium | T1562.001 | Detects the manual termination of the Windows Event logging service to hide malicious activity. |
 | **[User Added to Local Administrators](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Analytics-Rules/README.md#-user-added-to-local-administrators)** | High | T1098 | Detects unauthorized additions of user accounts to the local Administrators group on an endpoint. |
@@ -4229,9 +4229,7 @@ When endpoints are compromised, malware or threat actors frequently establish ou
 ---
 
 ## 🛡️ MITRE ATT&CK Mapping
-| Tactic | Technique | Technique ID |
-|---------|-----------|--------------|
-| Command And Control, Exfiltration | Exfiltration Over C2 Channel | T1041 |
+**MITRE ATT&CK Mapping:** N/A — Threat Intelligence-based Detection
 
 ---
 
