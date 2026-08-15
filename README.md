@@ -18,7 +18,6 @@ Security telemetry is centralized in Log Analytics and monitored through Microso
 |---|---:|
 | Custom Analytics Rules | **31** |
 | Multi-Stage Correlation Rules | **6** |
-| Custom Detection Rules | **37** |
 | MITRE ATT&CK Techniques | **31** |
 | ATT&CK Tactics | **9** |
 | Sentinel Automation Rules | **6** |
