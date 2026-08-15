@@ -193,7 +193,7 @@ This correlation rule helps security teams:
 
 
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ [Back to Correlation Rules](#-correlation-rules)
 
 ---
 
@@ -362,7 +362,7 @@ This correlation rule helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ [Back to Correlation Rules](#-correlation-rules)
 
 ---
 
@@ -530,7 +530,7 @@ This correlation rule helps security teams:
 
 
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ [Back to Correlation Rules](#-correlation-rules)
 
 
 ---
@@ -694,8 +694,7 @@ This correlation rule helps security teams:
 ---
 
 
-
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ [Back to Correlation Rules](#-correlation-rules)
 
 ---
 # 🔗 Correlation 5: Certutil Download → Mshta Execution
@@ -862,7 +861,7 @@ This correlation rule helps security teams:
 
 
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ [Back to Correlation Rules](#-correlation-rules)
 
 ---
 # 🔗 Correlation 6: Defender Disabled → Firewall Disabled → Mimikatz
@@ -1041,5 +1040,5 @@ This correlation rule helps security teams:
 
 ---
 
-⬆️ **[Back to Analytics Rule Summary](#analytics-rule-summary)**
+⬆️ [Back to Correlation Rules](#-correlation-rules)
 
