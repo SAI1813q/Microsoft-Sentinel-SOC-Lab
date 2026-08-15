@@ -32,6 +32,9 @@ The lab collects Windows security telemetry through Azure Monitor Agent and Data
 
 **Architecture Flow:**
 
+<img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 12_03_31 AM" src="https://github.com/user-attachments/assets/5877c3ca-a0a6-4d4e-91e0-14ba2b460477" />
+
+
 **Windows VMs / Active Directory → AMA → DCR → Log Analytics → Microsoft Sentinel → Analytics Rules → Incidents → Automation / Response**
 
 📖 **[View Architecture Documentation](Architecture/README.md)**
