@@ -13,7 +13,7 @@ The correlation rules combine multiple analytics detections using KQL-based logi
 
 | # | Correlation Rule | Attack Chain | Rule |
 |---|---|---|---|
-| 1 | Brute Force → Successful Login → New Local User | Credential Attack → Account Creation | [View Rule](#-correlation-1--brute-force--successful-login--new-local-user) |
+| 1 | Brute Force → Successful Login → New Local User | Credential Attack → Account Creation | [View Rule](⬆️ [Back to Correlation Rules](#-correlation-rules)) |
 | 2 | Encoded PowerShell → Registry Run Key | Execution → Persistence | [View Rule](#-correlation-2--encoded-powershell--registry-run-key) |
 | 3 | Mimikatz → PsExec | Credential Dumping → Service Execution | [View Rule](#-correlation-3--mimikatz--psexec) |
 | 4 | New Service → Event Log Cleared | Service Creation → Evidence Removal | [View Rule](#-correlation-4--new-service--event-log-cleared) |
