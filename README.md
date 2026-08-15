@@ -86,7 +86,7 @@ Examples include:
 - Certutil Download → Mshta Execution
 - Defender Disabled → Firewall Disabled → Mimikatz
 
-📖 **[View Correlation Rules](Analytics-Rules/README.md)**
+📖 **[View Correlation Rules](Correlation%20Rules/README.md)**
 
 ---
 
