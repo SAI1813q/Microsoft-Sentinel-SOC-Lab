@@ -14,7 +14,7 @@ The correlation rules combine multiple analytics detections using KQL-based logi
 | # | Correlation Rule | Attack Chain | Rule |
 |---|---|---|---|
 | 1 | Brute Force → Successful Login → New Local User | Credential Attack → Account Creation | [View Rule](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Correlation%20Rules/README.md#-correlation-1-brute-force--successful-login--new-local-user) |
-| 2 | Encoded PowerShell → Registry Run Key | Execution → Persistence | [View Rule](#-correlation-2--encoded-powershell--registry-run-key) |
+| 2 | Encoded PowerShell → Registry Run Key | Execution → Persistence | [View Rule](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Correlation%20Rules/README.md#-correlation-2-encoded-powershell--registry-run-key) |
 | 3 | Mimikatz → PsExec | Credential Dumping → Service Execution | [View Rule](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Correlation%20Rules/README.md#-correlation-3-mimikatz--psexec) |
 | 4 | New Service → Event Log Cleared | Service Creation → Evidence Removal | [View Rule](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Correlation%20Rules/README.md#-correlation-4-new-service--event-log-cleared) |
 | 5 | Certutil Download → Mshta Execution | Payload Transfer → Proxy Execution | [View Rule](https://github.com/SAI1813q/Microsoft-Sentinel-SOC-Lab/blob/main/Correlation%20Rules/README.md#-correlation-5-certutil-download--mshta-execution) |
