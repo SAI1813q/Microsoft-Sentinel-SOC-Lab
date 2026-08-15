@@ -1,17 +1,14 @@
 # 🛡️ Microsoft Sentinel SOC Lab
 
-An Azure-based Security Operations Center (SOC) lab built with Microsoft Sentinel to simulate enterprise security monitoring, detection engineering, attack investigation, MITRE ATT&CK mapping, incident response, and SOC automation.
-
-<img width="1536" height="1024" alt="ChatGPT Image Aug 15, 2026, 12_03_31 AM" src="https://github.com/user-attachments/assets/72d51c5a-92ca-41eb-9488-132c95a66443" />
-
+An Azure-based Security Operations Center (SOC) lab focused on Microsoft Sentinel detection engineering, KQL-based threat detection, MITRE ATT&CK mapping, attack simulation, incident investigation, and SOC automation.
 
 ---
 
 ## 🎯 Project Overview
 
-This project demonstrates the design and implementation of a cloud-based SOC using Microsoft Sentinel, Azure Monitor Agent (AMA), Log Analytics, Windows Server and Windows 10 virtual machines, including an Active Directory domain controller, send Windows Security Event telemetry through Azure Monitor Agent and Data Collection Rules into a centralized Log Analytics Workspace connected to Microsoft Sentinel.
+This project demonstrates the design and implementation of a cloud-based SOC using Microsoft Sentinel, Azure Monitor Agent (AMA), Data Collection Rules (DCRs), Log Analytics, Windows virtual machines, and Active Directory.
 
-The lab simulates real-world attack techniques and builds detections, correlations, investigations, dashboards, and automated response workflows around them.
+Security telemetry is centralized in Log Analytics and monitored through Microsoft Sentinel, where custom analytics rules, multi-stage correlations, automation rules, Logic Apps, and workbooks are used to simulate SOC detection and response workflows.
 
 ---
 
@@ -27,18 +24,15 @@ The lab simulates real-world attack techniques and builds detections, correlatio
 | Sentinel Automation Rules | **6** |
 | Azure Logic Apps | **2** |
 
-
 ---
 
-## 🏗️ SOC Architecture
+## 🏗️ Architecture
 
-The lab collects security telemetry from Windows endpoints and Active Directory through Azure Monitor Agent and Data Collection Rules into a centralized Log Analytics workspace connected to Microsoft Sentinel.
+The lab collects Windows security telemetry through Azure Monitor Agent and Data Collection Rules into a centralized Log Analytics Workspace connected to Microsoft Sentinel.
 
-![SOC Architecture](Architecture/images/architecture.png)
+**Architecture Flow:**
 
-**Architecture flow:**
-
-`Windows / AD → AMA → DCR → Log Analytics → Microsoft Sentinel → Analytics Rules → Incidents → Automation / Response`
+**Windows VMs / Active Directory → AMA → DCR → Log Analytics → Microsoft Sentinel → Analytics Rules → Incidents → Automation / Response**
 
 📖 **[View Architecture Documentation](Architecture/README.md)**
 
@@ -46,7 +40,9 @@ The lab collects security telemetry from Windows endpoints and Active Directory 
 
 ## 🔍 Detection Engineering
 
-Developed **31 custom KQL-based analytics rules** covering multiple stages of the attack lifecycle, including:
+Developed **31 custom KQL-based analytics rules** to detect adversary behaviors across multiple stages of the attack lifecycle.
+
+Detection coverage includes:
 
 - Brute-force authentication
 - Successful login after brute force
@@ -76,7 +72,7 @@ Developed **31 custom KQL-based analytics rules** covering multiple stages of th
 
 ## 🔗 Multi-Stage Correlation
 
-Built **6 correlation rules** to increase detection confidence by combining related behaviors into attack chains.
+Built **6 multi-stage correlation rules** that combine related security events to identify higher-confidence attack chains.
 
 Examples include:
 
@@ -107,13 +103,37 @@ Coverage includes:
 - Lateral Movement
 - Command and Control
 
+Threat-intelligence detections that cannot be confidently mapped to a specific ATT&CK technique are documented as **N/A** rather than using an unsupported mapping.
+
 📖 **[View MITRE ATT&CK Coverage](Threat%20Coverage%20%28MITRE%20ATT%26CK%29/README.md)**
+
+---
+
+## 🧪 Attack Simulation & Detection Validation
+
+Controlled attack simulations were performed to validate detection logic and investigate generated Sentinel alerts.
+
+Validation included techniques and tools such as:
+
+- Atomic Red Team
+- Mimikatz
+- PsExec
+- Rubeus
+- PowerShell
+- Windows native utilities
+- Active Directory attack simulations
+
+Detection validation includes investigating generated alerts, reviewing event telemetry, tuning KQL queries, and validating multi-stage correlation logic.
+
+📖 **[View Detection Documentation](Detection/README.md)**
 
 ---
 
 ## 🤖 SOC Automation & Response
 
-Implemented **6 Microsoft Sentinel Automation Rules and 2 Azure Logic Apps** to support SOC workflows such as:
+Implemented **6 Microsoft Sentinel Automation Rules and 2 Azure Logic Apps** to support SOC investigation and response workflows.
+
+Automation capabilities include:
 
 - Incident assignment
 - Triage tagging
@@ -126,27 +146,15 @@ Implemented **6 Microsoft Sentinel Automation Rules and 2 Azure Logic Apps** to 
 
 ---
 
-## 🧪 Attack Simulation & Detection Validation
+## 📊 Workbooks & Dashboards
 
-The lab uses controlled attack simulations to validate detection logic and investigate generated alerts.
+Developed Microsoft Sentinel workbooks and dashboards to provide visibility into:
 
-Tools and techniques include:
-
-- Atomic Red Team
-- Mimikatz
-- PsExec
-- Rubeus
-- PowerShell
-- Windows native utilities
-- Active Directory attack simulations
-
-📖 **[View Detection Validation](Detection/README.md)**
-
----
-
-## 📈 SOC Monitoring & Investigation
-
-Investigated **68,000+ brute-force RDP events** and built Sentinel workbooks to visualize authentication activity, detections, incidents, affected entities, and SOC monitoring metrics.
+- Authentication activity
+- Security detections
+- Incidents
+- Affected entities
+- SOC monitoring metrics
 
 📖 **[View Workbooks & Dashboards](Workbook%20%26%20Dashboard/README.md)**
 
@@ -154,41 +162,31 @@ Investigated **68,000+ brute-force RDP events** and built Sentinel workbooks to 
 
 ## 🗂️ Project Structure
 
-```text
-Microsoft-Sentinel-SOC-Lab/
-│
-├── Architecture/
-│   └── README.md
-│
-├── Analytics-Rules/
-│   └── README.md
-│
-├── Detection/
-│   └── README.md
-│
-├── Threat Coverage (MITRE ATT&CK)/
-│   └── README.md
-│
-├── Automation & Playbooks/
-│   └── README.md
-│
-└── Workbook & Dashboard/
-    └── README.md
+- **Architecture/** — Azure SOC architecture and telemetry flow
+- **Analytics-Rules/** — KQL detection rules and correlation logic
+- **Detection/** — Attack simulation and detection validation
+- **Threat Coverage (MITRE ATT&CK)/** — MITRE ATT&CK technique and tactic coverage
+- **Automation & Playbooks/** — Sentinel Automation Rules and Azure Logic Apps
+- **Workbook & Dashboard/** — SOC monitoring and visualization
+- **Project Overview/** — Project goals and scope
+- **Project Phases/** — Implementation phases
+- **Project Workflow/** — End-to-end SOC workflow
+- **Objectives/** — Project objectives
+- **Lessons Learned/** — Implementation lessons and findings
+- **Future Improvements/** — Planned enhancements
 
-```
 ---
 
 ## 🛠️ Technologies
 
 - Microsoft Sentinel
 - Microsoft Azure
-- Log Analytics
+- Log Analytics Workspace
 - Azure Monitor Agent (AMA)
-- Data Collection Rules (DCR)
+- Data Collection Rules (DCRs)
 - Kusto Query Language (KQL)
-- Windows Server / Windows
+- Windows
 - Active Directory
-- Sysmon
 - Azure Logic Apps
 - MITRE ATT&CK
 - Atomic Red Team
@@ -199,15 +197,17 @@ Microsoft-Sentinel-SOC-Lab/
 
 | Section | Description |
 |---|---|
-| 🏗️ [Architecture](Architecture/README.md) | SOC architecture, Azure resources, and telemetry flow |
-| 🔍 [Analytics Rules](Analytics-Rules/README.md) | KQL detections and rule configuration |
+| 🏗️ [Architecture](Architecture/README.md) | Azure resources, SOC architecture, and telemetry flow |
+| 🔍 [Analytics Rules](Analytics-Rules/README.md) | KQL detections, rule configuration, and correlations |
 | 🧪 [Detection](Detection/README.md) | Attack simulation and detection validation |
 | 🧠 [MITRE ATT&CK](Threat%20Coverage%20%28MITRE%20ATT%26CK%29/README.md) | ATT&CK technique and tactic coverage |
 | 🤖 [Automation & Playbooks](Automation%20%26%20Playbooks/README.md) | Automation Rules and Logic Apps |
 | 📊 [Workbook & Dashboard](Workbook%20%26%20Dashboard/README.md) | SOC dashboards and monitoring |
+| 📋 [Project Overview](Project%20Overview/README.md) | Project scope and objectives |
+| 🔄 [Project Workflow](Project%20Workflow/README.md) | End-to-end implementation workflow |
 
 ---
 
 ## ⚠️ Disclaimer
 
-This project is a controlled cybersecurity lab created for learning and demonstration purposes. Attack simulations were performed against lab infrastructure and should not be conducted against systems without authorization.
+This project is a controlled cybersecurity lab created for learning and demonstration purposes. Attack simulations were performed against authorized lab infrastructure and should not be conducted against systems without authorization.
