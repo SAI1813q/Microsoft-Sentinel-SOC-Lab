@@ -3,6 +3,31 @@
 
 Welcome to the technical architecture documentation for this cloud-native Security Operations Center (SOC) project. This document outlines the end-to-end design, components, and data flow implemented to monitor, ingest, and analyze threat telemetry within Microsoft Azure and Microsoft Sentinel.
 
+```text
+
+Windows VM ───────┐
+                  │
+Active Directory ─┤
+                  ↓
+             Azure Monitor
+                 Agent
+                  ↓
+                DCR
+                  ↓
+          Log Analytics
+                  ↓
+        Microsoft Sentinel
+          ↓       ↓       ↓
+     Analytics  Correlation  MITRE
+       Rules      Rules      Mapping
+          ↓
+       Incidents
+          ↓
+ Automation Rules
+          ↓
+       Logic Apps
+
+```
 ---
 
 ## 📖 Project Overview
