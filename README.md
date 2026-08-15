@@ -203,7 +203,7 @@ Developed Microsoft Sentinel workbooks and dashboards to provide visibility into
 |---|---|
 | 🏗️ [Architecture](Architecture/README.md) | Azure resources, SOC architecture, and telemetry flow |
 | 🔍 [Analytics Rules](Analytics-Rules/README.md) | KQL detections, rule configuration, and correlations |
-| 🔗 [Correlation Rules](Correlation-Rules/README.md) | Multi-stage attack-chain detection and correlation logic |
+| 🔗 [Correlation Rules](Correlation%20Rules/README.md) | Multi-stage attack-chain detection and correlation logic |
 | 🧪 [Detection](Detection/README.md) | Attack simulation and detection validation |
 | 🧠 [MITRE ATT&CK](Threat%20Coverage%20%28MITRE%20ATT%26CK%29/README.md) | ATT&CK technique and tactic coverage |
 | 🤖 [Automation & Playbooks](Automation%20%26%20Playbooks/README.md) | Automation Rules and Logic Apps |
